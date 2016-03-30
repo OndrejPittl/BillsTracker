@@ -1,0 +1,109 @@
+<resources>
+    <!-- general -->
+    <string name="appName">SuperCoolApp</string>
+    <string name="app_name">Semestralka</string>
+    <string name="arrow_left">&#9664;</string>
+    <string name="arrow_right">&#9654;</string>
+
+    <!-- temp -->
+    <string name="lbl_background_image">background_image</string>
+    <string name="action_settings">Settings</string>
+
+
+
+    <!-- Welcome activity -->
+        <!-- Welcome screen -->
+        <string name="title_activity_welcome">WelcomeActivity</string>
+        <string name="loginHello">Hello!</string>
+        <string name="loginFirstTime">First time here right?</string>
+        <string name="loginTellMe">Tell me about this app.</string>
+        <string name="loginContinue">– continue –</string>
+
+
+        <!-- Login Screen -->
+            <!-- Register -->
+            <string name="loginPleaseLogin">Enter your PIN please.</string>
+            <string name="loginLogin">– set PIN code –</string>
+
+            <!-- Login -->
+            <string name="loginWelcomeBack">Welcome back!</string>
+            <string name="loginOtherTime">Some expenses? Again?</string>
+            <string name="loginEnter">– enter –</string>
+
+
+
+    <!-- About activity -->
+    <string name="title_activity_about">AboutActivity</string>
+    <string name="headingAboutApp">About this app</string>
+    <string name="loremIpsum">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+    tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+    quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+    consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+    cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+    proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</string>
+
+
+
+    <!-- Home activity -->
+    <string name="title_activity_home">HomeActivity</string>
+    <string name="home_month_mock">March</string>
+    <string name="home_stats_day_label">today:</string>
+    <string name="home_stats_week_label">this week:</string>
+    <string name="home_stats_month_label">this month:</string>
+
+
+
+        <!-- controls -->
+        <string name="btn_dateTxt">today</string>
+        <string-array name="categories">
+            <item>Electronics</item>
+            <item>Entertainment</item>
+            <item>Food/Drink</item>
+            <item>Health</item>
+            <item>Hobby</item>
+            <item>Hygiene</item>
+            <item>Living</item>
+            <item>Payments</item>
+            <item>School</item>
+            <item>Travelling</item>
+            <item>Work</item>
+        </string-array>
+
+        <!-- @TODO do DB tabulky/souboru s možností in-app editace -->
+        <!-- @TODO načítat a řadit dle četnosti-->
+        <string-array name="stores">
+            <item>Penny Market</item>
+            <item>Albert</item>
+            <item>Lidl</item>
+            <item>Billa</item>
+            <item>Tesco</item>
+            <item>Kaufland</item>
+            <item>Globus</item>
+            <item>Makro</item>
+
+            <item>Jysk</item>
+            <item>ASKO nábytek</item>
+            <item>SCONTO nábytek</item>
+            <item>Möbelix</item>
+            <item>Kika</item>
+            <item>IKEA</item>
+
+            <item>DM</item>
+            <item>Teta</item>
+            <item>Rossmann</item>
+
+            <item>H&amp;M</item>
+            <item>C&amp;A</item>
+            <item>New Yorker</item>
+            <item>Humanic</item>
+            <item>Baťa</item>
+            <item>Deichmann</item>
+
+            <item>McDonalds</item>
+            <item>KFC</item>
+            <item>Delish</item>
+            <item>Menza</item>
+
+        </string-array>
+
+</resources>

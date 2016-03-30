@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorAccent">#000</color>
+    <color name="colorPrimaryDark">#000</color>
+    <color name="colorPrimary">#000</color>
+
+    <color name="transparent">#00FFFFFF</color>
+    <color name="appWhite25">#33FFFFFF</color>
+    <color name="appWhite40">#68FFFFFF</color>
+    <color name="appWhite50">#88FFFFFF</color>
+    <color name="appWhite75">#CCFFFFFF</color>
+    <color name="appWhite">#FFFFFFFF</color>
+
+
+
+    <color name="appTextWhite">#FFF</color>
+    <color name="appTextLightGold">#F7EBBE</color>
+    <color name="appTextGold">#e1d5a4</color>
+
+    <color name="appButtonOK">#9ab47e</color>
+    <color name="appButtonOKStroke">#949d6e</color>
+    <color name="appButtonCancel">#bf9a7f</color>
+    <color name="appButtonCancelStroke">#bd947c</color>
+
+    <color name="appMainControlsBg">#66FFFFFF</color>
+
+
+</resources>

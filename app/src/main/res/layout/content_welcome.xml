@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+
+    android:id="@+id/welcomeActivityFirstTime"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="cz.ondrejpittl.semestralka.WelcomeActivity"
+    tools:showIn="@layout/activity_welcome">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imgViewBG"
+        android:layout_gravity="center"
+        android:cropToPadding="false"
+        android:scaleType = "centerCrop"
+        android:src="@drawable/bg" />
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center">
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="2">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="200dp"
+                android:id="@+id/imgView_logo"
+                android:src="@drawable/logo"
+                android:layout_gravity="center|bottom" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1">
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1">
+
+                <cz.ondrejpittl.semestralka.partial.MyShadowTextView
+                    android:id="@+id/txtView_hello"
+                    android:text="@string/loginHello"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:textColor="#ffffff"
+                    android:textSize="40dp" />
+
+                <cz.ondrejpittl.semestralka.partial.MyShadowTextView
+                    android:id="@+id/txtView_firstTime"
+                    android:text="@string/loginFirstTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:textColor="#ffffff"
+                    android:textSize="20dp" />
+
+
+
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:weightSum="1">
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal">
+
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/welcomeUpperControlWrapper">
+
+
+                </FrameLayout>
+
+                <View
+                    android:id="@+id/viewLine"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_below="@+id/welcomeUpperControlWrapper"
+                    android:background="@android:color/white"/>
+
+
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/welcomeLowerControlWrapper"
+                    android:layout_below="@+id/viewLine">
+
+                </FrameLayout>
+
+
+
+            </LinearLayout>
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+</FrameLayout>

@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imgViewBG"
+        android:layout_gravity="center"
+        android:cropToPadding="false"
+        android:scaleType = "centerCrop"
+        android:src="@drawable/bg" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:padding="10dp">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center_vertical|left"
+            android:layout_weight="2">
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:padding="40dp">
+
+                <ImageView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/imgView_logo"
+                    android:src="@drawable/logo"
+                    android:layout_weight="2"
+                    android:layout_gravity="center" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="2"
+            android:paddingRight="7dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <cz.ondrejpittl.semestralka.partial.MyShadowTextView
+                    android:id="@+id/txtView_hello"
+                    android:text="@string/loginHello"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:textColor="#ffffff"
+                    android:textSize="40dp"
+                    android:layout_centerVertical="true"
+                    android:layout_centerHorizontal="true" />
+
+                <cz.ondrejpittl.semestralka.partial.MyShadowTextView
+                    android:id="@+id/txtView_firstTime"
+                    android:text="@string/loginFirstTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:textColor="#ffffff"
+                    android:textSize="20dp"
+                    android:layout_below="@+id/txtView_hello"
+                    android:layout_centerHorizontal="true" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/welcomeUpperControlWrapper"
+
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true">
+
+                </FrameLayout>
+
+                <View
+                    android:id="@+id/viewLine"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_below="@+id/welcomeUpperControlWrapper"
+                    android:background="@android:color/white"/>
+
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/welcomeLowerControlWrapper"
+                    android:layout_below="@+id/viewLine">
+
+                </FrameLayout>
+
+
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</FrameLayout>
