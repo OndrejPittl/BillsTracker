@@ -22,7 +22,7 @@ import cz.ondrejpittl.semestralka.partial.MyShadowTextView;
 /**
  * Created by OndrejPittl on 30.03.16.
  */
-public class WelcomeActivityLayoutController {
+public class WelcomeUIController {
 
     /**
      * Activity that is being controlled.
@@ -43,7 +43,7 @@ public class WelcomeActivityLayoutController {
     /**
      * Constructor, controller initialization.
      */
-    public WelcomeActivityLayoutController(WelcomeActivity activity){
+    public WelcomeUIController(WelcomeActivity activity){
         this.activity = activity;
         this.pinFieldsCount = 4;
         this.pinFields = new EditText[this.pinFieldsCount];

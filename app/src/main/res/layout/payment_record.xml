@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="65dp"
+    android:orientation="vertical"
+    android:layout_marginTop="2dp"
+    android:layout_marginBottom="2dp"
+    android:background="@color/appWhite25">
+    <!--android:background="@color/appWhite25"-->
+
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:padding="4dp">
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:id="@+id/recordImgHolder"
+            android:padding="3dp">
+
+            <ImageView
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:id="@+id/imgViewRecordIcon"
+                android:background="#fff"
+                android:layout_gravity="center" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:id="@+id/recordDayHolder"
+            android:padding="3dp">
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:id="@+id/txtViewRecordDay"
+                android:layout_gravity="center"
+                android:text="1"
+                android:textColor="@color/appPaymentRecordLabels"
+                android:shadowColor="@color/appPaymentRecordLabelShadow"
+                android:shadowDx="0"
+                android:shadowDy="1"
+                android:shadowRadius="1"
+                android:textSize="13sp"
+                android:textAlignment="center" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:id="@+id/recordCategoryHolder"
+            android:padding="3dp">
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="category"
+                android:id="@+id/txtViewRecordCategory"
+                android:layout_gravity="center"
+                android:textColor="@color/appPaymentRecordLabels"
+                android:shadowColor="@color/appPaymentRecordLabelShadow"
+                android:shadowDx="0"
+                android:shadowDy="1"
+                android:shadowRadius="1"
+                android:textSize="12sp"
+                android:textAlignment="center" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:id="@+id/recordStoreHolder"
+            android:padding="3dp">
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="store"
+                android:id="@+id/txtViewRecordStore"
+                android:layout_gravity="center"
+                android:textColor="@color/appPaymentRecordLabels"
+                android:shadowColor="@color/appPaymentRecordLabelShadow"
+                android:shadowDx="0"
+                android:shadowDy="1"
+                android:shadowRadius="1"
+                android:textSize="12sp"
+                android:textAlignment="center" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:id="@+id/recordPriceHolder"
+            android:padding="3dp">
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@string/price_mock"
+                android:id="@+id/txtViewRecordPrice"
+                android:layout_gravity="center"
+                android:textIsSelectable="true"
+                android:textSize="13sp"
+                android:textColor="@color/appPaymentRecordLabels"
+                android:shadowColor="@color/appPaymentRecordLabelShadow"
+                android:shadowDx="0"
+                android:shadowDy="1"
+                android:shadowRadius="1"
+                android:textAlignment="center" />
+
+        </FrameLayout>
+    </LinearLayout>
+
+    <View
+        android:id="@+id/viewLine"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/welcomeUpperControlWrapper"
+        android:background="@color/appPaymentRecordLine"/>
+
+    <FrameLayout
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/recordNoteHolder"
+        android:layout_gravity="center">
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="note1 note2 note3 note4 note5 note6 note7 note8 note9 note10 note11 note12 note13 note14"
+            android:id="@+id/txtViewRecordNote"
+            android:layout_gravity="center"
+            android:textColor="@color/appPaymentRecordLabels"
+            android:shadowColor="@color/appPaymentRecordLabelShadow"
+            android:shadowDx="0"
+            android:shadowDy="1"
+            android:shadowRadius="1"
+            android:textSize="10sp"
+            android:textAlignment="center"
+
+
+            android:singleLine="true" />
+    </FrameLayout>
+
+</LinearLayout>

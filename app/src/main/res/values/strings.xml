@@ -46,16 +46,20 @@
 
     <!-- Home activity -->
     <string name="title_activity_home">HomeActivity</string>
+    <string name="home_btn_ok_label">Insert</string>
+    <string name="home_btn_cancel_label">Cancel</string>
     <string name="home_month_mock">March</string>
     <string name="home_stats_day_label">today:</string>
-    <string name="home_stats_week_label">this week:</string>
-    <string name="home_stats_month_label">this month:</string>
+    <string name="home_stats_week_label">week:</string>
+    <string name="home_stats_month_label">month:</string>
+    <string name="price_mock">0,-</string>
+
 
 
 
         <!-- controls -->
         <string name="btn_dateTxt">today</string>
-        <string-array name="categories">
+        <!--<string-array name="categories">
             <item>Electronics</item>
             <item>Entertainment</item>
             <item>Food/Drink</item>
@@ -69,8 +73,6 @@
             <item>Work</item>
         </string-array>
 
-        <!-- @TODO do DB tabulky/souboru s možností in-app editace -->
-        <!-- @TODO načítat a řadit dle četnosti-->
         <string-array name="stores">
             <item>Penny Market</item>
             <item>Albert</item>
@@ -104,6 +106,6 @@
             <item>Delish</item>
             <item>Menza</item>
 
-        </string-array>
+        </string-array> -->
 
 </resources>

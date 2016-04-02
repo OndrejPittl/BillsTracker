@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- @TODO do DB tabulky/souboru s možností in-app editace -->
+<!-- @TODO načítat a řadit dle četnosti-->
+
+<stores>
+    <store id="0" name=" --- " />
+    <store id="1" name="Penny Market" />
+    <store id="2" name="Albert" />
+    <store id="3" name="Lidl" />
+    <store id="4" name="Billa" />
+    <store id="5" name="Tesco" />
+    <store id="6" name="Kaufland" />
+    <store id="7" name="Globus" />
+    <store id="8" name="Makro" />
+    <store id="9" name="Jysk" />
+    <store id="10" name="ASKO nábytek" />
+    <store id="11" name="SCONTO nábytek" />
+    <store id="12" name="Möbelix" />
+    <store id="13" name="Kika" />
+    <store id="14" name="IKEA" />
+    <store id="15" name="DM" />
+    <store id="16" name="Teta" />
+    <store id="17" name="Rossmann" />
+    <store id="18" name="H&amp;M" />
+    <store id="19" name="C&amp;A" />
+    <store id="21" name="New Yorker" />
+    <store id="22" name="Humanic" />
+    <store id="23" name="Baťa" />
+    <store id="24" name="Deichmann" />
+    <store id="25" name="McDonalds" />
+    <store id="26" name="KFC" />
+    <store id="27" name="Delish" />
+</stores>

@@ -16,6 +16,8 @@
     <color name="appTextWhite">#FFF</color>
     <color name="appTextLightGold">#F7EBBE</color>
     <color name="appTextGold">#e1d5a4</color>
+    <color name="appTextGreen">#717c67</color>
+
 
     <color name="appButtonOK">#9ab47e</color>
     <color name="appButtonOKStroke">#949d6e</color>
@@ -23,6 +25,10 @@
     <color name="appButtonCancelStroke">#bd947c</color>
 
     <color name="appMainControlsBg">#66FFFFFF</color>
+    <color name="appPaymentRecordLabels">#bf9a7f</color>
+    <color name="appPaymentRecordLabelShadow">#FFF</color>
+    <color name="appPaymentRecordLine">#68FFFFFF</color>
+
 
 
 </resources>

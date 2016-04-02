@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
-import cz.ondrejpittl.semestralka.controllers.WelcomeActivityLayoutController;
+import cz.ondrejpittl.semestralka.controllers.WelcomeUIController;
 
 
 public class WelcomeActivity extends AppCompatActivity {
@@ -14,7 +14,7 @@ public class WelcomeActivity extends AppCompatActivity {
     /**
      * Controls Welcome/Login activity layout due to launch.
      */
-    private WelcomeActivityLayoutController controller;
+    private WelcomeUIController controller;
 
     private SharedPreferences prefs;
 
@@ -62,7 +62,7 @@ public class WelcomeActivity extends AppCompatActivity {
     private void init(){
         this.activityLoaded = false;
         this.prefs = getSharedPreferences("cz.ondrejpittl.semestralka", MODE_PRIVATE);
-        this.controller = new WelcomeActivityLayoutController(this);
+        this.controller = new WelcomeUIController(this);
     }
 
     /**
@@ -85,11 +85,11 @@ public class WelcomeActivity extends AppCompatActivity {
      * App was already launched.
      */
     public void registerLoginScreenDisplayed(){
-        this.prefs.edit().putBoolean("firstLaunch7", false).commit();
+        this.prefs.edit().putBoolean("firstLaunch", false).commit();
     }
 
     public boolean isFirstTimeLaunch(){
-        return this.prefs.getBoolean("firstLaunch7", true);
+        return this.prefs.getBoolean("firstLaunch", true);
         //return true;
     }
 

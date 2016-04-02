@@ -1,26 +1,51 @@
 package cz.ondrejpittl.semestralka;
 
-import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.DatePicker;
-import android.widget.Spinner;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
-import java.util.Calendar;
+import java.sql.DatabaseMetaData;
+import java.util.ArrayList;
+
+import cz.ondrejpittl.semestralka.controllers.HomeDataController;
+import cz.ondrejpittl.semestralka.controllers.HomeUIController;
+import cz.ondrejpittl.semestralka.database.DBManager;
+import cz.ondrejpittl.semestralka.models.Payment;
 
 public class HomeActivity extends AppCompatActivity {
 
-    private Calendar cal;
-    private Button dateButton;
+    /**
+     * Shared Preferences of this app.
+     */
+    private SharedPreferences prefs;
+
+    /**
+     * Model layer.
+     * Database Manager representing a model layer od app. Completely controls database.
+     */
+    DBManager dbManager;
+
+    /**
+     * View Layer.
+     * Controller building UI layout of this activity.
+     */
+    private HomeUIController controllerUI;
+
+    /**
+     * Logic layer.
+     * Controls data displayed to user.
+     */
+    private HomeDataController controllerData;
 
 
 
-    private int dateDialogID = 0;
-    private int date_year, date_month, date_day;
+
 
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,82 +55,80 @@ public class HomeActivity extends AppCompatActivity {
         init();
     }
 
+    /**
+     * Initializes Activity properties and major objects.
+     */
     private void init(){
-        this.cal = Calendar.getInstance();
-        initDateControls();
-        initCategoryControls();
-        initStoreControls();
+
+        //build ui
+        this.controllerUI = new HomeUIController(this);
+        this.controllerUI.initUI();
+
+        //model layer
+        this.dbManager = new DBManager(this);
+
+        //data
+        this.controllerData = new HomeDataController(this);
+
+
+
+
+
+        //store in-app local-shared preferences
+        this.prefs = getSharedPreferences("cz.ondrejpittl.semestralka", MODE_PRIVATE);
+
     }
 
-    private void initDateControls(){
-        this.date_year = this.cal.get(Calendar.YEAR);
-        this.date_month = this.cal.get(Calendar.MONTH);
-        this.date_day = this.cal.get(Calendar.DAY_OF_MONTH);
-
-
-        this.dateButton = (Button) findViewById(R.id.btn_date);
-        this.dateButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showDialog(dateDialogID);
-            }
-        });
-    }
-
-    private void initCategoryControls(){
-        Spinner spinner = (Spinner) findViewById(R.id.spinner_category);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.categories, R.layout.spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
-    }
-
-    private void initStoreControls(){
-        Spinner spinner = (Spinner) findViewById(R.id.spinner_store);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.stores, R.layout.spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
-    }
-
-
+    /**
+     * Builds DatePicker dialog.
+     * @param id    ID of dialog.
+     * @return      Built DatePicker dialog.
+     */
+    @Override
     protected Dialog onCreateDialog(int id) {
-        if(id == this.dateDialogID) {
-
-            DatePickerDialog dpDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
-                public void onDateSet(DatePicker arg0, int y, int m, int d) {
-                    updateDateButton(y, m, d);
-                    saveSelectedDate(y, m, d);
-                }
-            }, this.date_year, this.date_month, this.date_day);
-
-
-            //o 1 den navic oproti StackOverflow! @TODO otestovat!
-            Calendar c = Calendar.getInstance();
-            c.add(Calendar.DATE, 1);
-
-            DatePicker datePicker = dpDialog.getDatePicker();
-            datePicker.setMaxDate(c.getTimeInMillis());
-            return dpDialog;
-        }
-        return null;
+        return this.controllerUI.handleDatePickerDialogCreation(id);
     }
 
-    private void saveSelectedDate(int y, int m, int d){
-        this.date_year = y;
-        this.date_month = m;
-        this.date_day = d;
+
+
+
+
+
+    private void loadPayments(){
+
+
+
+
+        /*
+
+        LinearLayout container = (LinearLayout) findViewById(R.id.recordsContainer);
+
+        for(int i = 0; i < 5; i++) {
+            View rec = (View) layoutInflater.inflate(R.layout.payment_record, container, false);
+
+            rec.setId(i);
+
+            TextView v = (TextView) rec.findViewById(R.id.txtViewNote);
+            v.setText(i);
+
+            container.addView(rec);
+        }
+
+        */
+
     }
 
-    private void updateDateButton(int y, int m, int d){
-        if(y == this.cal.get(Calendar.YEAR) && m == this.cal.get(Calendar.MONTH)) {
 
-            if(d == this.cal.get(Calendar.DAY_OF_MONTH)) {
-                this.dateButton.setText("Today");
-            } else if((d + 1) == this.cal.get(Calendar.DAY_OF_MONTH)) {
-                this.dateButton.setText("Yesterday");
-            } else {
-                dateButton.setText(d + ". " + m + ". " + y);
-            }
-        }
+    public HomeDataController getDataController(){
+        return this.controllerData;
+    }
+
+    public HomeUIController getUIController(){
+        return this.controllerUI;
+    }
+
+    public DBManager getDbManager(){
+        return this.dbManager;
     }
 
 

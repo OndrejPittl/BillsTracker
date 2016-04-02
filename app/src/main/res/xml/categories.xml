@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- @TODO do DB tabulky/souboru s možností in-app editace -->
+<!-- @TODO načítat a řadit -->
+
+<categories>
+    <category id="0" name="Car" />
+    <category id="1" name="Clothes" />
+    <category id="2" name="Electronics" />
+    <category id="3" name="Entertainment" />
+    <category id="4" name="Family" />
+    <category id="5" name="Food &amp; Drink" />
+    <category id="6" name="Health" />
+    <category id="7" name="Hobby" />
+    <category id="8" name="Hygiene" />
+    <category id="9" name="Living" />
+    <category id="10" name="Payments" />
+    <category id="11" name="Pets" />
+    <category id="12" name="Phone" />
+    <category id="13" name="Restaurant" />
+    <category id="14" name="School" />
+    <category id="15" name="Travelling" />
+    <category id="16" name="Work" />
+    <!--<category id="17" name="" />
+    <category id="18" name="" />
+    <category id="19" name="" />
+    <category id="21" name="" />
+    <category id="22" name="" />
+    <category id="23" name="" />
+    <category id="24" name="" />
+    <category id="25" name="" />
+    <category id="26" name="" />
+    <category id="27" name="" />-->
+</categories>
+
