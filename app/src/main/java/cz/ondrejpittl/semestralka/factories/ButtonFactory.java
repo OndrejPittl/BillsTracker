@@ -3,21 +3,17 @@ package cz.ondrejpittl.semestralka.factories;
 import android.content.Context;
 import android.view.Gravity;
 import android.view.View;
-import android.widget.Button;
 
-import cz.ondrejpittl.semestralka.partial.MyShadowTextView;
+import cz.ondrejpittl.semestralka.layout.MyShadowTextView;
 
 /**
  * Created by OndrejPittl on 30.03.16.
  */
 public class ButtonFactory {
 
-    //private static Context appContext;
-
     private static int txtGravity = Gravity.CENTER;
     private static int txtSize = 25;
     private static int[] padding = {7, 7, 7, 7};
-    //private static
 
     public static MyShadowTextView createMyShadowTxtView(String txt, int txtSize, int txtColor, int gravity, int[] padding, View.OnClickListener onClickListener, Context appContext){
         MyShadowTextView btn = new MyShadowTextView(appContext);
@@ -38,15 +34,8 @@ public class ButtonFactory {
         return ButtonFactory.createMyShadowTxtView(txt, txtSize, txtColor, ButtonFactory.txtGravity, padding, onClickListener, appContext);
     }
 
-    public static MyShadowTextView createMyShadowTxtView(String txt, int txtSize, int txtColor, View.OnClickListener onClickListener, Context appContext){
+    /*public static MyShadowTextView createMyShadowTxtView(String txt, int txtSize, int txtColor, View.OnClickListener onClickListener, Context appContext){
         return ButtonFactory.createMyShadowTxtView(txt, txtSize, txtColor, ButtonFactory.txtGravity, ButtonFactory.padding, onClickListener, appContext);
-    }
-
-
-
-    /*public static void setAppContext(Context appContext){
-        ButtonFactory.appContext = appContext;
     }*/
-
 
 }

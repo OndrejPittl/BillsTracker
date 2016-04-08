@@ -55,7 +55,7 @@
                 android:layout_gravity="center"
                 android:layout_weight="1">
 
-                <cz.ondrejpittl.semestralka.partial.MyShadowTextView
+                <cz.ondrejpittl.semestralka.layout.MyShadowTextView
                     android:id="@+id/txtView_hello"
                     android:text="@string/loginHello"
                     android:layout_width="wrap_content"
@@ -64,7 +64,7 @@
                     android:textColor="#ffffff"
                     android:textSize="40dp" />
 
-                <cz.ondrejpittl.semestralka.partial.MyShadowTextView
+                <cz.ondrejpittl.semestralka.layout.MyShadowTextView
                     android:id="@+id/txtView_firstTime"
                     android:text="@string/loginFirstTime"
                     android:layout_width="wrap_content"

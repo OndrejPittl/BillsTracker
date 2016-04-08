@@ -7,9 +7,12 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 import cz.ondrejpittl.semestralka.models.Category;
+import cz.ondrejpittl.semestralka.models.Currency;
 import cz.ondrejpittl.semestralka.models.Payment;
+import cz.ondrejpittl.semestralka.models.Statistics;
 import cz.ondrejpittl.semestralka.models.Store;
 
 /**
@@ -17,13 +20,14 @@ import cz.ondrejpittl.semestralka.models.Store;
  */
 public class DBManager extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 5;
 
     private static final String DATABASE_NAME = "billstracker_database";
 
     private PaymentsManager payments;
     private StoresManager stores;
     private CategoryManager categories;
+    private CurrencyManager currencies;
 
     protected SQLiteDatabase db;
 
@@ -43,6 +47,7 @@ public class DBManager extends SQLiteOpenHelper {
         this.payments = new PaymentsManager(this);
         this.stores = new StoresManager(this);
         this.categories = new CategoryManager(this);
+        this.currencies = new CurrencyManager(this);
 
         Log.i("Ondra", "All table managers initialised.");
 
@@ -59,23 +64,29 @@ public class DBManager extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         this.payments.createPaymentsTable(db);
 
-        this.payments.insertPayment("1", "2", "3", "123", "1459468800000", "prvního");
-        this.payments.insertPayment("2", "3", "4", "234", "1461974400000", "posledního");
-        this.payments.insertPayment("3", "4", "5", "345", "1464566400000", "moc pozdě");
-        this.payments.insertPayment("4", "5", "6", "456", "1459458800000", "moc brzo");
-        this.payments.insertPayment("5", "6", "7", "567", "1459478800000", "akorát");
+        this.payments.insertPayment("1", "2", "3", "123", "1459461600000", "prvního");
+        this.payments.insertPayment("2", "3", "4", "234", "1462053599999", "posledního");
+        this.payments.insertPayment("3", "4", "5", "345", "1462060599999", "moc pozdě");
+        this.payments.insertPayment("4", "5", "6", "456", "1459460600000", "moc brzo");
+        this.payments.insertPayment("5", "6", "7", "567", "1459469600000", "akorát");
 
 
         Resources res = this.context.getResources();
         this.stores.createStoresTable(db, res);
         this.categories.createCategoriesTable(db, res);
+        this.currencies.createCurrenciesTable(db, res);
 
         Log.i("Ondra", "All table managers initialised.");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
+        db.execSQL("DROP TABLE IF EXISTS " + this.payments.getTableName());
+        db.execSQL("DROP TABLE IF EXISTS " + this.stores.getTableName());
+        db.execSQL("DROP TABLE IF EXISTS " + this.categories.getTableName());
+        db.execSQL("DROP TABLE IF EXISTS " + this.currencies.getTableName());
+        Log.i("Ondra", "TABLES DROPPED.");
+        onCreate(db);
     }
 
     public ArrayList<Store> getStoredStores(){
@@ -90,7 +101,57 @@ public class DBManager extends SQLiteOpenHelper {
         return this.payments.selectPaymentsOfMonth(month, year);
     }
 
+    /*
+    public String getDefaultCurrency(){
+        String[] defaults = {"USD", "EUR"};
 
+        for(int i = 0; i < defaults.length; i++) {
+            if(this.currencies.checkIfCurrencyExists(defaults[i])) {
+                return defaults[i];
+            }
+        }
+
+        Log.i("Ondra", "DEFAULT CURRENCY2: not found, getting first");
+
+        return this.currencies.getFirstCurrency();
+    }
+    */
+
+    public void updateDefaultCurrency(String curr){
+        if(this.currencies.checkIfCurrencyExists(curr))
+            return;
+        this.currencies.insertCurrency(curr);
+    }
+
+    public String getAllTableColumnsList(){
+        return  this.payments.getAllColumnsSelector() + ", " +
+                this.categories.getAllColumnsSelector() + ", " +
+                this.stores.getAllColumnsSelector();
+    }
+
+    public Statistics computeStatistics(){
+        int today, week,
+            month, year, total;
+
+        today = this.payments.computeTodayPaymentAmount();
+        week = this.payments.computeWeekPaymentAmount();
+        month = this.payments.computeMonthPaymentAmount();
+        year = this.payments.computeYearPaymentAmount();
+        total = this.payments.computeTotalPaymentAmount();
+
+        Statistics s = new Statistics();
+        s.setTodayAmount(today);
+        s.setWeekAmount(week);
+        s.setMonthAmount(month);
+        s.setYearAmount(year);
+        s.setTotalAmount(total);
+
+        return s;
+    }
+
+    public void insertNewPayment(Payment p){
+        this.payments.insertPayment(p);
+    }
 
 
 

@@ -31,7 +31,7 @@ public class DBQueryFactory {
         return "select * from " + tableName;
     }
 
-    public static String querySelectOne(String tableName, String[][] wheres, String[][] orderBy){
+    public static String querySelect(String tableName, String[][] wheres, String[][] orderBy){
         //"select * from " + TABLE_NAME + " where id="+id+""
 
         clearStringBuilder();
@@ -39,7 +39,24 @@ public class DBQueryFactory {
 
         buildWhere(wheres);
         buildOrderBy(orderBy);
+        return sb.toString();
+    }
 
+    public static String querySelectOne(String tableName, String[][] wheres, String[][] orderBy){
+        String query = DBQueryFactory.querySelect(tableName, wheres, orderBy);
+        bildLimit(1);
+        return query;
+    }
+
+    public static String querySelectDetailed(String tableCols, String tables, String[][] wheres, String[][] orderBy, int limit) {
+        clearStringBuilder();
+        sb.append("SELECT ");
+        sb.append(tableCols);
+        sb.append(" FROM ");
+        sb.append(tables);
+        buildWhere(wheres);
+        buildOrderBy(orderBy);
+        bildLimit(limit);
         return sb.toString();
     }
 
@@ -60,13 +77,18 @@ public class DBQueryFactory {
         sb.append(" WHERE ");
 
         for(int w = 0; w < wheres.length; w++) {
-            sb.append(wheres[w][0] + " " + wheres[w][1] + " " + wheres[w][2]);
+            sb.append(wheres[w][0] + " " + wheres[w][1] + " '" + wheres[w][2] + "'");
             if(w < wheres.length - 1) sb.append(" AND ");
         }
     }
 
+    private static void bildLimit(int limit) {
+        if(limit > 0)
+            sb.append(" LIMIT " + limit);
+    }
 
-        public static String queryDeleteWhereClause(String[][] wheres){
+
+    public static String queryDeleteWhereClause(String[][] wheres){
         int whereCount = wheres.length;
         clearStringBuilder();
 

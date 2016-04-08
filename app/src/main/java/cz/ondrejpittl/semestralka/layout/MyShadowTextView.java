@@ -1,4 +1,4 @@
-package cz.ondrejpittl.semestralka.partial;
+package cz.ondrejpittl.semestralka.layout;
 
 import android.content.Context;
 import android.graphics.Color;

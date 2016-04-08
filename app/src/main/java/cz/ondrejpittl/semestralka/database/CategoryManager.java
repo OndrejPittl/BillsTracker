@@ -30,6 +30,11 @@ public class CategoryManager extends TableManager {
      */
     private static final String COLUMN_NAME = "name";
 
+    /**
+     * Table columns alias prefix.
+     */
+    private static final String ALIAS_PREFIX = "categories_";
+
 
     private Resources res;
 
@@ -51,7 +56,7 @@ public class CategoryManager extends TableManager {
 
         String[][] args = new String[][] {
                 {COLUMN_ID, "integer primary key autoincrement"},
-                {COLUMN_NAME, "test"}
+                {COLUMN_NAME, "text"}
         };
 
         createTable(args);
@@ -114,6 +119,29 @@ public class CategoryManager extends TableManager {
 
         return categories;
     }
+
+    public static String getColumnIdAliased(){
+        return ALIAS_PREFIX + COLUMN_ID;
+    }
+
+    public static String getColumnNameAliased(){
+        return ALIAS_PREFIX + COLUMN_NAME;
+    }
+
+    public static String getColumnId(){
+        return COLUMN_ID;
+    }
+
+    public static String getColumnName(){
+        return COLUMN_NAME;
+    }
+
+    public String getAllColumnsSelector(){
+        return TABLE_NAME + "." + COLUMN_ID + " as " + getColumnIdAliased()  + ", "
+                + TABLE_NAME + "." + COLUMN_NAME + " as " + getColumnNameAliased();
+    }
+
+
 
     public int deleteCategory(String[][] wheres){
         return deleteRecord(wheres);

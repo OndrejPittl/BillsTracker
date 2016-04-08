@@ -3,20 +3,31 @@ package cz.ondrejpittl.semestralka;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
+
+import android.view.animation.Animation;
+import android.view.animation.Transformation;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.sql.DatabaseMetaData;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import cz.ondrejpittl.semestralka.controllers.HomeDataController;
 import cz.ondrejpittl.semestralka.controllers.HomeUIController;
 import cz.ondrejpittl.semestralka.database.DBManager;
 import cz.ondrejpittl.semestralka.models.Payment;
+import cz.ondrejpittl.semestralka.partial.MonthChange;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -24,6 +35,13 @@ public class HomeActivity extends AppCompatActivity {
      * Shared Preferences of this app.
      */
     private SharedPreferences prefs;
+
+    /**
+     * Stored origin locale enables temporarily change locale to force ENG lang and then setting
+     * origin locale back.
+     *
+     */
+    private static Locale originLocale;
 
     /**
      * Model layer.
@@ -60,6 +78,8 @@ public class HomeActivity extends AppCompatActivity {
      */
     private void init(){
 
+        this.originLocale = Locale.getDefault();
+
         //build ui
         this.controllerUI = new HomeUIController(this);
         this.controllerUI.initUI();
@@ -71,12 +91,26 @@ public class HomeActivity extends AppCompatActivity {
         this.controllerData = new HomeDataController(this);
 
 
+        //this.controllerData.loadStoredSettings();
+
+    }
 
 
-
-        //store in-app local-shared preferences
-        this.prefs = getSharedPreferences("cz.ondrejpittl.semestralka", MODE_PRIVATE);
-
+    /**
+     * Check if the database exist and can be read.
+     *
+     * @return true if it exists and can be read, false if it doesn't
+     */
+    private boolean checkDataBase() {
+        SQLiteDatabase checkDB = null;
+        try {
+            checkDB = SQLiteDatabase.openDatabase("/data/data/YOUR_APP/databases/billstracker_database", null,
+                    SQLiteDatabase.OPEN_READONLY);
+            checkDB.close();
+        } catch (SQLiteException e) {
+            // database doesn't exist yet.
+        }
+        return checkDB != null;
     }
 
     /**
@@ -88,6 +122,37 @@ public class HomeActivity extends AppCompatActivity {
     protected Dialog onCreateDialog(int id) {
         return this.controllerUI.handleDatePickerDialogCreation(id);
     }
+
+    /**
+     * Handles actual month change.
+     */
+    public void activeMonthChangeHandler(View v){
+        MonthChange event;
+        Button b = (Button) v;
+
+        if(b.getId() == R.id.btn_recordsListPrev) {
+            event = MonthChange.PREV;
+        } else {
+            event = MonthChange.NEXT;
+        }
+
+        this.controllerData.registerActiveMonthChanged(event);
+    }
+
+    public void handleClearEvent(View v){
+        this.controllerUI.clearControls();
+    }
+
+    public void handleInsertEvent(View v){
+        this.controllerData.registerNewPaymentInsert();
+    }
+
+
+
+
+
+
+
 
 
 
@@ -118,6 +183,14 @@ public class HomeActivity extends AppCompatActivity {
 
     }
 
+
+    public static void changeLocaleDefault(){
+        Locale.setDefault(HomeActivity.originLocale);
+    }
+
+    public static void changeLocaleUS(){
+        Locale.setDefault(Locale.US);
+    }
 
     public HomeDataController getDataController(){
         return this.controllerData;

@@ -3,9 +3,13 @@ package cz.ondrejpittl.semestralka.database;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
+
+import org.joda.time.DateTime;
+
 import java.util.ArrayList;
-import java.util.Calendar;
+
 import cz.ondrejpittl.semestralka.models.Payment;
+import cz.ondrejpittl.semestralka.partial.JodaCalendar;
 
 /**
  * Created by OndrejPittl on 31.03.16.
@@ -48,6 +52,16 @@ public class PaymentsManager extends TableManager {
     private static final String COLUMN_NOTE = "note";
 
 
+    /**
+     * Table columns alias prefix.
+     */
+    private static final String ALIAS_PREFIX = "payments_";
+
+
+
+    private JodaCalendar jodaCalendar;
+
+
 
 
     /**
@@ -55,6 +69,8 @@ public class PaymentsManager extends TableManager {
      */
     public PaymentsManager(DBManager dbManager) {
         super("tb_payments", dbManager);
+
+        this.jodaCalendar = new JodaCalendar();
 
         Log.i("Ondra", "Payment Manager constructor");
 
@@ -109,7 +125,6 @@ public class PaymentsManager extends TableManager {
         });
     }
 
-    //insertPayment(Payment p){}
     public void insertPayment(String catID, String storeID, String amount, String date, String note){
         insertRecord(new String[][]{
                 {COLUMN_CATEGORY_ID, catID},
@@ -117,6 +132,16 @@ public class PaymentsManager extends TableManager {
                 {COLUMN_AMOUNT, amount},
                 {COLUMN_DATE, date},
                 {COLUMN_NOTE, note}
+        });
+    }
+
+    public void insertPayment(Payment p){
+        insertRecord(new String[][]{
+                {COLUMN_CATEGORY_ID, String.valueOf(p.getCategory().getID())},
+                {COLUMN_STORE_ID, String.valueOf(p.getStore().getID())},
+                {COLUMN_AMOUNT, String.valueOf(p.getAmount())},
+                {COLUMN_DATE, String.valueOf(p.getDateLong())},
+                {COLUMN_NOTE, String.valueOf(p.getNote())}
         });
     }
 
@@ -132,20 +157,103 @@ public class PaymentsManager extends TableManager {
         return this.buildPaymentArraylistFromCursor(c);
     }
 
+    public ArrayList<Payment> selectPaymentsDetailed(String tableCols, String tables, String[][] wheres, String[][] orderBy) {
+        //examples:
+        //tablecols: "a.name, b.id"
+        //tables: "tableA a inner join tableB b on a.id = b.id"
+        //wheres: {{"name", "=", "John"}, {"age", "<", 27}}
+        //orderBy: {{"id", "asc"}, {"name", "desc"}}
+        Cursor c = selectRecord(wheres, orderBy);
+        return this.buildPaymentArraylistFromCursorAliased(c);
+    }
+
     public ArrayList<Payment> selectPaymentsOfMonth(int month, int year) {
         long from, to;
 
-        from = firstDayOfMonth(month, year);
+        /*Log.i("Ondra", "first-day: " + this.getFirstDayOfMonth());
+        Log.i("Ondra", "last-day: " + this.getLastDayOfMonth());
+
+        Log.i("Ondra", "--------");
+        from = getFirstDayOfMonth();
+        from = getFirstDayOfMonth(month, year);
         Log.i("Ondra", "from: " + from);
 
-        to = lastDayOfMonth(month, year);
-        Log.i("Ondra", "to: " + to);
+        Log.i("Ondra", "--------");
+        to = getLastDayOfMonth();
+        to = getLastDayOfMonth(month, year);
+        Log.i("Ondra", "to: " + to);*/
 
-        return this.selectPayments(new String[][]{
-                {"date", ">=", "" + from},
-                {"date", "<=", "" + to }
 
-        }, new String[][]{{"date", "desc"}});
+        from = this.jodaCalendar.getFirstDayOfMonth(month, year).getMillis();
+        to = this.jodaCalendar.getLastDayOfMonth(month, year).getMillis();
+
+
+        String  tableCols = this.dbManager.getAllTableColumnsList(),
+                tables = "tb_payments inner join tb_categories on tb_payments.id_category = tb_categories.id " +
+                         "inner join tb_stores on tb_payments.id_store = tb_stores.id",
+                wheres[][] =  new String[][]{
+                                {PaymentsManager.getColumnDateAliased(), ">=", "" + from},
+                                {PaymentsManager.getColumnDateAliased(), "<=", "" + to}
+                            },
+                orderBy[][] = new String[][]{{PaymentsManager.getColumnDateAliased(), "desc"}};
+
+        int limit = -1;
+
+        Cursor c = this.selectRecordsDetailed(tableCols, tables, wheres, orderBy, limit);
+        return this.buildPaymentArraylistFromCursorAliased(c);
+    }
+
+    public static String getColumnIdAliased(){
+        return ALIAS_PREFIX + COLUMN_ID;
+    }
+
+    public static String getColumnCategoryIdAliased(){
+        return ALIAS_PREFIX + COLUMN_CATEGORY_ID;
+    }
+
+    public static String getColumnStoreIdAliased(){
+        return ALIAS_PREFIX + COLUMN_STORE_ID;
+    }
+
+    public static String getColumnAmountAliased(){
+        return ALIAS_PREFIX + COLUMN_AMOUNT;
+    }
+
+    public static String getColumnDateAliased(){
+        return ALIAS_PREFIX + COLUMN_DATE;
+    }
+
+    public static String getColumnNoteAliased(){
+        return ALIAS_PREFIX + COLUMN_NOTE;
+    }
+
+
+    public String getAllColumnsSelector(){
+        return TABLE_NAME + "." + COLUMN_ID + " as " + getColumnIdAliased() + ", "
+                + TABLE_NAME + "." + COLUMN_CATEGORY_ID + " as " + getColumnCategoryIdAliased() + ", "
+                + TABLE_NAME + "." + COLUMN_STORE_ID + " as " + getColumnStoreIdAliased() + ", "
+                + TABLE_NAME + "." + COLUMN_AMOUNT + " as " + getColumnAmountAliased() + ", "
+                + TABLE_NAME + "." + COLUMN_DATE + " as " + getColumnDateAliased() + ", "
+                + TABLE_NAME + "." + COLUMN_NOTE + " as " + getColumnNoteAliased();
+    }
+
+    private ArrayList<Payment> buildPaymentArraylistFromCursorAliased(Cursor c){
+        ArrayList<Payment> payments = new ArrayList<Payment>();
+
+        c.moveToFirst();
+        while(c.isAfterLast() == false){
+            Payment p = new Payment();
+            p.setID(Integer.parseInt(c.getString(c.getColumnIndex(getColumnIdAliased()))));
+            p.setCategory(Integer.parseInt(c.getString(c.getColumnIndex(getColumnCategoryIdAliased()))), c.getString(c.getColumnIndex(CategoryManager.getColumnNameAliased())));
+            p.setStore(Integer.parseInt(c.getString(c.getColumnIndex(getColumnStoreIdAliased()))), c.getString(c.getColumnIndex(StoresManager.getColumnNameAliased())));
+            p.setAmount(Float.parseFloat(c.getString(c.getColumnIndex(getColumnAmountAliased()))));
+            p.setDate(Long.parseLong(c.getString(c.getColumnIndex(getColumnDateAliased()))));
+            p.setNote(c.getString(c.getColumnIndex(getColumnNoteAliased())));
+            payments.add(p);
+            c.moveToNext();
+        }
+
+        return payments;
     }
 
     private ArrayList<Payment> buildPaymentArraylistFromCursor(Cursor c){
@@ -180,25 +288,64 @@ public class PaymentsManager extends TableManager {
     }
 
 
-    private long firstDayOfMonth(int month, int year){
-        return nthDayOfMonth(1, month, year, 0) + 7200000;
+    private ArrayList<Payment> getPaymentsIn(long from, long to){
+        return this.selectPayments(
+            new String[][]{
+                    {"date", ">=", String.valueOf(from)},
+                    {"date", "<=", String.valueOf(to)}
+            }, null);
     }
 
-    private long lastDayOfMonth(int month, int year){
-        return nthDayOfMonth(1, month+1, year, -1) + 7200000;
+    private int computeAmount(ArrayList<Payment> payments) {
+        int sum = 0;
+
+        for (Payment p : payments) {
+            sum += p.getAmount();
+        }
+
+        return sum;
     }
 
-    private long nthDayOfMonth(int day, int month, int year, int milliOffset){
-        Calendar cal = Calendar.getInstance();
-        cal.set(Calendar.DAY_OF_MONTH, day);
-        cal.set(Calendar.MONTH, month);
-        cal.set(Calendar.YEAR, year);
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
-        cal.set(Calendar.MILLISECOND, 0);
-        cal.add(Calendar.MILLISECOND, milliOffset);
-        return cal.getTimeInMillis();
+    private void reportTimes(long from, long to, String label){
+        Log.i("Ondra", label + "-from: " + new DateTime(from));
+        Log.i("Ondra", label + "-to: " + new DateTime(to));
     }
+
+    public int computeTodayPaymentAmount(){
+        long from = this.jodaCalendar.getStartOfDay().getMillis(),
+               to = this.jodaCalendar.getEndOfDay().getMillis();
+
+        reportTimes(from, to, "TODAY");
+        return computeAmount(getPaymentsIn(from, to));
+    }
+
+    public int computeWeekPaymentAmount(){
+        long from = this.jodaCalendar.getFirstDayOfWeek().getMillis(),
+               to = this.jodaCalendar.getLastDayOfWeek().getMillis();
+
+        reportTimes(from, to, "WEEK");
+        return computeAmount(getPaymentsIn(from, to));
+    }
+
+    public int computeMonthPaymentAmount() {
+        long from = this.jodaCalendar.getFirstDayOfMonth().getMillis(),
+                to = this.jodaCalendar.getLastDayOfMonth().getMillis();
+
+        reportTimes(from, to, "MONTH");
+        return computeAmount(getPaymentsIn(from, to));
+    }
+
+    public int computeYearPaymentAmount(){
+        long from = this.jodaCalendar.getFirstDayOfYear().getMillis(),
+                to = this.jodaCalendar.getLastDayOfYear().getMillis();
+
+        reportTimes(from, to, "YEAR");
+        return computeAmount(getPaymentsIn(from, to));
+    }
+
+    public int computeTotalPaymentAmount(){
+        return computeAmount(selectAllPayments());
+    }
+
 
 }

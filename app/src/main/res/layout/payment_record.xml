@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<cz.ondrejpittl.semestralka.layout.PaymentRecord
+    xmlns:android="http://schemas.android.com/apk/res/android"
+
     android:layout_width="match_parent"
-    android:layout_height="65dp"
+    android:layout_height="45dp"
     android:orientation="vertical"
     android:layout_marginTop="2dp"
     android:layout_marginBottom="2dp"
@@ -14,7 +16,8 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="45dp"
-        android:padding="4dp">
+        android:padding="4dp"
+        android:id="@+id/recordControlsHolder">
 
         <FrameLayout
             android:layout_width="0dp"
@@ -121,7 +124,50 @@
                 android:shadowDx="0"
                 android:shadowDy="1"
                 android:shadowRadius="1"
-                android:textAlignment="center" />
+                android:textAlignment="center"/>
+
+
+            <!--
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="@string/price_mock"
+                    android:id="@+id/txtViewRecordPrice"
+                    android:layout_gravity="center|bottom"
+                    android:textIsSelectable="true"
+                    android:textSize="13sp"
+                    android:textColor="@color/appPaymentRecordLabels"
+                    android:shadowColor="@color/appPaymentRecordLabelShadow"
+                    android:shadowDx="0"
+                    android:shadowDy="1"
+                    android:shadowRadius="1"
+                    android:textAlignment="textEnd"
+                    android:layout_weight="9"
+                    android:paddingRight="5dp" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:id="@+id/txtViewRecordCurrency"
+                    android:layout_weight="4"
+                    android:text="USD"
+                    android:textSize="9sp"
+                    android:textColor="@color/appPaymentRecordLabels"
+                    android:shadowColor="@color/appPaymentRecordLabelShadow"
+                    android:shadowDx="0"
+                    android:shadowDy="1"
+                    android:shadowRadius="1"
+                    android:layout_gravity="center_vertical|bottom" />
+            </LinearLayout>
+            -->
 
         </FrameLayout>
     </LinearLayout>
@@ -131,7 +177,7 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_below="@+id/welcomeUpperControlWrapper"
-        android:background="@color/appPaymentRecordLine"/>
+        android:background="@color/appWhite50"/>
 
     <FrameLayout
         android:layout_width="fill_parent"
@@ -141,7 +187,7 @@
 
         <TextView
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="15dp"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:text="note1 note2 note3 note4 note5 note6 note7 note8 note9 note10 note11 note12 note13 note14"
             android:id="@+id/txtViewRecordNote"
@@ -158,4 +204,4 @@
             android:singleLine="true" />
     </FrameLayout>
 
-</LinearLayout>
+</cz.ondrejpittl.semestralka.layout.PaymentRecord>

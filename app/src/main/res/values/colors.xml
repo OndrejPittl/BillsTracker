@@ -10,7 +10,7 @@
     <color name="appWhite50">#88FFFFFF</color>
     <color name="appWhite75">#CCFFFFFF</color>
     <color name="appWhite">#FFFFFFFF</color>
-
+    <color name="appError">#A60000</color>
 
 
     <color name="appTextWhite">#FFF</color>

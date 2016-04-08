@@ -1,21 +1,21 @@
 package cz.ondrejpittl.semestralka.database;
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import cz.ondrejpittl.semestralka.factories.DBQueryFactory;
+import cz.ondrejpittl.semestralka.models.Payment;
 
 /**
  * Created by OndrejPittl on 31.03.16.
  */
-public class TableManager implements ITableManagable {
+public class TableManager {
 
     /**
      * Table name.
@@ -43,6 +43,7 @@ public class TableManager implements ITableManagable {
         Log.i("Ondra", "Table Manager constructor");
         this.TABLE_NAME = tbName;
         this.dbManager = dbManager;
+
     }
 
 
@@ -64,7 +65,7 @@ public class TableManager implements ITableManagable {
      * @param cols    Array of fields of a record in a form: {{colName, colVal}, {colName, colVal}, ...}
      *                example: {{name, "John"}, {age, 27}}
      */
-    public void insertRecord(String[][] cols) {
+    protected void insertRecord(String[][] cols) {
         ContentValues contentValues = new ContentValues();
 
         for (int i = 0; i < cols.length; i++) {
@@ -78,7 +79,7 @@ public class TableManager implements ITableManagable {
     }
 
 
-    public Cursor selectAllRecords() {
+    protected Cursor selectAllRecords() {
         String query = DBQueryFactory.querySelectAll(TABLE_NAME);
 
         Log.i("Ondra", "Selecting all from table " + TABLE_NAME + ":");
@@ -93,14 +94,49 @@ public class TableManager implements ITableManagable {
      * @param wheres    Array of where criteria in a form: {{colName, equality, colVal}, {colName, equality, colVal}, ...}
      *                  example: {{"name", "=", "John"}, {"age", "<", 27}}
      */
-    public Cursor selectRecord(String[][] wheres, String[][] orderBy){
-        String query = DBQueryFactory.querySelectOne(TABLE_NAME, wheres, orderBy);
+    protected Cursor selectRecord(String[][] wheres, String[][] orderBy){
+        String query = DBQueryFactory.querySelect(TABLE_NAME, wheres, orderBy);
         Log.i("Ondra", "Selecting all from table " + TABLE_NAME + ":");
         Log.i("Ondra", query);
 
         db = dbManager.getReadableDatabase();
         return db.rawQuery(query, null);
     }
+
+    /**
+     * Select records due to where conditions.
+     * @param wheres    Array of where criteria in a form: {{colName, equality, colVal}, {colName, equality, colVal}, ...}
+     *                  example: {{"name", "=", "John"}, {"age", "<", 27}}
+     */
+    protected Cursor selectOneRecord(String[][] wheres, String[][] orderBy){
+        String query = DBQueryFactory.querySelectOne(TABLE_NAME, wheres, orderBy);
+        Log.i("Ondra", "Selecting ONE from table " + TABLE_NAME + ":");
+        Log.i("Ondra", query);
+
+        db = dbManager.getReadableDatabase();
+        return db.rawQuery(query, null);
+    }
+
+    protected Cursor selectRecordsDetailed(String tableCols, String tables, String[][] wheres, String[][] orderBy, int limit) {
+        //examples:
+        //tablecols: "a.name, b.id"
+        //tables: "tableA a inner join tableB b on a.id = b.id"
+        //wheres: {{"name", "=", "John"}, {"age", "<", 27}}
+        //orderBy: {{"id", "asc"}, {"name", "desc"}}
+        //limit: 1
+        String query = DBQueryFactory.querySelectDetailed(tableCols, tables, wheres, orderBy, limit);
+        Log.i("Ondra", "Selecting DETAILED from table " + TABLE_NAME + ":");
+        Log.i("Ondra", query);
+
+        db = dbManager.getReadableDatabase();
+        return db.rawQuery(query, null);
+    }
+
+    private boolean isResultNotEmpty(Cursor c){
+        return c != null && c.getCount() > 0;
+    }
+
+
 
     /**
      * Removes records due to where conditions.
@@ -110,7 +146,7 @@ public class TableManager implements ITableManagable {
      *                  example: {{"name", "=", "John"}, {"age", "<", 27}}
      * @return  ???
      */
-    public int deleteRecord(String[][] wheres) {
+    protected int deleteRecord(String[][] wheres) {
 
         ////db.delete("tablename","id=? and name=?",new String[]{"1","jack"});
         String whereClause = DBQueryFactory.queryDeleteWhereClause(wheres),
@@ -132,7 +168,7 @@ public class TableManager implements ITableManagable {
      *                  {{colName, equality, colVal}, {colName, equality, colVal}, ...}.
      *                  example: {{"name", "=", "John"}, {"age", "<", 27}}
      */
-    public int updateRecord(String[][] changes, String[][] wheres) {
+    protected int updateRecord(String[][] changes, String[][] wheres) {
         int whereCount = wheres.length;
 
         String whereClause = DBQueryFactory.queryDeleteWhereClause(wheres),
@@ -156,12 +192,22 @@ public class TableManager implements ITableManagable {
      * Counts total number of records.
      * @return  Number of rows found.
      */
-    public int getRecordCount(){
+    protected int getRecordCount(){
         Log.i("Ondra", "Counting total number of records of table " + TABLE_NAME);
 
         db = dbManager.getReadableDatabase();
         return (int) DatabaseUtils.queryNumEntries(db, TABLE_NAME);
     }
+
+    protected boolean checkIfRecordExists(String[][] wheres){
+        Cursor c = selectOneRecord(wheres, null);
+        return isResultNotEmpty(c);
+    }
+
+    public String getTableName(){
+        return this.TABLE_NAME;
+    }
+
 
     public void setDB(SQLiteDatabase db){
         this.db = db;

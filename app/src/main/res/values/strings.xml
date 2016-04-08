@@ -46,13 +46,15 @@
 
     <!-- Home activity -->
     <string name="title_activity_home">HomeActivity</string>
+    <string name="home_priceHint">amount</string>
+    <string name="home_noteHint">( note )</string>
     <string name="home_btn_ok_label">Insert</string>
-    <string name="home_btn_cancel_label">Cancel</string>
+    <string name="home_btn_clear_label">Clear</string>
     <string name="home_month_mock">March</string>
     <string name="home_stats_day_label">today:</string>
     <string name="home_stats_week_label">week:</string>
     <string name="home_stats_month_label">month:</string>
-    <string name="price_mock">0,-</string>
+    <string name="price_mock">0</string>
 
 
 

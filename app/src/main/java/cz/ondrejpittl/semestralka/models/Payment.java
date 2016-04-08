@@ -1,5 +1,8 @@
 package cz.ondrejpittl.semestralka.models;
 
+import android.util.Log;
+
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -21,8 +24,19 @@ public class Payment {
     private String note;
 
 
-    public Payment(){
+    public Payment(){}
 
+    public Payment(String[] inputs){
+        //0: date/long, 1: category/String, 2: category/int, 3: amount/int,
+        //4: note/String, 5: store/String, 6: store/int
+
+        Log.i("Ondra", Arrays.toString(inputs));
+
+        this.setDate(Long.parseLong(inputs[0]));
+        this.setCategory(Integer.parseInt(inputs[2]), inputs[1]);
+        this.setAmount(Float.parseFloat(inputs[3]));
+        this.setNote(inputs[4]);
+        this.setStore(Integer.parseInt(inputs[6]), inputs[5]);
     }
 
     public int getID() {

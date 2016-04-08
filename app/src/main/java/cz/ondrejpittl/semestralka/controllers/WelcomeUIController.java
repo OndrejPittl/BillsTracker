@@ -2,10 +2,8 @@ package cz.ondrejpittl.semestralka.controllers;
 
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +15,7 @@ import android.widget.Toast;
 import cz.ondrejpittl.semestralka.R;
 import cz.ondrejpittl.semestralka.WelcomeActivity;
 import cz.ondrejpittl.semestralka.factories.ButtonFactory;
-import cz.ondrejpittl.semestralka.partial.MyShadowTextView;
+import cz.ondrejpittl.semestralka.layout.MyShadowTextView;
 
 /**
  * Created by OndrejPittl on 30.03.16.
