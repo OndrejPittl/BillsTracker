@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -136,9 +137,9 @@ public class HomeUIController {
         //this.buildStoreControls();
     }
 
-    public void updatePayments(String month, int year, ArrayList<Payment> payments, String currencyUnits){
+    public void updatePayments(String month, int year, ArrayList<Payment> payments, String currencyUnits, HomeDataController dControl){
         this.updateDateLabels(month, year);
-        this.buildPaymentBoxes(payments, currencyUnits);
+        this.buildPaymentBoxes(payments, currencyUnits, dControl);
     }
 
     private void updateDateLabels(String month, int year){
@@ -149,16 +150,24 @@ public class HomeUIController {
         y.setText(String.valueOf(year));
     }
 
-    private void buildPaymentBoxes(ArrayList<Payment> payments, String currencyUnits){
+    private void buildPaymentBoxes(ArrayList<Payment> payments, String currencyUnits, final HomeDataController dControl){
         this.paymentRecordsContainer.removeAllViews();
 
         for(Payment p : payments) {
             PaymentRecord record = (PaymentRecord) layoutInflater.inflate(R.layout.payment_record, paymentRecordsContainer, false);
 
             //payment ID
-            record.setId(p.getID());
+            final int paymentID = p.getID();
+            record.setId(paymentID);
             record.setPaymentId(p.getID());
-            record.setCollapsed(true);
+            record.setHomeController(dControl);
+
+            record.getRecordDeleteBtn().setOnTouchListener(new View.OnTouchListener() {
+                public boolean onTouch(View v, MotionEvent event) {
+                    dControl.registerPaymentDelete(paymentID);
+                    return false;
+                }
+            });
 
 
             //payment day

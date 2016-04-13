@@ -158,7 +158,7 @@ public class HomeDataController {
 
         String currencyUnits = loadDefaultCurrencyFromPrefs();
         this.displayedPayments = this.dbManager.getPaymentsByMonth(month, year);
-        this.controllerUI.updatePayments(monthStr, year, this.displayedPayments, currencyUnits);
+        this.controllerUI.updatePayments(monthStr, year, this.displayedPayments, currencyUnits, this);
 
         logDisplayedPayments();
         computeStatistics();
@@ -195,6 +195,11 @@ public class HomeDataController {
 
         this.dbManager.insertNewPayment(new Payment(contents));
         this.controllerUI.clearControls();
+        this.loadPaymentsOfMonth();
+    }
+
+    public void registerPaymentDelete(int paymentID){
+        this.dbManager.deletePayment(paymentID);
         this.loadPaymentsOfMonth();
     }
 

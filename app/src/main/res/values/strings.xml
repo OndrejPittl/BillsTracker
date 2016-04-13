@@ -54,6 +54,7 @@
     <string name="home_stats_day_label">today:</string>
     <string name="home_stats_week_label">week:</string>
     <string name="home_stats_month_label">month:</string>
+    <string name="recordDeleteLabel">delete</string>
     <string name="price_mock">0</string>
 
 
@@ -61,53 +62,53 @@
 
         <!-- controls -->
         <string name="btn_dateTxt">today</string>
-        <!--<string-array name="categories">
-            <item>Electronics</item>
-            <item>Entertainment</item>
-            <item>Food/Drink</item>
-            <item>Health</item>
-            <item>Hobby</item>
-            <item>Hygiene</item>
-            <item>Living</item>
-            <item>Payments</item>
-            <item>School</item>
-            <item>Travelling</item>
-            <item>Work</item>
-        </string-array>
+    <!--<string-array name="categories">
+        <item>Electronics</item>
+        <item>Entertainment</item>
+        <item>Food/Drink</item>
+        <item>Health</item>
+        <item>Hobby</item>
+        <item>Hygiene</item>
+        <item>Living</item>
+        <item>Payments</item>
+        <item>School</item>
+        <item>Travelling</item>
+        <item>Work</item>
+    </string-array>
 
-        <string-array name="stores">
-            <item>Penny Market</item>
-            <item>Albert</item>
-            <item>Lidl</item>
-            <item>Billa</item>
-            <item>Tesco</item>
-            <item>Kaufland</item>
-            <item>Globus</item>
-            <item>Makro</item>
+    <string-array name="stores">
+        <item>Penny Market</item>
+        <item>Albert</item>
+        <item>Lidl</item>
+        <item>Billa</item>
+        <item>Tesco</item>
+        <item>Kaufland</item>
+        <item>Globus</item>
+        <item>Makro</item>
 
-            <item>Jysk</item>
-            <item>ASKO nábytek</item>
-            <item>SCONTO nábytek</item>
-            <item>Möbelix</item>
-            <item>Kika</item>
-            <item>IKEA</item>
+        <item>Jysk</item>
+        <item>ASKO nábytek</item>
+        <item>SCONTO nábytek</item>
+        <item>Möbelix</item>
+        <item>Kika</item>
+        <item>IKEA</item>
 
-            <item>DM</item>
-            <item>Teta</item>
-            <item>Rossmann</item>
+        <item>DM</item>
+        <item>Teta</item>
+        <item>Rossmann</item>
 
-            <item>H&amp;M</item>
-            <item>C&amp;A</item>
-            <item>New Yorker</item>
-            <item>Humanic</item>
-            <item>Baťa</item>
-            <item>Deichmann</item>
+        <item>H&amp;M</item>
+        <item>C&amp;A</item>
+        <item>New Yorker</item>
+        <item>Humanic</item>
+        <item>Baťa</item>
+        <item>Deichmann</item>
 
-            <item>McDonalds</item>
-            <item>KFC</item>
-            <item>Delish</item>
-            <item>Menza</item>
+        <item>McDonalds</item>
+        <item>KFC</item>
+        <item>Delish</item>
+        <item>Menza</item>
 
-        </string-array> -->
+    </string-array> -->
 
 </resources>

@@ -153,6 +153,12 @@ public class DBManager extends SQLiteOpenHelper {
         this.payments.insertPayment(p);
     }
 
+    public void deletePayment(int id){
+        this.payments.deletePayment(new String[][]{
+                {"id", "=", String.valueOf(id)}
+        });
+    }
+
 
 
     public SQLiteDatabase getDB(){
