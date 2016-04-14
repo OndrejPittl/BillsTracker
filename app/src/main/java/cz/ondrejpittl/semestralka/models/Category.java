@@ -9,7 +9,16 @@ public class Category {
 
     private String name;
 
+    private String icon;
+
+
     public Category() {}
+
+    public Category(int ID, String name, String icon) {
+        this.ID = ID;
+        this.name = name;
+        this.icon = icon;
+    }
 
     public Category(int ID, String name) {
         this.ID = ID;
@@ -32,7 +41,16 @@ public class Category {
         this.name = name;
     }
 
+    public String getIcon() {
+        return icon;
+    }
+
+    public void setIcon(String icon) {
+        this.icon = icon;
+    }
+
     public String toString(){
         return this.getName();
     }
+
 }

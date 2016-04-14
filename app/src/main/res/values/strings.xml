@@ -48,7 +48,8 @@
     <string name="title_activity_home">HomeActivity</string>
     <string name="home_priceHint">amount</string>
     <string name="home_noteHint">( note )</string>
-    <string name="home_btn_ok_label">Insert</string>
+    <string name="home_btn_ok_insert_label">Insert</string>
+    <string name="home_btn_ok_update_label">Update</string>
     <string name="home_btn_clear_label">Clear</string>
     <string name="home_month_mock">March</string>
     <string name="home_stats_day_label">today:</string>

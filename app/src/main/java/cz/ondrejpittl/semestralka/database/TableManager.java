@@ -176,16 +176,23 @@ public class TableManager {
 
         ContentValues contentValues = new ContentValues();
 
-        for (int i = 0; i < whereCount; i++) {
-            contentValues.put(changes[i][0], changes[i][1]);
-        }
-
         Log.i("Ondra", "Updating table " + TABLE_NAME + ":");
         Log.i("Ondra", whereClause);
         Log.i("Ondra", Arrays.toString(whereArgs));
 
+        for (int i = 0; i < changes.length; i++) {
+            contentValues.put(changes[i][0], changes[i][1]);
+            Log.i("Ondra", "0: " + changes[i][0]);
+            Log.i("Ondra", "1: " + changes[i][1]);
+        }
+
         db = dbManager.getWritableDatabase();
-        return db.update(TABLE_NAME, contentValues, whereClause, whereArgs);
+        int rs = db.update(TABLE_NAME, contentValues, whereClause, whereArgs);
+
+        Log.i("Ondra", "update: " + rs);
+
+        return rs;
+        //String q = DBQueryFactory.query
     }
 
     /**

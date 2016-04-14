@@ -31,6 +31,11 @@ public class CategoryManager extends TableManager {
     private static final String COLUMN_NAME = "name";
 
     /**
+     * Table ICON column name.
+     */
+    private static final String COLUMN_ICON = "icon";
+
+    /**
      * Table columns alias prefix.
      */
     private static final String ALIAS_PREFIX = "categories_";
@@ -56,7 +61,8 @@ public class CategoryManager extends TableManager {
 
         String[][] args = new String[][] {
                 {COLUMN_ID, "integer primary key autoincrement"},
-                {COLUMN_NAME, "text"}
+                {COLUMN_NAME, "text"},
+                {COLUMN_ICON, "text"}
         };
 
         createTable(args);
@@ -74,7 +80,8 @@ public class CategoryManager extends TableManager {
                 if((eventType == XmlPullParser.START_TAG) && (tag != null) && (tag.equals("category"))) {
                     String id = parser.getAttributeValue(null, COLUMN_ID);
                     String name = parser.getAttributeValue(null, COLUMN_NAME);
-                    insertCategory(id, name);
+                    String icon = parser.getAttributeValue(null, COLUMN_ICON);
+                    insertCategory(id, name, icon);
                     Log.e("Ondra", "CATEGORY: " + name);
                 }
                 eventType = parser.next();
@@ -87,16 +94,18 @@ public class CategoryManager extends TableManager {
         }
     }
 
-    public void insertCategory(String name){
+    public void insertCategory(String name, String icon){
         insertRecord(new String[][]{
-                {COLUMN_NAME, name}
+                {COLUMN_NAME, name},
+                {COLUMN_ICON, icon}
         });
     }
 
-    private void insertCategory(String id, String name){
+    private void insertCategory(String id, String name, String icon){
         insertRecord(new String[][]{
                 {COLUMN_ID, id},
-                {COLUMN_NAME, name}
+                {COLUMN_NAME, name},
+                {COLUMN_ICON, icon}
         });
     }
 
@@ -113,6 +122,7 @@ public class CategoryManager extends TableManager {
             Category cat = new Category();
             cat.setID(Integer.parseInt(c.getString(c.getColumnIndex(COLUMN_ID))));
             cat.setName(c.getString(c.getColumnIndex(COLUMN_NAME)));
+            cat.setIcon(c.getString(c.getColumnIndex(COLUMN_ICON)));
             categories.add(cat);
             c.moveToNext();
         }
@@ -128,6 +138,10 @@ public class CategoryManager extends TableManager {
         return ALIAS_PREFIX + COLUMN_NAME;
     }
 
+    public static String getColumnIconAliased(){
+        return ALIAS_PREFIX + COLUMN_ICON;
+    }
+
     public static String getColumnId(){
         return COLUMN_ID;
     }
@@ -138,7 +152,8 @@ public class CategoryManager extends TableManager {
 
     public String getAllColumnsSelector(){
         return TABLE_NAME + "." + COLUMN_ID + " as " + getColumnIdAliased()  + ", "
-                + TABLE_NAME + "." + COLUMN_NAME + " as " + getColumnNameAliased();
+                + TABLE_NAME + "." + COLUMN_NAME + " as " + getColumnNameAliased()  + ", "
+                + TABLE_NAME + "." + COLUMN_ICON + " as " + getColumnIconAliased();
     }
 
 

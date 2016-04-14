@@ -15,6 +15,28 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:background="@color/appPaymentEditAction"
+            android:id="@+id/recordEditWrapper"
+            android:layout_weight="0">
+
+            <ImageButton
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_gravity="center"
+                android:padding="11dp"
+                android:paddingLeft="9dp"
+                android:paddingRight="9dp"
+                android:background="@color/appPaymentEditAction"
+                android:scaleType="fitCenter"
+                android:src="@drawable/pencil"
+                android:textColor="#FFFFFF"
+                android:id="@+id/btnRecordEdit"></ImageButton>
+
+        </FrameLayout>
+
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="0dp"
@@ -35,13 +57,13 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:id="@+id/recordImgHolder"
-                    android:padding="3dp">
+                    android:padding="4dp">
 
                     <ImageView
-                        android:layout_width="fill_parent"
+                        android:layout_width="match_parent"
                         android:layout_height="fill_parent"
                         android:id="@+id/imgViewRecordIcon"
-                        android:background="#fff"
+                        android:scaleType="fitCenter"
                         android:layout_gravity="center" />
                 </FrameLayout>
 
@@ -222,7 +244,7 @@
         <FrameLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:background="@color/appError"
+            android:background="@color/appPaymentDeleteAction"
             android:id="@+id/recordDeleteWrapper"
             android:layout_weight="0">
 
@@ -230,23 +252,15 @@
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:layout_gravity="center"
-                android:padding="13dp"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
+                android:padding="11dp"
+                android:paddingLeft="9dp"
+                android:paddingRight="9dp"
                 android:background="@color/appError"
                 android:scaleType="fitCenter"
                 android:src="@drawable/trash"
                 android:textColor="#FFFFFF"
                 android:id="@+id/btnRecordDelete"></ImageButton>
 
-
-            <!--<TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/recordDeleteLabel"
-            android:id="@+id/textView3"
-            android:layout_gravity="center"
-            android:textColor="@color/appWhite" />-->
         </FrameLayout>
 
     </LinearLayout>

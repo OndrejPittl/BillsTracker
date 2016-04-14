@@ -4,32 +4,34 @@
 <!-- @TODO načítat a řadit -->
 
 <categories>
-    <category id="0" name="Car" />
-    <category id="1" name="Clothes" />
-    <category id="2" name="Electronics" />
-    <category id="3" name="Entertainment" />
-    <category id="4" name="Family" />
-    <category id="5" name="Food &amp; Drink" />
-    <category id="6" name="Health" />
-    <category id="7" name="Hobby" />
-    <category id="8" name="Hygiene" />
-    <category id="9" name="Living" />
-    <category id="10" name="Payments" />
-    <category id="11" name="Pets" />
-    <category id="12" name="Phone" />
-    <category id="13" name="Restaurant" />
-    <category id="14" name="School" />
-    <category id="15" name="Travelling" />
-    <category id="16" name="Work" />
-    <!--<category id="17" name="" />
-    <category id="18" name="" />
-    <category id="19" name="" />
-    <category id="21" name="" />
-    <category id="22" name="" />
-    <category id="23" name="" />
-    <category id="24" name="" />
-    <category id="25" name="" />
-    <category id="26" name="" />
-    <category id="27" name="" />-->
+    <category id="0" name="Car" icon="@drawable/category_icon_car" />
+    <category id="1" name="Clothes" icon="@drawable/category_icon_clothes" />
+    <category id="2" name="Electronics" icon="@drawable/category_icon_electronics" />
+    <category id="3" name="Entertainment" icon="@drawable/category_icon_entertainment" />
+    <category id="4" name="Family" icon="@drawable/category_icon_family" />
+    <category id="5" name="Food &amp; Drink" icon="@drawable/category_icon_food" />
+    <category id="6" name="Health" icon="@drawable/category_icon_health" />
+    <category id="7" name="Hobby" icon="@drawable/category_icon_hobby" />
+    <category id="8" name="Hygiene" icon="@drawable/category_icon_hygiene" />
+    <category id="9" name="Living" icon="@drawable/category_icon_living" />
+    <category id="10" name="Payments" icon="@drawable/category_icon_payments" />
+    <category id="11" name="Pets" icon="@drawable/category_icon_pets" />
+    <category id="12" name="Party" icon="@drawable/category_icon_party" />
+    <category id="13" name="Phone" icon="@drawable/category_icon_phone" />
+    <category id="14" name="Restaurant" icon="@drawable/category_icon_restaurant" />
+    <category id="15" name="School" icon="@drawable/category_icon_school" />
+    <category id="16" name="Sport" icon="@drawable/category_icon_sport" />
+    <category id="17" name="Travelling" icon="@drawable/category_icon_travelling" />
+    <category id="18" name="Work" icon="@drawable/category_icon_work" />
+
+    <!--
+    <category id="19" name="" icon="@drawable/category_icon_" />
+    <category id="21" name="" icon="@drawable/category_icon_" />
+    <category id="22" name="" icon="@drawable/category_icon_" />
+    <category id="23" name="" icon="@drawable/category_icon_" />
+    <category id="24" name="" icon="@drawable/category_icon_" />
+    <category id="25" name="" icon="@drawable/category_icon_" />
+    <category id="26" name="" icon="@drawable/category_icon_" />
+    <category id="27" name="" icon="@drawable/category_icon_" /name="">-->
 </categories>
 

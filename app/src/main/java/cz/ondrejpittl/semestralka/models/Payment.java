@@ -51,6 +51,10 @@ public class Payment {
         return category;
     }
 
+    public void setCategory(int categoryID, String categoryName, String categoryIcon) {
+        this.category = new Category(categoryID, categoryName, categoryIcon);
+    }
+
     public void setCategory(int categoryID, String categoryName) {
         this.category = new Category(categoryID, categoryName);
     }

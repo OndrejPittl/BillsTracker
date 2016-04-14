@@ -129,7 +129,7 @@ public class DBManager extends SQLiteOpenHelper {
                 this.stores.getAllColumnsSelector();
     }
 
-    public Statistics computeStatistics(){
+    public Statistics computeCurrentStatistics(){
         int today, week,
             month, year, total;
 
@@ -149,6 +149,14 @@ public class DBManager extends SQLiteOpenHelper {
         return s;
     }
 
+    public Statistics computeOtherStatistics(int month, int year){
+        int monthStats = this.payments.computeMonthPaymentAmount(month, year);
+
+        Statistics s = new Statistics();
+        s.setMonthAmount(monthStats);
+        return s;
+    }
+
     public void insertNewPayment(Payment p){
         this.payments.insertPayment(p);
     }
@@ -156,6 +164,22 @@ public class DBManager extends SQLiteOpenHelper {
     public void deletePayment(int id){
         this.payments.deletePayment(new String[][]{
                 {"id", "=", String.valueOf(id)}
+        });
+    }
+
+    public void updatePayment(Payment p){
+        /*this.payments.deletePayment(new String[][]{
+                {"id", "=", String.valueOf(id)}
+        });*/
+
+        this.payments.updatePayment(new String[][]{
+                {"id_category", String.valueOf(p.getCategory().getID())},
+                {"id_store", String.valueOf(p.getStore().getID())},
+                {"amount", String.valueOf(p.getAmount())},
+                {"date", String.valueOf(p.getDateLong())},
+                {"note", p.getNote()}
+        }, new String[][]{
+                {"id", "=", String.valueOf(p.getID())}
         });
     }
 

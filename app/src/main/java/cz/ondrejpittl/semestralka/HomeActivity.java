@@ -1,33 +1,21 @@
 package cz.ondrejpittl.semestralka;
 
 import android.app.Dialog;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
 
-import android.view.animation.Animation;
-import android.view.animation.Transformation;
 import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
-import java.sql.DatabaseMetaData;
-import java.util.ArrayList;
 import java.util.Locale;
 
 import cz.ondrejpittl.semestralka.controllers.HomeDataController;
 import cz.ondrejpittl.semestralka.controllers.HomeUIController;
 import cz.ondrejpittl.semestralka.database.DBManager;
-import cz.ondrejpittl.semestralka.models.Payment;
-import cz.ondrejpittl.semestralka.partial.MonthChange;
+import cz.ondrejpittl.semestralka.partial.MonthChangeEnum;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -127,24 +115,26 @@ public class HomeActivity extends AppCompatActivity {
      * Handles actual month change.
      */
     public void activeMonthChangeHandler(View v){
-        MonthChange event;
+        MonthChangeEnum event;
         Button b = (Button) v;
 
         if(b.getId() == R.id.btn_recordsListPrev) {
-            event = MonthChange.PREV;
+            event = MonthChangeEnum.PREV;
         } else {
-            event = MonthChange.NEXT;
+            event = MonthChangeEnum.NEXT;
         }
 
         this.controllerData.registerActiveMonthChanged(event);
     }
 
     public void handleClearEvent(View v){
-        this.controllerUI.clearControls();
+
+        this.controllerData.handlePaymentCancel();
     }
 
     public void handleInsertEvent(View v){
-        this.controllerData.registerNewPaymentInsert();
+
+        this.controllerData.handleNewPaymentInsert();
     }
 
 

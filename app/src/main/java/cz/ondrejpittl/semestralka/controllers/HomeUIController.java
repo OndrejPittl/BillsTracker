@@ -5,31 +5,29 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.res.ResourcesCompat;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.Transformation;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.w3c.dom.Text;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Locale;
 
 import cz.ondrejpittl.semestralka.HomeActivity;
 import cz.ondrejpittl.semestralka.R;
@@ -97,6 +95,7 @@ public class HomeUIController {
     private int date_day;
 
 
+    private PaymentRecord editingRecord;
 
 
 
@@ -133,8 +132,27 @@ public class HomeUIController {
      */
     private void buildControlPanel(){
         this.buildDateControls();
+
+
         //this.buildCategoryControls();
         //this.buildStoreControls();
+    }
+
+    private void setEditTextFocusLoseHandler(){
+
+        /*this.activity.findViewById()
+        hideKeyboard();*/
+
+    }
+
+    private void hideKeyboard() {
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+
+        //skryj soft klávesnici
+        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+
+        //zobraz soft klávestnici
+        //imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
     }
 
     public void updatePayments(String month, int year, ArrayList<Payment> payments, String currencyUnits, HomeDataController dControl){
@@ -150,24 +168,54 @@ public class HomeUIController {
         y.setText(String.valueOf(year));
     }
 
+    private int getDislayWidthInPx(){
+        DisplayMetrics dm = new DisplayMetrics();
+        this.activity.getWindow().getWindowManager().getDefaultDisplay().getMetrics(dm);
+        return dm.widthPixels ;
+    }
+
+
     private void buildPaymentBoxes(ArrayList<Payment> payments, String currencyUnits, final HomeDataController dControl){
         this.paymentRecordsContainer.removeAllViews();
 
+        PaymentRecord.setDisplayWidth(getDislayWidthInPx());
+
         for(Payment p : payments) {
-            PaymentRecord record = (PaymentRecord) layoutInflater.inflate(R.layout.payment_record, paymentRecordsContainer, false);
+            final PaymentRecord record = (PaymentRecord) layoutInflater.inflate(R.layout.payment_record, paymentRecordsContainer, false);
 
             //payment ID
-            final int paymentID = p.getID();
-            record.setId(paymentID);
-            record.setPaymentId(p.getID());
+            //record.setId(paymentID);
+            //record.setPaymentId(p.getID());
+
+            record.setPayment(p);
             record.setHomeController(dControl);
 
             record.getRecordDeleteBtn().setOnTouchListener(new View.OnTouchListener() {
                 public boolean onTouch(View v, MotionEvent event) {
-                    dControl.registerPaymentDelete(paymentID);
+                    dControl.handlePaymentDelete(record.getPaymentId());
                     return false;
                 }
             });
+
+            record.getRecordEditBtn().setOnTouchListener(new View.OnTouchListener() {
+                public boolean onTouch(View v, MotionEvent event) {
+                    Payment p = record.getPayment();
+                    dControl.handlePaymentEdit(p.getID());
+                    registerPaymentUpdateStart(record);
+                    return false;
+                }
+            });
+
+            //payment category icon
+            String iconPath = p.getCategory().getIcon();
+            int imageResource = this.activity.getResources().getIdentifier(iconPath, null, this.activity.getPackageName());
+            //Drawable image = ResourcesCompat.getDrawable(this.activity.getResources(), imageResource, null);
+
+            ImageView icon = (ImageView) record.findViewById(R.id.imgViewRecordIcon);
+            //icon.setBackground(image);
+            //icon.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.appWhite50));
+            icon.setImageResource(imageResource);
+
 
 
             //payment day
@@ -204,7 +252,25 @@ public class HomeUIController {
     }
 
 
+    public void registerPaymentUpdateStart(PaymentRecord record){
+        fillPaymentInfoOnUpdate(record.getPayment());
+        setInsertUpdateButtonText(true);
+        record.hideEditActionButton();
 
+        if(this.editingRecord != null)
+            this.editingRecord.setEditing(false);
+
+        this.editingRecord = record;
+        this.editingRecord.setEditing(true);
+
+    }
+
+
+    public void registerPaymentUpdateFinished(){
+        setInsertUpdateButtonText(false);
+        this.editingRecord.setEditing(true);
+        this.editingRecord = null;
+    }
 
     /**
      * Initializes date controls represented with button and DatePicker.
@@ -217,6 +283,7 @@ public class HomeUIController {
         this.dateButton = (Button) this.activity.findViewById(R.id.btn_date);
         this.dateButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                clearControlsFocus();
                 activity.showDialog(dateDialogID);
             }
         });
@@ -233,10 +300,26 @@ public class HomeUIController {
     }*/
 
     public void buildCategoryControls(ArrayList<Category> categories){
-        Spinner spinner = (Spinner) this.activity.findViewById(R.id.spinner_category);
+        final Spinner spinner = (Spinner) this.activity.findViewById(R.id.spinner_category);
         ArrayAdapter<Category> adapter = new ArrayAdapter<Category>(this.activity, R.layout.spinner_item, categories);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
+        spinner.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                clearControlsFocus();
+                return false;
+            }
+        });
+    }
+
+    private void clearControlsFocus(){
+        View v = this.activity.getCurrentFocus();
+
+        if(v != null){
+            InputMethodManager imm = (InputMethodManager) this.activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+            v.clearFocus();
+        }
     }
 
 
@@ -259,6 +342,12 @@ public class HomeUIController {
         ArrayAdapter<Store> adapter = new ArrayAdapter<Store>(this.activity, R.layout.spinner_item, stores);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
+        spinner.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                clearControlsFocus();
+                return false;
+            }
+        });
     }
 
 
@@ -346,19 +435,32 @@ public class HomeUIController {
         tvM.setText(curr);
     }
 
-    public void updateStatistics(Statistics s){
-        TextView tvT = (TextView) this.activity.findViewById(R.id.txtView_statisticsToday);
-        tvT.setText(String.valueOf(s.getTodayAmount()));
+    public void updateStatistics(Statistics s, boolean dispayAll){
+        int today = s.getTodayAmount(),
+            week = s.getWeekAmount(),
+            month = s.getMonthAmount();
 
-        TextView tvW = (TextView) this.activity.findViewById(R.id.txtView_statisticsWeek);
-        tvW.setText(String.valueOf(s.getWeekAmount()));
+        LinearLayout tW = (LinearLayout) this.activity.findViewById(R.id.statsTodayWrapper);
+        LinearLayout wW = (LinearLayout) this.activity.findViewById(R.id.statsWeekWrapper);
 
         TextView tvM = (TextView) this.activity.findViewById(R.id.txtView_statisticsMonth);
-        tvM.setText(String.valueOf(s.getMonthAmount()));
+        tvM.setText(String.valueOf(month));
+
+        if(dispayAll) {
+            TextView tvT = (TextView) this.activity.findViewById(R.id.txtView_statisticsToday);
+            tvT.setText(String.valueOf(today));
+            tW.setVisibility(View.VISIBLE);
+
+            TextView tvW = (TextView) this.activity.findViewById(R.id.txtView_statisticsWeek);
+            tvW.setText(String.valueOf(week));
+            wW.setVisibility(View.VISIBLE);
+        } else {
+            tW.setVisibility(View.INVISIBLE);
+            wW.setVisibility(View.INVISIBLE);
+        }
     }
 
     public void clearControls(){
-
         Calendar cal = Calendar.getInstance();
 
         int y = cal.get(Calendar.YEAR),
@@ -384,6 +486,11 @@ public class HomeUIController {
         Spinner stSpin = (Spinner) this.activity.findViewById(R.id.spinner_store);
         stSpin.setSelection(0, true);
 
+
+        if(editingRecord != null)
+            editingRecord.setEditing(false);
+
+        this.clearControlsFocus();
         this.unmarkInputAmountError();
     }
 
@@ -420,6 +527,7 @@ public class HomeUIController {
         EditText et = (EditText) this.activity.findViewById(edTxt_amount);
         et.setTextColor(errColor);
         et.setHintTextColor(errColor);
+        et.requestFocus();
 
         LinearLayout layout = (LinearLayout) this.activity.findViewById(homeAmountContainer);
         layout.setBackgroundResource(shape_thin_border_error);
@@ -436,9 +544,52 @@ public class HomeUIController {
         layout.setBackgroundResource(shape_thin_border);
     }
 
+    public void fillPaymentInfoOnUpdate(Payment p){
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(p.getDateLong());
 
+        int y = cal.get(Calendar.YEAR),
+            m = cal.get(Calendar.MONTH),
+            d = cal.get(Calendar.DAY_OF_MONTH);
 
+        //date button
+        updateDateButton(y, m, d);
 
+        //category spinner
+        Spinner catSpin = (Spinner) this.activity.findViewById(R.id.spinner_category);
+        catSpin.setSelection(findSpinnerItemIndex(catSpin, p.getCategory().getName()), true);
+
+        //amount edittext
+        EditText etA = (EditText) this.activity.findViewById(edTxt_amount);
+        etA.setText(String.valueOf(p.getAmount()));
+
+        //note edittext
+        EditText etN = (EditText) this.activity.findViewById(R.id.edTxt_note);
+        etN.setText(p.getNote());
+
+        //store spinner
+        Spinner stSpin = (Spinner) this.activity.findViewById(R.id.spinner_store);
+        stSpin.setSelection(findSpinnerItemIndex(stSpin, p.getStore().getName()), true);
+    }
+
+    private int findSpinnerItemIndex(Spinner s, String value){
+        for(int i = 0; i < s.getCount(); i++) {
+            String val = s.getItemAtPosition(i).toString();
+            if(val.equals(value)) return i;
+        }
+
+        return 0;
+    }
+
+    public void setInsertUpdateButtonText(boolean editing){
+        Button btn = (Button) this.activity.findViewById(R.id.btn_ok);
+
+        if(editing) {
+            btn.setText(R.string.home_btn_ok_update_label);
+        } else {
+            btn.setText(R.string.home_btn_ok_insert_label);
+        }
+    }
 
 
 

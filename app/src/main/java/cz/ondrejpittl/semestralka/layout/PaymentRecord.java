@@ -1,6 +1,7 @@
 package cz.ondrejpittl.semestralka.layout;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -14,6 +15,8 @@ import android.widget.TextView;
 
 import cz.ondrejpittl.semestralka.R;
 import cz.ondrejpittl.semestralka.controllers.HomeDataController;
+import cz.ondrejpittl.semestralka.models.Payment;
+import cz.ondrejpittl.semestralka.partial.PaymentRecordStateEnum;
 
 /**
  * Created by OndrejPittl on 08.04.16.
@@ -23,20 +26,74 @@ public class PaymentRecord extends LinearLayout {
     private HomeDataController contorller;
 
 
+    /**
+     * ID of payment record.
+     */
     private int paymentId;
 
+    /**
+     * Payment record reference.
+     */
+    private Payment payment;
+
+
+    /**
+     * Flag indicating whether or not is payment record collapsed – whether or not is note visible.
+     */
     private boolean collapsed;
 
+    /**
+     * Height of collapsed payment record.
+     */
     private int collapsedHeight;
 
 
-    private final int deleteExpandedWidth = 200;
+    /**
+     * Width of action button hidden under a payment record and visible while swiping.
+     */
+    private int ACTION_TAB_WIDTH = 200;
 
-    private int deleteWrapperWidth = 0;
 
-    private boolean deleteWrapperExpanded = false;
+    /**
+     * Width of hidden delete button.
+     */
+    //private int deleteActionWidth = 0;
+    private int actionButtonWidth = 0;
 
-    private int padding = 0;
+    /**
+     *  Flag indicating whether or not is action button animating.
+     */
+    private boolean actionBtnAnimating = false;
+
+
+
+    /**
+     *  State of payment record.
+     *  State can acquire NORMAL (no action is being triggered/none is visible),
+     *                    DELETE_VISIBLE (delete action is being triggered/delete action btn is visible),
+     *                    EDIT_VISIBLE (edit action is being triggered/edit action btn is visible).
+     */
+    private PaymentRecordStateEnum state = PaymentRecordStateEnum.NORMAL;
+
+
+    /**
+     *  Flag indicating whether or not is delete action button visible.
+     */
+    //private boolean deleteActionVisible = false;
+
+
+    /**
+     * Width of hidden edit button.
+     */
+    //private int editActionWidth = 0;
+
+    /**
+     *  Flag indicating whether or not is edit action button visible.
+     */
+    private boolean editActionVisible = false;
+
+
+    private static int displayWidth;
 
 
 
@@ -60,18 +117,18 @@ public class PaymentRecord extends LinearLayout {
         this.collapsedHeight = -1;
         /*this.expandedHeight = -1;*/
 
-        this.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                collapseToggle(v);
-            }
-        });
+        ACTION_TAB_WIDTH = displayWidth / 6;
 
 
         this.setOnTouchListener(new OnTouchListener() {
 
-            private final int MIN_SWIPE_DISTANCE = 100;
+            /**
+             * Minimal finger move to be categorized as swipe.
+             * Every move smaller is marked as tap/touch.
+             */
+            private final int MIN_SWIPE_DISTANCE = 70;
 
-            boolean swiping = false;
+            //boolean swiping = false;
 
             int start = 0,
                     end = 0,
@@ -80,18 +137,16 @@ public class PaymentRecord extends LinearLayout {
 
             @Override
             public boolean onTouch(View view, MotionEvent event) {
-
                 switch (event.getAction()) {
 
+                    //finger moving
                     case MotionEvent.ACTION_MOVE:
                         current = (int) event.getRawX();
                         delta = current - start;
 
                         Log.i("Ondra", "delta: " + delta);
 
-                        if (/*swiping ||*/Math.abs(delta) > MIN_SWIPE_DISTANCE) {
-                            swiping = true;
-
+                        if (Math.abs(delta) > MIN_SWIPE_DISTANCE) {
                             if (delta < 0) {
                                 doSwipeLeft(delta, view);
                             } else {
@@ -99,42 +154,33 @@ public class PaymentRecord extends LinearLayout {
                             }
                         }
 
-
-                        //params.rightMargin = (int) event.getRawX() - (view.getWidth() / 2);
-                        //view.setLayoutParams(params);
                         break;
 
+                    //finger up
                     case MotionEvent.ACTION_UP:
-                        swiping = false;
-
                         end = (int) event.getRawX();
                         delta = end - start;
 
-                        Log.i("Ondra", "X-start: " + start);
+                        /*Log.i("Ondra", "X-start: " + start);
                         Log.i("Ondra", "X-end: " + end);
-                        Log.i("Ondra", "delta: " + delta);
+                        Log.i("Ondra", "delta: " + delta);*/
 
                         if (Math.abs(delta) < MIN_SWIPE_DISTANCE) {
+                            //tap event
                             onTap(view);
                         } else {
+                            //swipe event
                             if (delta < 0) {
                                 onSwipeLeftFinished(view);
                             } else {
                                 onSwipeRightFinished(view);
-
                             }
-
                         }
 
-                        //params.rightMargin = (int) event.getRawX() - (view.getWidth() / 2);
-                        //view.setLayoutParams(params);
                         break;
 
                     case MotionEvent.ACTION_DOWN:
                         start = (int) event.getRawX();
-                        //Log.i("Ondra", "X: " + start);
-
-                        //view.setLayoutParams(params);
                         break;
                 }
 
@@ -142,62 +188,110 @@ public class PaymentRecord extends LinearLayout {
             }
 
             private boolean onTap(View v) {
-                Log.i("Ondra", "tap");
                 collapseToggle(v);
                 return true;
             }
 
-            private void setDeleteWrapperWidth(View v) {
-                FrameLayout deleteWrapper = (FrameLayout) v.findViewById(R.id.recordDeleteWrapper);
-                LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) deleteWrapper.getLayoutParams();
+            private void setActionButtonWidth(View v) {
+                FrameLayout wrapper = (FrameLayout) v;
+                LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) wrapper.getLayoutParams();
 
-                params.width = deleteWrapperWidth;
-                deleteWrapper.setLayoutParams(params);
-                deleteWrapper.requestLayout();
+                params.width = actionButtonWidth;
+                wrapper.setLayoutParams(params);
+                wrapper.requestLayout();
             }
 
+            /*private void setEditActionButtonWidth(View v) {
+                FrameLayout editWrapper = (FrameLayout) v.findViewById(R.id.recordEditWrapper);
+                LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) editWrapper.getLayoutParams();
+
+                params.width = actionButtonWidth;
+                editWrapper.setLayoutParams(params);
+                editWrapper.requestLayout();
+            }*/
+
             private boolean doSwipeLeft(int delta, View v) {
-                Log.i("Ondra", "swiping left");
+                //Log.i("Ondra", "swiping left");
 
-                if (deleteWrapperExpanded) return true;
+                //if (deleteActionVisible) return true;
+                //if(state == PaymentRecordStateEnum.DELETE_ACTIVE) return true;
 
-                int d = Math.abs(Math.abs(delta) - MIN_SWIPE_DISTANCE);
-                if (d < deleteExpandedWidth) deleteWrapperWidth = d;
-                Log.i("Ondra", "width: " + deleteWrapperWidth);
+                if (actionBtnAnimating)
+                    return false;
 
-                setDeleteWrapperWidth(v);
+
+                if (state == PaymentRecordStateEnum.NORMAL) {
+
+                    int d = Math.abs(Math.abs(delta) - MIN_SWIPE_DISTANCE);
+                    if (d < ACTION_TAB_WIDTH) actionButtonWidth = d;
+                    Log.i("Ondra", "delete width: " + actionButtonWidth);
+                    setActionButtonWidth(v.findViewById(R.id.recordDeleteWrapper));
+
+                } else if (state == PaymentRecordStateEnum.EDIT_ACTIVE) {
+
+                    int d = ACTION_TAB_WIDTH + (delta + MIN_SWIPE_DISTANCE);
+                    if (d > 0) actionButtonWidth = d;
+                    Log.i("Ondra", "edit width: " + actionButtonWidth);
+                    setActionButtonWidth(v.findViewById(R.id.recordEditWrapper));
+
+                }
 
                 return true;
             }
 
             private boolean doSwipeRight(int delta, View v) {
-                Log.i("Ondra", "swiping right");
+                //Log.i("Ondra", "swiping right");
 
-                if (!deleteWrapperExpanded) return true;
+                //if (!deleteActionVisible) return true;
+                //if(state != PaymentRecordStateEnum.DELETE_ACTIVE) return true;
 
-                int d = deleteExpandedWidth - (delta - MIN_SWIPE_DISTANCE);
-                if (d > 0) deleteWrapperWidth = d;
+                if (actionBtnAnimating)
+                    return false;
 
-                Log.i("Ondra", "width: " + deleteWrapperWidth);
+                if (state == PaymentRecordStateEnum.NORMAL) {
 
-                setDeleteWrapperWidth(v);
+                    int d = Math.abs(Math.abs(delta) - MIN_SWIPE_DISTANCE);
+                    if (d < ACTION_TAB_WIDTH) actionButtonWidth = d;
+                    Log.i("Ondra", "edit width: " + actionButtonWidth);
+                    setActionButtonWidth(v.findViewById(R.id.recordEditWrapper));
+
+                } else if (state == PaymentRecordStateEnum.DELETE_ACTIVE) {
+
+                    int d = ACTION_TAB_WIDTH - (delta - MIN_SWIPE_DISTANCE);
+                    if (d > 0) actionButtonWidth = d;
+                    Log.i("Ondra", "delete width: " + actionButtonWidth);
+                    setActionButtonWidth(v.findViewById(R.id.recordDeleteWrapper));
+
+                }
 
                 return true;
             }
 
 
             private boolean onSwipeLeftFinished(View v) {
-                //Log.i("Ondra", "swipe left");
+                Log.i("Ondra", "swipe left finished");
 
-                if (deleteWrapperExpanded) return true;
+                //if (deleteActionVisible) return true;
+                //if(state == PaymentRecordStateEnum.DELETE_ACTIVE) return true;
 
-                FrameLayout deleteWrapper = (FrameLayout) v.findViewById(R.id.recordDeleteWrapper);
+                if (actionBtnAnimating)
+                    return false;
 
+                if (state == PaymentRecordStateEnum.NORMAL) {
 
-                if (deleteWrapper.getWidth() > deleteExpandedWidth / 2) {
-                    animateDeleteWrapper(deleteWrapper, deleteExpandedWidth);
-                } else {
-                    animateDeleteWrapper(deleteWrapper, 0);
+                    FrameLayout deleteWrapper = (FrameLayout) v.findViewById(R.id.recordDeleteWrapper);
+
+                    if (deleteWrapper.getWidth() > ACTION_TAB_WIDTH / 2) {
+                        animateActionButton(deleteWrapper, ACTION_TAB_WIDTH, PaymentRecordStateEnum.DELETE_ACTIVE);
+                    } else {
+                        animateActionButton(deleteWrapper, 0, PaymentRecordStateEnum.DELETE_ACTIVE);
+                    }
+
+                } else if (state == PaymentRecordStateEnum.EDIT_ACTIVE) {
+
+                    FrameLayout editWrapper = (FrameLayout) v.findViewById(R.id.recordEditWrapper);
+                    animateActionButton(editWrapper, 0, PaymentRecordStateEnum.EDIT_ACTIVE);
+
                 }
 
 
@@ -205,60 +299,63 @@ public class PaymentRecord extends LinearLayout {
             }
 
             private boolean onSwipeRightFinished(View v) {
-                Log.i("Ondra", "swipe right");
+                Log.i("Ondra", "swipe right finished");
 
-                if (!deleteWrapperExpanded) return true;
+                //if (!deleteActionVisible) return true;
+                //if(state != PaymentRecordStateEnum.DELETE_ACTIVE) return true;
 
-                FrameLayout deleteWrapper = (FrameLayout) v.findViewById(R.id.recordDeleteWrapper);
-                animateDeleteWrapper(deleteWrapper, 0);
+                if (actionBtnAnimating)
+                    return false;
+
+                if (state == PaymentRecordStateEnum.NORMAL) {
+
+                    FrameLayout editWrapper = (FrameLayout) v.findViewById(R.id.recordEditWrapper);
+
+                    if (editWrapper.getWidth() > ACTION_TAB_WIDTH / 2) {
+                        animateActionButton(editWrapper, ACTION_TAB_WIDTH, PaymentRecordStateEnum.EDIT_ACTIVE);
+                    } else {
+                        animateActionButton(editWrapper, 0, PaymentRecordStateEnum.EDIT_ACTIVE);
+                    }
+
+                } else if (state == PaymentRecordStateEnum.DELETE_ACTIVE) {
+
+                    FrameLayout deleteWrapper = (FrameLayout) v.findViewById(R.id.recordDeleteWrapper);
+                    animateActionButton(deleteWrapper, 0, PaymentRecordStateEnum.DELETE_ACTIVE);
+
+                }
 
                 return true;
             }
-
-
-
-            /*public boolean onTouch(View v, MotionEvent event) {
-
-                float startPoint = 0,
-                      currentPoint = 0,
-                      previouspoint = 0;
-
-                Log.i("Ondra", "MOVING!!!!!!!!!!");
-
-                switch(event.getAction()){
-                    case MotionEvent.ACTION_DOWN:
-                        startPoint = event.getX();
-                        break;
-
-                    case MotionEvent.ACTION_MOVE:
-                        currentPoint = event.getX();
-
-                        if(currentPoint < startPoint)
-                            v.setPadding(0, 0, (int)currentPoint, 0);
-                            v.requestLayout();
-                        break;
-
-                    case MotionEvent.ACTION_CANCEL:
-                        previouspoint=event.getX();
-                        if(previouspoint > startPoint){
-                            //Right side swipe
-                        }else{
-                            // Left side swipe
-                        }
-                        break;
-                }
-
-                return false;
-            }*/
         });
     }
 
-    public int getPaymentId() {
-        return paymentId;
+    public static void setDisplayWidth(int width){
+        PaymentRecord.displayWidth = width;
     }
 
-    public void setPaymentId(int paymentId) {
-        this.paymentId = paymentId;
+    public void hideEditActionButton(){
+        FrameLayout editWrapper = (FrameLayout) this.findViewById(R.id.recordEditWrapper);
+        animateActionButton(editWrapper, 0, PaymentRecordStateEnum.EDIT_ACTIVE);
+    }
+
+    public void setEditing(boolean editing){
+        if(editing){
+            this.findViewById(R.id.recordMainWrapper).setBackgroundColor(ContextCompat.getColor(getContext(), R.color.appWhite50));
+        } else {
+            this.findViewById(R.id.recordMainWrapper).setBackgroundColor(ContextCompat.getColor(getContext(), R.color.appWhite25));
+        }
+    }
+
+    public int getPaymentId() {
+        return this.payment.getID();
+    }
+
+    public void setPayment(Payment p) {
+        this.payment = p;
+    }
+
+    public Payment getPayment() {
+        return this.payment;
     }
 
     public boolean isCollapsed() {
@@ -275,7 +372,10 @@ public class PaymentRecord extends LinearLayout {
 
     public ImageButton getRecordDeleteBtn(){
         return (ImageButton) this.findViewById(R.id.btnRecordDelete);
+    }
 
+    public ImageButton getRecordEditBtn(){
+        return (ImageButton) this.findViewById(R.id.btnRecordEdit);
     }
 
     private void collapseToggle(final View v) {
@@ -323,17 +423,21 @@ public class PaymentRecord extends LinearLayout {
     }
 
 
-    private void animateDeleteWrapper(final View v, final int to) {
+    private void animateActionButton(final View v, final int to, final PaymentRecordStateEnum recState) {
         final int from, diff;
 
-        //base height
-        from = deleteWrapperWidth;
+        actionBtnAnimating = true;
+
+        from = actionButtonWidth;
         diff = Math.abs(to - from);
+
+        Log.i("Ondra", "from: " + from);
+        Log.i("Ondra", "to: " + to);
 
         Animation a = new Animation() {
             protected void applyTransformation(float interpolatedTime, Transformation t) {
                 float interTime;
-                int base;
+                int base, realWidth;
 
                 if(to < from) {
                     interTime = (1 - interpolatedTime);
@@ -343,33 +447,59 @@ public class PaymentRecord extends LinearLayout {
                     base = from;
                 }
 
+                if(interpolatedTime == 1) {
+                    realWidth = to;
+                }  else {
+                    realWidth = (int)(base + diff * interTime);
+                }
+
                 Log.i("Ondra", "inter-time: " + interTime);
                 Log.i("Ondra", "w: " + (int)(diff * interTime));
+                Log.i("Ondra", "realWidth: " + realWidth);
 
-                v.getLayoutParams().width = interpolatedTime == 1 ? to : (int)(base + diff * interTime);
+                v.getLayoutParams().width = realWidth;
                 v.requestLayout();
+
+                Log.i("Ondra", "nastaveno: " + v.getLayoutParams().width);
+
+
             }
             public boolean willChangeBounds() {
                 return true;
             }
         };
 
-        // 1dp/ms
-        //a.setDuration((int) (deleteExpandedWidth / v.getContext().getResources().getDisplayMetrics().density));
-
         a.setAnimationListener(new Animation.AnimationListener(){
             public void onAnimationStart(Animation arg0) {}
             public void onAnimationRepeat(Animation arg0) {}
             public void onAnimationEnd(Animation arg0) {
-                if(to < from) {
-                    deleteWrapperExpanded = false;
-                } else {
-                    deleteWrapperExpanded = true;
+
+                if(recState == PaymentRecordStateEnum.DELETE_ACTIVE) {
+
+                    if(to < from) {
+                        //deleteActionVisible = false;
+                        state = PaymentRecordStateEnum.NORMAL;
+                    } else {
+                        //deleteActionVisible = true;
+                        state = PaymentRecordStateEnum.DELETE_ACTIVE;
+                    }
+
+                } else if(recState == PaymentRecordStateEnum.EDIT_ACTIVE) {
+
+                    if(to < from) {
+                        state = PaymentRecordStateEnum.NORMAL;
+                    } else {
+                        state = PaymentRecordStateEnum.EDIT_ACTIVE;
+                    }
+
                 }
+
+                actionBtnAnimating = false;
+
             }
         });
 
-        a.setDuration(700);
+        a.setDuration(300);
         v.startAnimation(a);
     }
 }

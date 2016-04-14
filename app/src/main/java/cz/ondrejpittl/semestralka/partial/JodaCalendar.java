@@ -81,4 +81,17 @@ public class JodaCalendar {
         return setEndTime().dayOfMonth().withMaximumValue().monthOfYear().withMaximumValue();
     }
 
+    public DateTime getDate(){
+        return this.date;
+    }
+
+    public static boolean compareMonthYear(DateTime j1, DateTime j2){
+        int j1M = j1.getMonthOfYear(),
+            j1Y = j1.getYearOfEra(),
+            j2M = j2.getMonthOfYear(),
+            j2Y = j2.getYearOfEra();
+
+        return j1M == j2M && j1Y == j2Y;
+    }
+
 }

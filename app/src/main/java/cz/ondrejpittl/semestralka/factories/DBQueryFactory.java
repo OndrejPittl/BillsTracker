@@ -113,6 +113,7 @@ public class DBQueryFactory {
 
 
 
+
     /*
 
     private static boolean isNumeric(String str){

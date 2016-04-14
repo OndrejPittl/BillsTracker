@@ -244,7 +244,7 @@ public class PaymentsManager extends TableManager {
         while(c.isAfterLast() == false){
             Payment p = new Payment();
             p.setID(Integer.parseInt(c.getString(c.getColumnIndex(getColumnIdAliased()))));
-            p.setCategory(Integer.parseInt(c.getString(c.getColumnIndex(getColumnCategoryIdAliased()))), c.getString(c.getColumnIndex(CategoryManager.getColumnNameAliased())));
+            p.setCategory(Integer.parseInt(c.getString(c.getColumnIndex(getColumnCategoryIdAliased()))), c.getString(c.getColumnIndex(CategoryManager.getColumnNameAliased())), c.getString(c.getColumnIndex(CategoryManager.getColumnIconAliased())));
             p.setStore(Integer.parseInt(c.getString(c.getColumnIndex(getColumnStoreIdAliased()))), c.getString(c.getColumnIndex(StoresManager.getColumnNameAliased())));
             p.setAmount(Float.parseFloat(c.getString(c.getColumnIndex(getColumnAmountAliased()))));
             p.setDate(Long.parseLong(c.getString(c.getColumnIndex(getColumnDateAliased()))));
@@ -263,7 +263,7 @@ public class PaymentsManager extends TableManager {
         while(c.isAfterLast() == false){
             Payment p = new Payment();
             p.setID(Integer.parseInt(c.getString(c.getColumnIndex(COLUMN_ID))));
-            p.setCategory(Integer.parseInt(c.getString(c.getColumnIndex(COLUMN_CATEGORY_ID))), "");
+            p.setCategory(Integer.parseInt(c.getString(c.getColumnIndex(COLUMN_CATEGORY_ID))), "", "");
             p.setStore(Integer.parseInt(c.getString(c.getColumnIndex(COLUMN_STORE_ID))), "");
             p.setAmount(Float.parseFloat(c.getString(c.getColumnIndex(COLUMN_AMOUNT))));
             p.setDate(Long.parseLong(c.getString(c.getColumnIndex(COLUMN_DATE))));
@@ -290,10 +290,10 @@ public class PaymentsManager extends TableManager {
 
     private ArrayList<Payment> getPaymentsIn(long from, long to){
         return this.selectPayments(
-            new String[][]{
-                    {"date", ">=", String.valueOf(from)},
-                    {"date", "<=", String.valueOf(to)}
-            }, null);
+                new String[][]{
+                        {"date", ">=", String.valueOf(from)},
+                        {"date", "<=", String.valueOf(to)}
+                }, null);
     }
 
     private int computeAmount(ArrayList<Payment> payments) {
@@ -330,6 +330,14 @@ public class PaymentsManager extends TableManager {
     public int computeMonthPaymentAmount() {
         long from = this.jodaCalendar.getFirstDayOfMonth().getMillis(),
                 to = this.jodaCalendar.getLastDayOfMonth().getMillis();
+
+        reportTimes(from, to, "MONTH");
+        return computeAmount(getPaymentsIn(from, to));
+    }
+
+    public int computeMonthPaymentAmount(int month, int year) {
+        long from = this.jodaCalendar.getFirstDayOfMonth(month, year).getMillis(),
+                to = this.jodaCalendar.getLastDayOfMonth(month, year).getMillis();
 
         reportTimes(from, to, "MONTH");
         return computeAmount(getPaymentsIn(from, to));

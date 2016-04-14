@@ -2,14 +2,11 @@ package cz.ondrejpittl.semestralka.controllers;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.support.annotation.FloatRange;
 import android.util.Log;
 
 import org.joda.time.DateTime;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Locale;
 
 import cz.ondrejpittl.semestralka.HomeActivity;
@@ -19,7 +16,7 @@ import cz.ondrejpittl.semestralka.models.Payment;
 import cz.ondrejpittl.semestralka.models.Statistics;
 import cz.ondrejpittl.semestralka.models.Store;
 import cz.ondrejpittl.semestralka.partial.JodaCalendar;
-import cz.ondrejpittl.semestralka.partial.MonthChange;
+import cz.ondrejpittl.semestralka.partial.MonthChangeEnum;
 
 /**
  * Created by OndrejPittl on 01.04.16.
@@ -56,6 +53,8 @@ public class HomeDataController {
 
     private DateTime jodaDate;
 
+    private DateTime jodaDateCurrent;
+
     /**
      *  Number of month being displayed.
      */
@@ -84,6 +83,11 @@ public class HomeDataController {
     private ArrayList<Payment> displayedPayments;
 
 
+    private boolean edittingPayment;
+
+    private int edittingPaymentID;
+
+
 
     public HomeDataController(HomeActivity activity) {
         this.activity = activity;
@@ -95,6 +99,9 @@ public class HomeDataController {
 
     private void init(){
         this.jodaDate = new DateTime();
+        this.jodaDateCurrent = new DateTime();
+
+        this.edittingPayment = false;
         this.prefs = this.activity.getSharedPreferences("cz.ondrejpittl.semestralka", Context.MODE_PRIVATE);
 
         //defaults
@@ -165,12 +172,24 @@ public class HomeDataController {
     }
 
     private void computeStatistics(){
-        Statistics s = this.dbManager.computeStatistics();
-        this.controllerUI.updateStatistics(s);
+        Statistics s;
+
+        if(JodaCalendar.compareMonthYear(jodaDateCurrent, jodaDate)){
+            //if(this.jodaDateCurrent.compareMonthYear(this.jodaDate)) {
+            //if currently viewd month is a current calendar one
+            s = this.dbManager.computeCurrentStatistics();
+            this.controllerUI.updateStatistics(s, true);
+        } else {
+            int displayedM = this.jodaDate.getMonthOfYear(),
+                displayedY = this.jodaDate.getYearOfEra();
+
+            s = this.dbManager.computeOtherStatistics(displayedM, displayedY);
+            this.controllerUI.updateStatistics(s, false);
+        }
     }
 
 
-    public void registerActiveMonthChanged(MonthChange event){
+    public void registerActiveMonthChanged(MonthChangeEnum event){
         switch (event) {
             case NEXT:
                 this.jodaDate = this.jodaDate.plusMonths(1);
@@ -187,20 +206,56 @@ public class HomeDataController {
         this.loadPaymentsOfMonth();
     }
 
-    public void registerNewPaymentInsert(){
+    public void handlePaymentCancel(){
+        this.controllerUI.clearControls();
+
+        if(this.edittingPayment){
+            this.controllerUI.setInsertUpdateButtonText(false);
+            this.edittingPayment = false;
+        }
+
+    }
+
+    public void handleNewPaymentInsert(){
         String[] contents = this.controllerUI.getControlsContents();
 
         if(!validatePaymentInputs(contents))
             return;
 
-        this.dbManager.insertNewPayment(new Payment(contents));
+        if(this.edittingPayment) {
+
+            //old payment is being editted
+            Payment p = new Payment(contents);
+            p.setID(this.edittingPaymentID);
+
+            this.controllerUI.registerPaymentUpdateFinished();
+            this.dbManager.updatePayment(p);
+            this.edittingPayment = false;
+
+        } else {
+
+            //new payment is being inserted
+            this.dbManager.insertNewPayment(new Payment(contents));
+
+        }
+
         this.controllerUI.clearControls();
         this.loadPaymentsOfMonth();
     }
 
-    public void registerPaymentDelete(int paymentID){
+    public void handlePaymentDelete(int paymentID){
         this.dbManager.deletePayment(paymentID);
         this.loadPaymentsOfMonth();
+    }
+
+    public void handlePaymentEdit(int paymentID){
+        this.edittingPayment = true;
+        this.edittingPaymentID = paymentID;
+        //this.controllerUI.fillPaymentInfoOnUpdate(p);
+
+
+        //this.dbManager.updatePayment(paymentID);
+        //this.loadPaymentsOfMonth();
     }
 
     private boolean validatePaymentInputs(String[] contents){

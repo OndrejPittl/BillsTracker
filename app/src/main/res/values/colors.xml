@@ -12,23 +12,28 @@
     <color name="appWhite">#FFFFFFFF</color>
     <color name="appError">#A60000</color>
 
-
+    <!-- texts -->
     <color name="appTextWhite">#FFF</color>
     <color name="appTextLightGold">#F7EBBE</color>
     <color name="appTextGold">#e1d5a4</color>
     <color name="appTextGreen">#717c67</color>
 
-
+    <!-- home controls-->
+    <color name="appMainControlsBg">#66FFFFFF</color>
     <color name="appButtonOK">#9ab47e</color>
     <color name="appButtonOKStroke">#949d6e</color>
     <color name="appButtonCancel">#bf9a7f</color>
     <color name="appButtonCancelStroke">#bd947c</color>
 
-    <color name="appMainControlsBg">#66FFFFFF</color>
+    <!-- home payment records-->
     <color name="appPaymentRecordLabels">#bf9a7f</color>
     <color name="appPaymentRecordLabelShadow">#FFF</color>
     <color name="appPaymentRecordLine">#68FFFFFF</color>
+    <color name="appPaymentRecordEditing">#ee00a65a</color>
+    <color name="appPaymentDeleteAction">#A60000</color>
+    <color name="appPaymentEditAction">#00a65a</color>
 
+    <!--<color name="appPaymentEditAction">#e5be09</color>-->
 
 
 </resources>
