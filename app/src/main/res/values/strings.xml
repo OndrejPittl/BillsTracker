@@ -1,7 +1,6 @@
 <resources>
     <!-- general -->
-    <string name="appName">SuperCoolApp</string>
-    <string name="app_name">Semestralka</string>
+    <string name="app_name">Bills Tracker</string>
     <string name="arrow_left">&#9664;</string>
     <string name="arrow_right">&#9654;</string>
 

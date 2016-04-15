@@ -53,6 +53,12 @@ public class PaymentRecord extends LinearLayout {
      */
     private int ACTION_TAB_WIDTH = 200;
 
+    /**
+     * Minimal finger move to be categorized as swipe.
+     * Every move smaller is marked as tap/touch.
+     */
+    private final int MIN_SWIPE_DISTANCE = 70;
+
 
     /**
      * Width of hidden delete button.
@@ -75,24 +81,14 @@ public class PaymentRecord extends LinearLayout {
      */
     private PaymentRecordStateEnum state = PaymentRecordStateEnum.NORMAL;
 
-
-    /**
-     *  Flag indicating whether or not is delete action button visible.
-     */
-    //private boolean deleteActionVisible = false;
-
-
-    /**
-     * Width of hidden edit button.
-     */
-    //private int editActionWidth = 0;
-
     /**
      *  Flag indicating whether or not is edit action button visible.
      */
     private boolean editActionVisible = false;
 
-
+    /**
+     * Width of device display.
+     */
     private static int displayWidth;
 
 
@@ -112,232 +108,226 @@ public class PaymentRecord extends LinearLayout {
         this.init();
     }
 
-    private void init(){
+    /**
+     * Payment record initialization.
+     */
+    private void init() {
         this.collapsed = true;
         this.collapsedHeight = -1;
-        /*this.expandedHeight = -1;*/
 
         ACTION_TAB_WIDTH = displayWidth / 6;
 
 
         this.setOnTouchListener(new OnTouchListener() {
+            int start = 0, end = 0, current = 0, delta = 0;
 
-            /**
-             * Minimal finger move to be categorized as swipe.
-             * Every move smaller is marked as tap/touch.
-             */
-            private final int MIN_SWIPE_DISTANCE = 70;
-
-            //boolean swiping = false;
-
-            int start = 0,
-                    end = 0,
-                    current = 0,
-                    delta = 0;
-
-            @Override
             public boolean onTouch(View view, MotionEvent event) {
                 switch (event.getAction()) {
 
                     //finger moving
                     case MotionEvent.ACTION_MOVE:
                         current = (int) event.getRawX();
-                        delta = current - start;
 
+                        delta = current - start;
                         Log.i("Ondra", "delta: " + delta);
 
-                        if (Math.abs(delta) > MIN_SWIPE_DISTANCE) {
-                            if (delta < 0) {
-                                doSwipeLeft(delta, view);
-                            } else {
-                                doSwipeRight(delta, view);
-                            }
-                        }
+                        if (!actionBtnAnimating)
+                            doSwipe(delta, view);
 
                         break;
 
-                    //finger up
+                    //finger release
                     case MotionEvent.ACTION_UP:
                         end = (int) event.getRawX();
                         delta = end - start;
-
-                        /*Log.i("Ondra", "X-start: " + start);
-                        Log.i("Ondra", "X-end: " + end);
-                        Log.i("Ondra", "delta: " + delta);*/
 
                         if (Math.abs(delta) < MIN_SWIPE_DISTANCE) {
                             //tap event
                             onTap(view);
                         } else {
-                            //swipe event
-                            if (delta < 0) {
-                                onSwipeLeftFinished(view);
-                            } else {
-                                onSwipeRightFinished(view);
-                            }
+                            //swipe event finished
+                            onSwipeFinished(delta, view);
                         }
 
                         break;
 
+                    //finger touch
                     case MotionEvent.ACTION_DOWN:
                         start = (int) event.getRawX();
                         break;
                 }
-
-                return true;
-            }
-
-            private boolean onTap(View v) {
-                collapseToggle(v);
-                return true;
-            }
-
-            private void setActionButtonWidth(View v) {
-                FrameLayout wrapper = (FrameLayout) v;
-                LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) wrapper.getLayoutParams();
-
-                params.width = actionButtonWidth;
-                wrapper.setLayoutParams(params);
-                wrapper.requestLayout();
-            }
-
-            /*private void setEditActionButtonWidth(View v) {
-                FrameLayout editWrapper = (FrameLayout) v.findViewById(R.id.recordEditWrapper);
-                LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) editWrapper.getLayoutParams();
-
-                params.width = actionButtonWidth;
-                editWrapper.setLayoutParams(params);
-                editWrapper.requestLayout();
-            }*/
-
-            private boolean doSwipeLeft(int delta, View v) {
-                //Log.i("Ondra", "swiping left");
-
-                //if (deleteActionVisible) return true;
-                //if(state == PaymentRecordStateEnum.DELETE_ACTIVE) return true;
-
-                if (actionBtnAnimating)
-                    return false;
-
-
-                if (state == PaymentRecordStateEnum.NORMAL) {
-
-                    int d = Math.abs(Math.abs(delta) - MIN_SWIPE_DISTANCE);
-                    if (d < ACTION_TAB_WIDTH) actionButtonWidth = d;
-                    Log.i("Ondra", "delete width: " + actionButtonWidth);
-                    setActionButtonWidth(v.findViewById(R.id.recordDeleteWrapper));
-
-                } else if (state == PaymentRecordStateEnum.EDIT_ACTIVE) {
-
-                    int d = ACTION_TAB_WIDTH + (delta + MIN_SWIPE_DISTANCE);
-                    if (d > 0) actionButtonWidth = d;
-                    Log.i("Ondra", "edit width: " + actionButtonWidth);
-                    setActionButtonWidth(v.findViewById(R.id.recordEditWrapper));
-
-                }
-
-                return true;
-            }
-
-            private boolean doSwipeRight(int delta, View v) {
-                //Log.i("Ondra", "swiping right");
-
-                //if (!deleteActionVisible) return true;
-                //if(state != PaymentRecordStateEnum.DELETE_ACTIVE) return true;
-
-                if (actionBtnAnimating)
-                    return false;
-
-                if (state == PaymentRecordStateEnum.NORMAL) {
-
-                    int d = Math.abs(Math.abs(delta) - MIN_SWIPE_DISTANCE);
-                    if (d < ACTION_TAB_WIDTH) actionButtonWidth = d;
-                    Log.i("Ondra", "edit width: " + actionButtonWidth);
-                    setActionButtonWidth(v.findViewById(R.id.recordEditWrapper));
-
-                } else if (state == PaymentRecordStateEnum.DELETE_ACTIVE) {
-
-                    int d = ACTION_TAB_WIDTH - (delta - MIN_SWIPE_DISTANCE);
-                    if (d > 0) actionButtonWidth = d;
-                    Log.i("Ondra", "delete width: " + actionButtonWidth);
-                    setActionButtonWidth(v.findViewById(R.id.recordDeleteWrapper));
-
-                }
-
-                return true;
-            }
-
-
-            private boolean onSwipeLeftFinished(View v) {
-                Log.i("Ondra", "swipe left finished");
-
-                //if (deleteActionVisible) return true;
-                //if(state == PaymentRecordStateEnum.DELETE_ACTIVE) return true;
-
-                if (actionBtnAnimating)
-                    return false;
-
-                if (state == PaymentRecordStateEnum.NORMAL) {
-
-                    FrameLayout deleteWrapper = (FrameLayout) v.findViewById(R.id.recordDeleteWrapper);
-
-                    if (deleteWrapper.getWidth() > ACTION_TAB_WIDTH / 2) {
-                        animateActionButton(deleteWrapper, ACTION_TAB_WIDTH, PaymentRecordStateEnum.DELETE_ACTIVE);
-                    } else {
-                        animateActionButton(deleteWrapper, 0, PaymentRecordStateEnum.DELETE_ACTIVE);
-                    }
-
-                } else if (state == PaymentRecordStateEnum.EDIT_ACTIVE) {
-
-                    FrameLayout editWrapper = (FrameLayout) v.findViewById(R.id.recordEditWrapper);
-                    animateActionButton(editWrapper, 0, PaymentRecordStateEnum.EDIT_ACTIVE);
-
-                }
-
-
-                return true;
-            }
-
-            private boolean onSwipeRightFinished(View v) {
-                Log.i("Ondra", "swipe right finished");
-
-                //if (!deleteActionVisible) return true;
-                //if(state != PaymentRecordStateEnum.DELETE_ACTIVE) return true;
-
-                if (actionBtnAnimating)
-                    return false;
-
-                if (state == PaymentRecordStateEnum.NORMAL) {
-
-                    FrameLayout editWrapper = (FrameLayout) v.findViewById(R.id.recordEditWrapper);
-
-                    if (editWrapper.getWidth() > ACTION_TAB_WIDTH / 2) {
-                        animateActionButton(editWrapper, ACTION_TAB_WIDTH, PaymentRecordStateEnum.EDIT_ACTIVE);
-                    } else {
-                        animateActionButton(editWrapper, 0, PaymentRecordStateEnum.EDIT_ACTIVE);
-                    }
-
-                } else if (state == PaymentRecordStateEnum.DELETE_ACTIVE) {
-
-                    FrameLayout deleteWrapper = (FrameLayout) v.findViewById(R.id.recordDeleteWrapper);
-                    animateActionButton(deleteWrapper, 0, PaymentRecordStateEnum.DELETE_ACTIVE);
-
-                }
-
                 return true;
             }
         });
     }
 
+    /**
+     * Handles process triggered with tap event.
+     * @param v View where was the event triggered.
+     */
+    private void onTap(View v) {
+        collapseToggle(v);
+    }
+
+    /**
+     * Handles process triggered with swipe event.
+     * @param delta Distance of trajectory made with finger.
+     * @param v View where was the event triggered.
+     */
+    private void doSwipe(int delta, View v) {
+        int deleteActionBtnW = 0, editActionBtnW = 0;
+
+        if (delta < 0) {
+
+            //swipe left
+            if (state == PaymentRecordStateEnum.DELETE_ACTIVE || state == PaymentRecordStateEnum.EDIT_ACTIVE) {
+                if (isSwipe(delta)) onSwipeFinished(delta, v);
+                return;
+            }
+
+            actionButtonWidth = deleteActionBtnW = normalizeActionBtnWidth(Math.abs(delta) - MIN_SWIPE_DISTANCE);
+            editActionBtnW = 0;
+
+
+        } else {
+
+            //swipe right
+            if (state == PaymentRecordStateEnum.DELETE_ACTIVE || state == PaymentRecordStateEnum.EDIT_ACTIVE) {
+                if (isSwipe(delta)) onSwipeFinished(delta, v);
+                return;
+            }
+
+            actionButtonWidth = editActionBtnW = normalizeActionBtnWidth(delta - MIN_SWIPE_DISTANCE);
+            deleteActionBtnW = 0;
+
+        }
+
+        Log.i("Ondra", "action button width: " + actionButtonWidth);
+
+        setActionButtonWidth(deleteActionBtnW, v.findViewById(R.id.recordDeleteWrapper));
+        setActionButtonWidth(editActionBtnW, v.findViewById(R.id.recordEditWrapper));
+
+    }
+
+    /**
+     * Handles process triggered at the end of swipe event with finger up.
+     * @param delta Distance of trajectory made with finger.
+     * @param v View where was the event triggered.
+     */
+    private void onSwipeFinished(int delta, View v) {
+        FrameLayout actionBtn;
+
+        if (delta < 0) {
+
+            //swipe left
+            if (state == PaymentRecordStateEnum.NORMAL) {
+                actionBtn = (FrameLayout) v.findViewById(R.id.recordDeleteWrapper);
+
+                if (actionBtn.getWidth() > ACTION_TAB_WIDTH / 2) {
+                    //show btn
+                    showAnimateActionBtn(actionBtn, PaymentRecordStateEnum.DELETE_ACTIVE);
+                } else {
+                    //hide btn
+                    hideAnimateActionBtn(actionBtn, PaymentRecordStateEnum.DELETE_ACTIVE);
+                }
+
+            } else if (state == PaymentRecordStateEnum.EDIT_ACTIVE) {
+                actionBtn = (FrameLayout) v.findViewById(R.id.recordEditWrapper);
+                hideAnimateActionBtn(actionBtn, PaymentRecordStateEnum.EDIT_ACTIVE);
+            }
+
+        } else {
+
+            //swipe right
+            if (state == PaymentRecordStateEnum.NORMAL) {
+                actionBtn = (FrameLayout) v.findViewById(R.id.recordEditWrapper);
+
+                if (actionBtn.getWidth() > ACTION_TAB_WIDTH / 2) {
+                    showAnimateActionBtn(actionBtn, PaymentRecordStateEnum.EDIT_ACTIVE);
+                } else {
+                    hideAnimateActionBtn(actionBtn, PaymentRecordStateEnum.EDIT_ACTIVE);
+                }
+
+            } else if (state == PaymentRecordStateEnum.DELETE_ACTIVE) {
+                actionBtn = (FrameLayout) v.findViewById(R.id.recordDeleteWrapper);
+                hideAnimateActionBtn(actionBtn, PaymentRecordStateEnum.DELETE_ACTIVE);
+            }
+        }
+    }
+
+    /**
+     * Keeps button width in range.
+     * @param btnWidth  Button width.
+     * @return  Normalized width.
+     */
+    private int normalizeActionBtnWidth(int btnWidth) {
+        int w = btnWidth;
+        if (w < 0) w = 0;
+        if (w > ACTION_TAB_WIDTH) w = ACTION_TAB_WIDTH;
+        return w;
+    }
+
+    /**
+     * Sets button given via input param width.
+     * @param w Width to be set.
+     * @param v Button reference.
+     */
+    private void setActionButtonWidth(int w, View v) {
+        FrameLayout wrapper = (FrameLayout) v;
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) wrapper.getLayoutParams();
+
+        params.width = w;
+        wrapper.setLayoutParams(params);
+        wrapper.requestLayout();
+    }
+
+    /**
+     * Triggers action button animation hiding it.
+     * @param actionBtn Animated action button reference.
+     * @param recState  State of payment record.
+     */
+    private void hideAnimateActionBtn(FrameLayout actionBtn, PaymentRecordStateEnum recState) {
+        animateActionButton(actionBtn, 0, recState);
+    }
+
+    /**
+     * Triggers action button animation showing it.
+     * @param actionBtn Animated action button reference.
+     * @param recState  State of payment record.
+     */
+    private void showAnimateActionBtn(FrameLayout actionBtn, PaymentRecordStateEnum recState) {
+        animateActionButton(actionBtn, ACTION_TAB_WIDTH, recState);
+    }
+
+    /**
+     * Compares finger trajectory distance with minimal distance to trigger swiping.
+     * @param delta  Distance of trajectory made with finger.
+     * @return  True – finger trajectory is long enough; false – not enough.
+     */
+    private boolean isSwipe(int delta){
+        return Math.abs(delta) > MIN_SWIPE_DISTANCE;
+    }
+
+    /**
+     * Setter storing device display width.
+     * @param width Device display width.
+     */
     public static void setDisplayWidth(int width){
         PaymentRecord.displayWidth = width;
     }
 
+    /**
+     * Function hiding edit action button.
+     */
     public void hideEditActionButton(){
         FrameLayout editWrapper = (FrameLayout) this.findViewById(R.id.recordEditWrapper);
         animateActionButton(editWrapper, 0, PaymentRecordStateEnum.EDIT_ACTIVE);
     }
 
+    /**
+     *  Marks payment record being edited.
+     * @param editing   True - record is being edited; false – it's not.
+     */
     public void setEditing(boolean editing){
         if(editing){
             this.findViewById(R.id.recordMainWrapper).setBackgroundColor(ContextCompat.getColor(getContext(), R.color.appWhite50));
@@ -345,6 +335,7 @@ public class PaymentRecord extends LinearLayout {
             this.findViewById(R.id.recordMainWrapper).setBackgroundColor(ContextCompat.getColor(getContext(), R.color.appWhite25));
         }
     }
+
 
     public int getPaymentId() {
         return this.payment.getID();
@@ -378,6 +369,10 @@ public class PaymentRecord extends LinearLayout {
         return (ImageButton) this.findViewById(R.id.btnRecordEdit);
     }
 
+    /**
+     * Note collapse animation handler.
+     * @param v View being collapsed.
+     */
     private void collapseToggle(final View v) {
         final int from, to, diff;
 
@@ -423,6 +418,12 @@ public class PaymentRecord extends LinearLayout {
     }
 
 
+    /**
+     * Function animating edit/delete action button.
+     * @param v         Action button being animated.
+     * @param to        Final action button width-state.
+     * @param recState  Payment record state.
+     */
     private void animateActionButton(final View v, final int to, final PaymentRecordStateEnum recState) {
         final int from, diff;
 

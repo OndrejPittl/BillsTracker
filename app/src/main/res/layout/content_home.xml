@@ -54,7 +54,7 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="4dp"
                     android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:text="@string/appName"
+                    android:text="@string/app_name"
                     android:id="@+id/txtView_homeAppName"
                     android:layout_weight="1"
                     android:textAlignment="center"
