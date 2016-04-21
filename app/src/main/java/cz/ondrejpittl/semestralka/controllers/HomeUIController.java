@@ -1,11 +1,13 @@
 package cz.ondrejpittl.semestralka.controllers;
 
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
+import android.os.Handler;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.util.DisplayMetrics;
@@ -14,6 +16,7 @@ import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.Animation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -26,16 +29,20 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.joda.time.DateTime;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 
 import cz.ondrejpittl.semestralka.HomeActivity;
 import cz.ondrejpittl.semestralka.R;
+import cz.ondrejpittl.semestralka.factories.AnimationFactory;
 import cz.ondrejpittl.semestralka.layout.PaymentRecord;
 import cz.ondrejpittl.semestralka.models.Category;
 import cz.ondrejpittl.semestralka.models.Payment;
 import cz.ondrejpittl.semestralka.models.Statistics;
 import cz.ondrejpittl.semestralka.models.Store;
+import cz.ondrejpittl.semestralka.partial.JodaCalendar;
 
 import static cz.ondrejpittl.semestralka.R.color.appError;
 import static cz.ondrejpittl.semestralka.R.drawable.shape_thin_border;
@@ -61,13 +68,17 @@ public class HomeUIController {
 
     LinearLayout paymentRecordsContainer;
 
+    private ArrayList<PaymentRecord> records;
+
+
 
     private SharedPreferences prefs;
 
     /**
      * Calendar singleton object reference with actual date.
      */
-    private Calendar cal;
+    //private Calendar cal;
+    private DateTime calendar;
 
     /**
      * Date button firing datepicker dialog.
@@ -114,7 +125,8 @@ public class HomeUIController {
      * Initializes UI of Home activity.
      */
     public void initUI(){
-        this.cal = Calendar.getInstance();
+        //this.cal = Calendar.getInstance();
+        this.calendar = new DateTime();
         this.prefs = this.activity.getSharedPreferences("cz.ondrejpittl.semestralka", Context.MODE_PRIVATE);
         this.layoutInflater = (LayoutInflater) this.activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.paymentRecordsContainer = (LinearLayout) this.activity.findViewById(R.id.recordsContainer);
@@ -155,9 +167,15 @@ public class HomeUIController {
         //imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
     }
 
-    public void updatePayments(String month, int year, ArrayList<Payment> payments, String currencyUnits, HomeDataController dControl){
-        this.updateDateLabels(month, year);
-        this.buildPaymentBoxes(payments, currencyUnits, dControl);
+    public void updatePaymentRecords(final String month, final int year, final ArrayList<Payment> payments, final String currencyUnits, final HomeDataController dControl){
+        AnimationFactory.fadeOutPaymentRecords(this.records);
+
+        new Handler().postDelayed(new Runnable() {
+            public void run() {
+                updateDateLabels(month, year);
+                buildPaymentBoxes(payments, currencyUnits, dControl);
+            }
+        }, 230);
     }
 
     private void updateDateLabels(String month, int year){
@@ -176,9 +194,12 @@ public class HomeUIController {
 
 
     private void buildPaymentBoxes(ArrayList<Payment> payments, String currencyUnits, final HomeDataController dControl){
-        this.paymentRecordsContainer.removeAllViews();
 
+        this.paymentRecordsContainer.removeAllViews();
         PaymentRecord.setDisplayWidth(getDislayWidthInPx());
+
+        records = new ArrayList<>();
+
 
         for(Payment p : payments) {
             final PaymentRecord record = (PaymentRecord) layoutInflater.inflate(R.layout.payment_record, paymentRecordsContainer, false);
@@ -187,8 +208,10 @@ public class HomeUIController {
             //record.setId(paymentID);
             //record.setPaymentId(p.getID());
 
+            record.setAlpha(0);
+
             record.setPayment(p);
-            record.setHomeController(dControl);
+            //record.setHomeController(dControl);
 
             record.getRecordDeleteBtn().setOnTouchListener(new View.OnTouchListener() {
                 public boolean onTouch(View v, MotionEvent event) {
@@ -221,7 +244,8 @@ public class HomeUIController {
             //payment day
             TextView d = (TextView) record.findViewById(R.id.txtViewRecordDay);
             Calendar cal = Calendar.getInstance();
-            cal.setTime(p.getDate());
+            //cal.setTime(p.getDate());
+            cal.setTime(p.getDate().toDate());
             d.setText(String.valueOf(cal.get(Calendar.DAY_OF_MONTH)) + ".");
 
             //payment category name
@@ -245,9 +269,11 @@ public class HomeUIController {
             TextView v = (TextView) record.findViewById(R.id.txtViewRecordNote);
             v.setText(p.getNote());
 
+            this.records.add(record);
             paymentRecordsContainer.addView(record);
         }
 
+        AnimationFactory.fadeInPaymentRecords(this.records);
 
     }
 
@@ -276,9 +302,13 @@ public class HomeUIController {
      * Initializes date controls represented with button and DatePicker.
      */
     private void buildDateControls(){
-        this.date_year = this.cal.get(Calendar.YEAR);
+        /*this.date_year = this.cal.get(Calendar.YEAR);
         this.date_month = this.cal.get(Calendar.MONTH);
-        this.date_day = this.cal.get(Calendar.DAY_OF_MONTH);
+        this.date_day = this.cal.get(Calendar.DAY_OF_MONTH);*/
+
+        this.date_year = this.calendar.getYear();
+        this.date_month = this.calendar.getMonthOfYear();
+        this.date_day = this.calendar.getDayOfMonth();
 
         this.dateButton = (Button) this.activity.findViewById(R.id.btn_date);
         this.dateButton.setOnClickListener(new View.OnClickListener() {
@@ -362,15 +392,17 @@ public class HomeUIController {
         this.date_year = y;
         this.date_month = m;
         this.date_day = d;
+
+        this.calendar = this.calendar.withYearOfEra(y).withMonthOfYear(m).withDayOfMonth(d);
     }
 
-    /**
+    /*
      * Updates date button label.
      * @param y Selected year.
      * @param m Selected month.
      * @param d Selected day.
      */
-    private void updateDateButton(int y, int m, int d){
+    /*private void updateDateButton(int y, int m, int d){
         Calendar cal = Calendar.getInstance();
 
         if(y == cal.get(Calendar.YEAR) && m == cal.get(Calendar.MONTH)) {
@@ -387,6 +419,35 @@ public class HomeUIController {
         this.cal.set(Calendar.YEAR, y);
         this.cal.set(Calendar.MONTH, m);
         this.cal.set(Calendar.DAY_OF_MONTH, d);
+    }*/
+
+    /**
+     * Updates date button label.
+     * @param y Selected year.
+     * @param m Selected month.
+     * @param d Selected day.
+     */
+    private void updateDateButton(int y, int m, int d){
+        DateTime now = new DateTime();
+        DateTime selected = new DateTime().withYearOfEra(y).withMonthOfYear(m).withDayOfMonth(d);
+
+        Log.i("Ondra-stats", "now: " + now);
+        Log.i("Ondra-stats", "sel: " + selected);
+
+        if(JodaCalendar.compareMonthYear(now, selected)) {
+            if(JodaCalendar.compareDateTimes(now, selected)) {
+                this.dateButton.setText("Today");
+                return;
+            } else if(JodaCalendar.compareDateTimes(now, JodaCalendar.clone(selected).plusDays(1))) {
+                this.dateButton.setText("Yesterday");
+                return;
+            } else if(JodaCalendar.compareDateTimes(now, JodaCalendar.clone(selected).minusDays(1))) {
+                this.dateButton.setText("Tomorrow");
+                return;
+            }
+        }
+
+        dateButton.setText(d + ". " + m + ". " + y);
     }
 
     public Dialog handleDatePickerDialogCreation(int id){
@@ -397,19 +458,19 @@ public class HomeUIController {
 
             DatePickerDialog dpDialog = new DatePickerDialog(this.activity, new DatePickerDialog.OnDateSetListener() {
                 public void onDateSet(DatePicker arg0, int y, int m, int d) {
-                    updateDateButton(y, m, d);
-                    saveSelectedDate(y, m, d);
+                    updateDateButton(y, m+1, d);
+                    saveSelectedDate(y, m+1, d);
                     HomeActivity.changeLocaleDefault();
                 }
-            }, this.date_year, this.date_month, this.date_day);
+            }, this.date_year, this.date_month - 1, this.date_day);
 
 
             //o 1 den navic oproti StackOverflow! @TODO otestovat!!!
-            Calendar c = Calendar.getInstance();
-            c.add(Calendar.DATE, 1);
-
-            DatePicker datePicker = dpDialog.getDatePicker();
+            //Calendar c = Calendar.getInstance();
+            //c.add(Calendar.DATE, 1);
+            //DatePicker datePicker = dpDialog.getDatePicker();
             //datePicker.setMaxDate(c.getTimeInMillis());
+
             return dpDialog;
         }
 
@@ -498,7 +559,8 @@ public class HomeUIController {
         String[] contents = new String[7];
 
         //date
-        contents[0] = String.valueOf(this.cal.getTimeInMillis());
+        //contents[0] = String.valueOf(this.cal.getTimeInMillis());
+        contents[0] = String.valueOf(this.calendar.getMillis());
 
         //category
         Spinner catSpin = (Spinner) this.activity.findViewById(R.id.spinner_category);
@@ -553,7 +615,7 @@ public class HomeUIController {
             d = cal.get(Calendar.DAY_OF_MONTH);
 
         //date button
-        updateDateButton(y, m, d);
+        updateDateButton(y, m+1, d);
 
         //category spinner
         Spinner catSpin = (Spinner) this.activity.findViewById(R.id.spinner_category);

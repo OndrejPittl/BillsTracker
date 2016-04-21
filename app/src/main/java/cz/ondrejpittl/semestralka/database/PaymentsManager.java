@@ -6,8 +6,10 @@ import android.util.Log;
 
 import org.joda.time.DateTime;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
+import cz.ondrejpittl.semestralka.models.Category;
 import cz.ondrejpittl.semestralka.models.Payment;
 import cz.ondrejpittl.semestralka.partial.JodaCalendar;
 
@@ -167,41 +169,95 @@ public class PaymentsManager extends TableManager {
         return this.buildPaymentArraylistFromCursorAliased(c);
     }
 
-    public ArrayList<Payment> selectPaymentsOfMonth(int month, int year) {
-        long from, to;
+    public ArrayList<Payment> selectCategorySummaryOfMonth(int month, int year, String category){
+        long from = this.jodaCalendar.getFirstDayOfMonth(month, year).getMillis(),
+                to = this.jodaCalendar.getLastDayOfMonth(month, year).getMillis();
 
-        /*Log.i("Ondra", "first-day: " + this.getFirstDayOfMonth());
-        Log.i("Ondra", "last-day: " + this.getLastDayOfMonth());
-
-        Log.i("Ondra", "--------");
-        from = getFirstDayOfMonth();
-        from = getFirstDayOfMonth(month, year);
-        Log.i("Ondra", "from: " + from);
-
-        Log.i("Ondra", "--------");
-        to = getLastDayOfMonth();
-        to = getLastDayOfMonth(month, year);
-        Log.i("Ondra", "to: " + to);*/
-
-
-        from = this.jodaCalendar.getFirstDayOfMonth(month, year).getMillis();
-        to = this.jodaCalendar.getLastDayOfMonth(month, year).getMillis();
-
-
-        String  tableCols = this.dbManager.getAllTableColumnsList(),
-                tables = "tb_payments inner join tb_categories on tb_payments.id_category = tb_categories.id " +
-                         "inner join tb_stores on tb_payments.id_store = tb_stores.id",
-                wheres[][] =  new String[][]{
-                                {PaymentsManager.getColumnDateAliased(), ">=", "" + from},
-                                {PaymentsManager.getColumnDateAliased(), "<=", "" + to}
-                            },
-                orderBy[][] = new String[][]{{PaymentsManager.getColumnDateAliased(), "desc"}};
+        String  tableCols = "sum(tb_payments.amount) as amount, tb_categories.id as categories_id, tb_categories.name",
+                tables = "tb_payments inner join tb_categories on tb_payments.id_category = tb_categories.id";
 
         int limit = -1;
 
-        Cursor c = this.selectRecordsDetailed(tableCols, tables, wheres, orderBy, limit);
+        Cursor c = this.selectRecordsDetailed(
+                tableCols,
+                tables,
+                new String[][]{
+                    {PaymentsManager.COLUMN_DATE, ">=", "" + String.valueOf(from)},
+                    {PaymentsManager.COLUMN_DATE, "<=", String.valueOf(to)},
+                    {CategoryManager.getColumnName(), "like", "%" + category + "%"}
+                },
+                new String[]{CategoryManager.getColumnIdAliased()},
+                new String[][]{{PaymentsManager.COLUMN_DATE, "asc"}},
+                limit);
+
+
+        ArrayList<Payment> payments = new ArrayList<Payment>();
+        c.moveToFirst();
+        while(c.isAfterLast() == false){
+            Payment p = new Payment();
+            p.setAmount(Integer.parseInt(c.getString(c.getColumnIndex("amount"))));
+            p.setCategory(Integer.parseInt(c.getString(c.getColumnIndex("categories_id"))),
+                    c.getString(c.getColumnIndex("name")));
+            payments.add(p);
+            c.moveToNext();
+        }
+
+        return payments;
+    }
+
+    private ArrayList<Payment> selectPaymentsOfMonthWhere(String wheres[][], String orderBy[][]) {
+        String  tableCols = this.dbManager.getAllTableColumnsList(),
+                tables = this.dbManager.getAllTablesList();
+
+        int limit = -1;
+
+        Cursor c = this.selectRecordsDetailed(tableCols, tables, wheres, null, orderBy, limit);
         return this.buildPaymentArraylistFromCursorAliased(c);
     }
+
+    public ArrayList<Payment> selectPaymentsOfMonth(int month, int year, String category) {
+        long from = this.jodaCalendar.getFirstDayOfMonth(month, year).getMillis(),
+                to = this.jodaCalendar.getLastDayOfMonth(month, year).getMillis();
+
+        return this.selectPaymentsOf(from, to, category);
+    }
+
+    public ArrayList<Payment> selectPaymentsOfYear(int year, String category) {
+        long from = this.jodaCalendar.getFirstDayOfYear(year).getMillis(),
+               to = this.jodaCalendar.getLastDayOfYear(year).getMillis();
+
+        return this.selectPaymentsOf(from, to, category);
+    }
+
+    public ArrayList<Payment> selectPaymentsOf(long from, long to, String category) {
+        String wheres[][] =  new String[][]{
+                {PaymentsManager.getColumnDateAliased(), ">=", "" + String.valueOf(from)},
+                {PaymentsManager.getColumnDateAliased(), "<=", String.valueOf(to)},
+                {CategoryManager.getColumnNameAliased(), "like", "%" + category + "%"}
+        },
+                orderBy[][] = new String[][]{{PaymentsManager.getColumnDateAliased(), "asc"}};
+
+        return this.selectPaymentsOfMonthWhere(wheres, orderBy);
+    }
+
+
+    public ArrayList<Payment> selectPaymentsOfMonth(int month, int year) {
+        long from = this.jodaCalendar.getFirstDayOfMonth(month, year).getMillis(),
+                to = this.jodaCalendar.getLastDayOfMonth(month, year).getMillis();
+
+        return this.selectPaymentsOf(from, to);
+    }
+
+    public ArrayList<Payment> selectPaymentsOf(long from, long to) {
+        String wheres[][] =  new String[][]{
+                {PaymentsManager.getColumnDateAliased(), ">=", "" + from},
+                {PaymentsManager.getColumnDateAliased(), "<=", "" + to}
+        },
+                orderBy[][] = new String[][]{{PaymentsManager.getColumnDateAliased(), "desc"}};
+
+        return this.selectPaymentsOfMonthWhere(wheres, orderBy);
+    }
+
 
     public static String getColumnIdAliased(){
         return ALIAS_PREFIX + COLUMN_ID;

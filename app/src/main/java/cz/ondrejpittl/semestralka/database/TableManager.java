@@ -117,14 +117,14 @@ public class TableManager {
         return db.rawQuery(query, null);
     }
 
-    protected Cursor selectRecordsDetailed(String tableCols, String tables, String[][] wheres, String[][] orderBy, int limit) {
+    protected Cursor selectRecordsDetailed(String tableCols, String tables, String[][] wheres,  String[] groupBy, String[][] orderBy, int limit) {
         //examples:
         //tablecols: "a.name, b.id"
         //tables: "tableA a inner join tableB b on a.id = b.id"
         //wheres: {{"name", "=", "John"}, {"age", "<", 27}}
         //orderBy: {{"id", "asc"}, {"name", "desc"}}
         //limit: 1
-        String query = DBQueryFactory.querySelectDetailed(tableCols, tables, wheres, orderBy, limit);
+        String query = DBQueryFactory.querySelectDetailed(tableCols, tables, wheres, groupBy, orderBy, limit);
         Log.i("Ondra", "Selecting DETAILED from table " + TABLE_NAME + ":");
         Log.i("Ondra", query);
 
@@ -214,6 +214,7 @@ public class TableManager {
     public String getTableName(){
         return this.TABLE_NAME;
     }
+
 
 
     public void setDB(SQLiteDatabase db){

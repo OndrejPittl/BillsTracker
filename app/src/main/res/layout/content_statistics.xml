@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="cz.ondrejpittl.semestralka.StatisticsActivity"
+    tools:showIn="@layout/activity_statistics">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imgViewBG"
+        android:layout_gravity="center"
+        android:cropToPadding="false"
+        android:scaleType = "centerCrop"
+        android:src="@drawable/bg" />
+
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:id="@+id/statsHeader"
+            android:background="@color/appWhite25"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="@string/statisticsHeading"
+                android:id="@+id/statisticsHeading"
+                android:layout_gravity="center_horizontal|top"
+                android:textColor="@color/appWhite"
+                android:padding="5dp"
+                android:paddingTop="10dp"
+                android:layout_marginTop="10dp" />
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/statsControlsWrapper"
+                android:orientation="horizontal"
+                android:layout_gravity="center_horizontal|bottom"
+                android:padding="20dp">
+
+                <Button
+                    android:layout_width="0dp"
+                    android:layout_height="30dp"
+                    android:layout_margin="2dp"
+                    android:layout_weight="1"
+                    android:text="@string/btn_dateTxt"
+                    android:textColor="@color/appTextWhite"
+                    android:id="@+id/statsDate"
+                    android:background="@drawable/shape_thin_border"
+                    android:textSize="11sp"
+                    android:singleLine="true" />
+
+                <Spinner
+                    android:layout_width="0dp"
+                    android:layout_height="30dp"
+                    android:layout_weight="1"
+                    android:layout_margin="2dp"
+                    android:id="@+id/statsCategory"
+                    android:background="@drawable/shape_thin_border"
+                    android:textSize="11sp"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"/>
+
+
+            </LinearLayout>
+            <View
+                android:id="@+id/viewLine"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@+id/welcomeUpperControlWrapper"
+                android:background="@color/appWhite50"/>
+        </LinearLayout>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingBottom="15dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="@string/statisticsMonthHeading"
+                    android:id="@+id/statisticsMonthHeadingLabel"
+                    android:layout_gravity="center_horizontal|top"
+                    android:textColor="@color/appWhite"
+                    android:padding="5dp"
+                    android:paddingTop="10dp"
+                    android:layout_marginTop="10dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:text="@string/statisticsNoData"
+                    android:id="@+id/statisticsMonthNoDataLabel"
+                    android:layout_gravity="center_horizontal|top"
+                    android:textColor="@color/appWhite"
+                    android:paddingTop="10dp"
+                    android:layout_marginTop="15dp"
+                    android:visibility="gone"/>
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingBottom="15dp"
+                    android:id="@+id/monthChartsContainer"></LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="@string/statisticsYearHeading"
+                    android:id="@+id/statisticsYearHeadingLabel"
+                    android:layout_gravity="center_horizontal|top"
+                    android:textColor="@color/appWhite"
+                    android:padding="5dp"
+                    android:paddingTop="10dp"
+                    android:layout_marginTop="10dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:text="@string/statisticsNoData"
+                    android:id="@+id/statisticsYearNoDataLabel"
+                    android:layout_gravity="center_horizontal|top"
+                    android:textColor="@color/appWhite"
+                    android:paddingTop="10dp"
+                    android:layout_marginTop="15dp"
+                    android:visibility="gone"/>
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingBottom="15dp"
+                    android:id="@+id/yearChartsContainer"></LinearLayout>
+
+
+            </LinearLayout>
+
+
+
+        </ScrollView>
+
+
+    </LinearLayout>
+
+
+</FrameLayout>
+
+

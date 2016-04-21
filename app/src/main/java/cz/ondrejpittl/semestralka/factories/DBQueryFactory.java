@@ -48,13 +48,14 @@ public class DBQueryFactory {
         return query;
     }
 
-    public static String querySelectDetailed(String tableCols, String tables, String[][] wheres, String[][] orderBy, int limit) {
+    public static String querySelectDetailed(String tableCols, String tables, String[][] wheres, String[] groupBy, String[][] orderBy, int limit) {
         clearStringBuilder();
         sb.append("SELECT ");
         sb.append(tableCols);
         sb.append(" FROM ");
         sb.append(tables);
         buildWhere(wheres);
+        buildGroup(groupBy);
         buildOrderBy(orderBy);
         bildLimit(limit);
         return sb.toString();
@@ -79,6 +80,17 @@ public class DBQueryFactory {
         for(int w = 0; w < wheres.length; w++) {
             sb.append(wheres[w][0] + " " + wheres[w][1] + " '" + wheres[w][2] + "'");
             if(w < wheres.length - 1) sb.append(" AND ");
+        }
+    }
+
+    private static void buildGroup(String[] groupBy){
+        if(groupBy == null || groupBy.length <= 0) return;
+
+        sb.append(" GROUP BY ");
+
+        for(int g = 0; g < groupBy.length; g++) {
+            sb.append(groupBy[g]);
+            if(g < groupBy.length - 1) sb.append(" AND ");
         }
     }
 

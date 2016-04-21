@@ -49,6 +49,22 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal">
 
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent">
+
+                    <ImageButton
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:layout_gravity="center"
+                        android:background="@color/transparent"
+                        android:padding="2dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/settings"
+                        android:id="@+id/homeSettingsBtn"></ImageButton>
+
+                </FrameLayout>
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -59,7 +75,26 @@
                     android:layout_weight="1"
                     android:textAlignment="center"
                     android:textColor="@color/appTextWhite"
-                    android:textSize="22sp"/>
+                    android:textSize="20sp"/>
+
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent">
+
+                    <ImageButton
+                        android:layout_width="22dp"
+                        android:layout_height="25dp"
+                        android:layout_gravity="center"
+                        android:background="@color/transparent"
+                        android:padding="2dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/charts"
+                        android:id="@+id/homeStatsBtn"
+                        android:onClick="startStatisticsActivity"></ImageButton>
+
+                </FrameLayout>
+
+
             </LinearLayout>
 
             <LinearLayout
@@ -266,7 +301,7 @@
 
             </FrameLayout>
 
-            <ScrollView
+            <cz.ondrejpittl.semestralka.layout.CustomScrollView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
@@ -279,7 +314,7 @@
                     android:id="@+id/recordsContainer"
                     android:paddingBottom="5dp">
                 </LinearLayout>
-            </ScrollView>
+            </cz.ondrejpittl.semestralka.layout.CustomScrollView>
 
 
         </LinearLayout>

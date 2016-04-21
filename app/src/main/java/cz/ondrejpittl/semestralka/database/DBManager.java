@@ -6,6 +6,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.google.gson.Gson;
+
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -101,21 +103,18 @@ public class DBManager extends SQLiteOpenHelper {
         return this.payments.selectPaymentsOfMonth(month, year);
     }
 
-    /*
-    public String getDefaultCurrency(){
-        String[] defaults = {"USD", "EUR"};
-
-        for(int i = 0; i < defaults.length; i++) {
-            if(this.currencies.checkIfCurrencyExists(defaults[i])) {
-                return defaults[i];
-            }
-        }
-
-        Log.i("Ondra", "DEFAULT CURRENCY2: not found, getting first");
-
-        return this.currencies.getFirstCurrency();
+    public ArrayList<Payment> getPaymentsByMonth(int month, int year, String category){
+        return this.payments.selectPaymentsOfMonth(month, year, category);
     }
-    */
+
+    public ArrayList<Payment> getCategorySummaryByMonth(int month, int year, String category){
+        return this.payments.selectCategorySummaryOfMonth(month, year, category);
+    }
+
+    public ArrayList<Payment> getPaymentsByYear(int year, String category){
+        return this.payments.selectPaymentsOfYear(year, category);
+    }
+
 
     public void updateDefaultCurrency(String curr){
         if(this.currencies.checkIfCurrencyExists(curr))
@@ -127,6 +126,12 @@ public class DBManager extends SQLiteOpenHelper {
         return  this.payments.getAllColumnsSelector() + ", " +
                 this.categories.getAllColumnsSelector() + ", " +
                 this.stores.getAllColumnsSelector();
+    }
+
+    public String getAllTablesList(){
+        return "tb_payments inner join tb_categories on tb_payments.id_category = tb_categories.id " +
+                        "inner join tb_stores on tb_payments.id_store = tb_stores.id";
+
     }
 
     public Statistics computeCurrentStatistics(){
@@ -184,11 +189,44 @@ public class DBManager extends SQLiteOpenHelper {
     }
 
 
+    public String packToJson() {
+        Gson gson = new Gson();
+        return gson.toJson(this);
+    }
+
+    public static DBManager unpackFromJson(String json) {
+        Gson gson = new Gson();
+        return gson.fromJson(json, DBManager.class);
+    }
+
 
     public SQLiteDatabase getDB(){
         return this.db;
     }
 }
+
+
+
+
+
+
+    /*
+    public String getDefaultCurrency(){
+        String[] defaults = {"USD", "EUR"};
+
+        for(int i = 0; i < defaults.length; i++) {
+            if(this.currencies.checkIfCurrencyExists(defaults[i])) {
+                return defaults[i];
+            }
+        }
+
+        Log.i("Ondra", "DEFAULT CURRENCY2: not found, getting first");
+
+        return this.currencies.getFirstCurrency();
+    }
+    */
+
+
 
 
 /*

@@ -165,7 +165,7 @@ public class HomeDataController {
 
         String currencyUnits = loadDefaultCurrencyFromPrefs();
         this.displayedPayments = this.dbManager.getPaymentsByMonth(month, year);
-        this.controllerUI.updatePayments(monthStr, year, this.displayedPayments, currencyUnits, this);
+        this.controllerUI.updatePaymentRecords(monthStr, year, this.displayedPayments, currencyUnits, this);
 
         logDisplayedPayments();
         computeStatistics();

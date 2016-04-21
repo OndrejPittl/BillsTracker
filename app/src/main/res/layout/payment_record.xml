@@ -206,14 +206,15 @@
                 </FrameLayout>
             </LinearLayout>
 
-            <View
+            <!--<View
                 android:id="@+id/viewLine"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_below="@+id/welcomeUpperControlWrapper"
-                android:background="@color/appWhite50"/>
+                android:background="@color/appWhite50"/>-->
 
             <FrameLayout
+                android:background="@color/appWhite25"
                 android:layout_width="fill_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/recordNoteHolder"

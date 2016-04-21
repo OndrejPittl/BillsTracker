@@ -2,6 +2,8 @@ package cz.ondrejpittl.semestralka.models;
 
 import android.util.Log;
 
+import org.joda.time.DateTime;
+
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -19,7 +21,7 @@ public class Payment {
 
     private float amount;
 
-    private Date date;
+    private DateTime date;
 
     private String note;
 
@@ -75,17 +77,17 @@ public class Payment {
         this.amount = amount;
     }
 
-    public Date getDate() {
+    public DateTime getDate() {
         return date;
     }
 
     // TODO: 01.04.16 zkontrolovat, zda sedí milisekundy!
     public Long getDateLong() {
-        return date.getTime();
+        return date.getMillis();
     }
 
     public void setDate(Long date) {
-        this.date = new Date(date);
+        this.date = new DateTime(date);
     }
 
     public String getNote() {

@@ -14,6 +14,7 @@
 
     <!-- texts -->
     <color name="appTextWhite">#FFF</color>
+    <color name="appTextBlack">#000</color>
     <color name="appTextLightGold">#F7EBBE</color>
     <color name="appTextGold">#e1d5a4</color>
     <color name="appTextGreen">#717c67</color>

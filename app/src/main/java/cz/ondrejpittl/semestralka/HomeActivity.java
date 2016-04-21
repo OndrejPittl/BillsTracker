@@ -1,11 +1,13 @@
 package cz.ondrejpittl.semestralka;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MotionEvent;
 import android.view.View;
 
 import android.widget.Button;
@@ -137,15 +139,10 @@ public class HomeActivity extends AppCompatActivity {
         this.controllerData.handleNewPaymentInsert();
     }
 
-
-
-
-
-
-
-
-
-
+    public void startStatisticsActivity(View v){
+        Intent i = new Intent(this, StatisticsActivity.class);
+        startActivity(i);
+    }
 
 
 
