@@ -50,21 +50,9 @@
                 android:layout_gravity="center_horizontal">
 
                 <FrameLayout
+                    android:id="@+id/settingsBtnWrapper"
                     android:layout_width="40dp"
-                    android:layout_height="30dp">
-
-                    <ImageButton
-                        android:layout_width="40dp"
-                        android:layout_height="30dp"
-                        android:layout_gravity="center"
-                        android:background="@color/transparent"
-                        android:paddingTop="5dp"
-                        android:paddingBottom="5dp"
-                        android:paddingLeft="3dp"
-                        android:scaleType="fitStart"
-                        android:src="@drawable/img_btn_src_settings"
-                        android:id="@+id/homeSettingsBtn"
-                        android:onClick="startSettingsActivity"></ImageButton>
+                    android:layout_height="35dp">
 
                 </FrameLayout>
 
@@ -81,21 +69,11 @@
                     android:textSize="20sp"/>
 
                 <FrameLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent">
+                    android:id="@+id/statsBtnWrapper"
+                    android:layout_width="40dp"
+                    android:layout_height="32dp">
 
-                    <ImageButton
-                        android:layout_width="40dp"
-                        android:layout_height="30dp"
-                        android:layout_gravity="center"
-                        android:background="@color/transparent"
-                        android:paddingTop="6dp"
-                        android:paddingBottom="6dp"
-                        android:paddingRight="1dp"
-                        android:scaleType="fitEnd"
-                        android:src="@drawable/img_btn_src_stats"
-                        android:id="@+id/homeStatsBtn"
-                        android:onClick="startStatisticsActivity"></ImageButton>
+
 
                 </FrameLayout>
 
@@ -186,7 +164,7 @@
                     android:layout_margin="2dp"
                     android:id="@+id/edTxt_note"
                     android:background="@drawable/shape_thin_border"
-                    android:layout_weight="3"
+                    android:layout_weight="5"
                     android:textSize="11sp"
                     android:textColor="@color/appTextWhite"
                     android:textColorHint="@color/appWhite50"
@@ -200,7 +178,7 @@
                     android:layout_height="30dp"
                     android:layout_margin="2dp"
                     android:id="@+id/spinner_store"
-                    android:layout_weight="2"
+                    android:layout_weight="4"
                     android:background="@drawable/shape_thin_border"
                     android:textSize="11sp"
                     android:focusable="true"

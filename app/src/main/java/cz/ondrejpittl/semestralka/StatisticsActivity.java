@@ -17,6 +17,8 @@ import cz.ondrejpittl.semestralka.partial.StatisticsChartObject;
 
 public class StatisticsActivity extends AppCompatActivity {
 
+    public static final int INTENT_INDEX = 2;
+
     /**
      * Stored origin locale enables temporarily change locale to force ENG lang and then setting
      * origin locale back.

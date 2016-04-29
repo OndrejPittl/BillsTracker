@@ -23,6 +23,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -38,12 +39,14 @@ import cz.ondrejpittl.semestralka.HomeActivity;
 import cz.ondrejpittl.semestralka.R;
 import cz.ondrejpittl.semestralka.factories.AnimationFactory;
 import cz.ondrejpittl.semestralka.layout.CustomSpinner;
+import cz.ondrejpittl.semestralka.layout.LoadingImgButton;
 import cz.ondrejpittl.semestralka.layout.PaymentRecord;
 import cz.ondrejpittl.semestralka.models.Category;
 import cz.ondrejpittl.semestralka.models.Payment;
 import cz.ondrejpittl.semestralka.models.Statistics;
 import cz.ondrejpittl.semestralka.models.Store;
 import cz.ondrejpittl.semestralka.partial.JodaCalendar;
+import cz.ondrejpittl.semestralka.partial.LoadingButtonType;
 import cz.ondrejpittl.semestralka.partial.SharedPrefs;
 
 import static cz.ondrejpittl.semestralka.R.color.appError;
@@ -114,6 +117,11 @@ public class HomeUIController {
 
 
 
+    private LoadingImgButton settingsBtn;
+    private LoadingImgButton statsBtn;
+
+
+
 
 
 
@@ -150,11 +158,36 @@ public class HomeUIController {
      */
     private void buildControlPanel(){
         this.buildDateControls();
-
+        this.buildSettingsImgButton();
+        this.buildStatsImgButton();
 
         //this.buildCategoryControls();
         //this.buildStoreControls();
     }
+
+    private void buildSettingsImgButton(){
+        FrameLayout container = (FrameLayout) this.activity.findViewById(R.id.settingsBtnWrapper);
+        this.settingsBtn = (LoadingImgButton) layoutInflater.inflate(R.layout.loading_img_button, container, false);
+        this.settingsBtn.init(LoadingButtonType.SETTINGS, this.activity);
+        container.addView(this.settingsBtn);
+    }
+
+    private void buildStatsImgButton(){
+        FrameLayout container = (FrameLayout) this.activity.findViewById(R.id.statsBtnWrapper);
+        this.statsBtn = (LoadingImgButton) layoutInflater.inflate(R.layout.loading_img_button, container, false);
+        this.statsBtn.init(LoadingButtonType.STATISTICS, this.activity);
+        container.addView(this.statsBtn);
+    }
+
+    public void resetSettingsImgButton(){
+        this.settingsBtn.reset();
+    }
+
+    public void resetStatsImgButton(){
+        this.statsBtn.reset();
+    }
+
+
 
     private void setEditTextFocusLoseHandler(){
 
@@ -688,6 +721,14 @@ public class HomeUIController {
         }
     }
 
+    /*public void hideImgButton(View v){
+        this.lastImgButton = v;
+        this.lastImgButton.setVisibility(View.INVISIBLE);
+    }
+
+    public void showLastImgButton(){
+        this.lastImgButton.setVisibility(View.VISIBLE);
+    }*/
 
 
     // TODO: 01.04.16 DELETE

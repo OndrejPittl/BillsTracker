@@ -29,6 +29,8 @@ import cz.ondrejpittl.semestralka.partial.SharedPrefs;
 
 public class SettingsActivity extends AppCompatActivity {
 
+    public static final int INTENT_INDEX = 1;
+
     private DBManager dbManager;
 
     @Override

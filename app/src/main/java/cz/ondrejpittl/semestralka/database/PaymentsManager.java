@@ -75,29 +75,6 @@ public class PaymentsManager extends TableManager {
         this.jodaCalendar = new JodaCalendar();
 
         Log.i("Ondra", "Payment Manager constructor");
-
-
-
-
-        /*insertPayment("cat0", "store1", "2Kč", "dnes", "pozn");
-
-        selectAllPayments();
-
-        selectPayments(new String[][]{
-                {"name", "=", "John"}, {"age", "<", "27"}
-        });
-
-        deletePayment(new String[][]{
-                {"name", "=", "John"}, {"age", "<", "27"}
-        });
-
-        updatePayment(new String[][]{
-                {"name", "Johnn"}, {"age", "277"}
-        }, new String[][]{
-                {"name", "=", "John"}, {"age", "<", "27"}
-        });
-
-        getPaymentsCount();*/
     }
 
     public void createPaymentsTable(SQLiteDatabase db) {

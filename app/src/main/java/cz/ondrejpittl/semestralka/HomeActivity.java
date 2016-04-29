@@ -159,60 +159,49 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     public void startStatisticsActivity(View v){
+        /*this.controllerUI.hideImgButton(v);
         HomeActivity.clearControlsFocus(this);
         Intent i = new Intent(this, StatisticsActivity.class);
-        startActivity(i);
+        startActivity(i);*/
     }
 
     public void startSettingsActivity(View v){
+        //this.controllerUI.hideImgButton(v);
         HomeActivity.clearControlsFocus(this);
 
         Intent i = new Intent(this, SettingsActivity.class);
         //startActivity(i);
         startActivityForResult(i, 1);
-
-
     }
+
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        //this.controllerUI.showLastImgButton();
+
         if(requestCode == 1) {
+
             //settings activity ended
+            this.controllerUI.resetSettingsImgButton();
+
             this.controllerUI.updateCurrencyViews(SharedPrefs.getDefaultCurrency());
             this.controllerUI.updateCategoryControlsSelection();
             this.controllerUI.updateStoreControlsSelection();
 
 
             this.updatePaymentRecords();
+
+        } else if(requestCode == 2) {
+
+            //stats activity ended
+            this.controllerUI.resetStatsImgButton();
+
         }
     }
 
 
 
-    private void loadPayments(){
-
-
-
-
-        /*
-
-        LinearLayout container = (LinearLayout) findViewById(R.id.recordsContainer);
-
-        for(int i = 0; i < 5; i++) {
-            View rec = (View) layoutInflater.inflate(R.layout.payment_record, container, false);
-
-            rec.setId(i);
-
-            TextView v = (TextView) rec.findViewById(R.id.txtViewNote);
-            v.setText(i);
-
-            container.addView(rec);
-        }
-
-        */
-
-    }
 
 
 
