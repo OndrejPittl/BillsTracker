@@ -1,6 +1,8 @@
 package cz.ondrejpittl.semestralka;
 
+import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
@@ -10,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
 import android.view.View;
 
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 
 import java.util.Locale;
@@ -17,14 +20,16 @@ import java.util.Locale;
 import cz.ondrejpittl.semestralka.controllers.HomeDataController;
 import cz.ondrejpittl.semestralka.controllers.HomeUIController;
 import cz.ondrejpittl.semestralka.database.DBManager;
+import cz.ondrejpittl.semestralka.layout.PaymentRecord;
 import cz.ondrejpittl.semestralka.partial.MonthChangeEnum;
+import cz.ondrejpittl.semestralka.partial.SharedPrefs;
 
 public class HomeActivity extends AppCompatActivity {
 
     /**
      * Shared Preferences of this app.
      */
-    private SharedPreferences prefs;
+    //private SharedPreferences prefs;
 
     /**
      * Stored origin locale enables temporarily change locale to force ENG lang and then setting
@@ -59,8 +64,13 @@ public class HomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-
         init();
+    }
+
+    protected void onResume() {
+        super.onResume();
+
+
     }
 
     /**
@@ -82,6 +92,10 @@ public class HomeActivity extends AppCompatActivity {
 
 
         //this.controllerData.loadStoredSettings();
+
+    }
+
+    private void updateSettings(){
 
     }
 
@@ -127,6 +141,11 @@ public class HomeActivity extends AppCompatActivity {
         }
 
         this.controllerData.registerActiveMonthChanged(event);
+        this.updatePaymentRecords();
+    }
+
+    private void updatePaymentRecords(){
+        this.controllerData.loadPaymentsOfMonth();
     }
 
     public void handleClearEvent(View v){
@@ -140,8 +159,33 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     public void startStatisticsActivity(View v){
+        HomeActivity.clearControlsFocus(this);
         Intent i = new Intent(this, StatisticsActivity.class);
         startActivity(i);
+    }
+
+    public void startSettingsActivity(View v){
+        HomeActivity.clearControlsFocus(this);
+
+        Intent i = new Intent(this, SettingsActivity.class);
+        //startActivity(i);
+        startActivityForResult(i, 1);
+
+
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == 1) {
+            //settings activity ended
+            this.controllerUI.updateCurrencyViews(SharedPrefs.getDefaultCurrency());
+            this.controllerUI.updateCategoryControlsSelection();
+            this.controllerUI.updateStoreControlsSelection();
+
+
+            this.updatePaymentRecords();
+        }
     }
 
 
@@ -170,6 +214,17 @@ public class HomeActivity extends AppCompatActivity {
 
     }
 
+
+
+    public static void clearControlsFocus(Activity activity){
+        View v = activity.getCurrentFocus();
+
+        if(v != null){
+            InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+            v.clearFocus();
+        }
+    }
 
     public static void changeLocaleDefault(){
         Locale.setDefault(HomeActivity.originLocale);

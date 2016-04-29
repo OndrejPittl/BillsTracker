@@ -22,6 +22,7 @@ import java.util.ArrayList;
 
 import cz.ondrejpittl.semestralka.R;
 import cz.ondrejpittl.semestralka.StatisticsActivity;
+import cz.ondrejpittl.semestralka.layout.CustomSpinner;
 import cz.ondrejpittl.semestralka.layout.StatsChart;
 import cz.ondrejpittl.semestralka.models.Category;
 import cz.ondrejpittl.semestralka.partial.JodaCalendar;
@@ -44,12 +45,16 @@ public class StatsUIController {
     private LayoutInflater layoutInflater;
 
 
+    private LinearLayout activeChartsContainer;
     private LinearLayout monthChartsContainer;
     private LinearLayout yearChartsContainer;
 
     private boolean portraitOrientation;
 
     private int chartHeight;
+    private int[] chartPadding;
+
+
 
     /**
      * Date button firing datepicker dialog.
@@ -81,13 +86,17 @@ public class StatsUIController {
      * Initializes UI of Home activity.
      */
     private void initUI(){
+        this.chartPadding = new int[2];
         this.portraitOrientation = isPortraitOrientation();
         this.layoutInflater = (LayoutInflater) this.activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.monthChartsContainer = (LinearLayout) this.activity.findViewById(R.id.monthChartsContainer);
         this.yearChartsContainer = (LinearLayout) this.activity.findViewById(R.id.yearChartsContainer);
 
+        Log.i("Ondra-debugLand", "initializing UI controller.");
+
+
         this.registerDateButton();
-        this.updateChartHeight();
+        //this.updateChartHeight();
 
         if(!this.portraitOrientation) {
             //landscape
@@ -103,9 +112,11 @@ public class StatsUIController {
                 activity.showDialog(dateDialogID);
             }
         });
+
+        this.updateDateButton(new DateTime());
     }
 
-    private void clearControlsFocus(){
+    /*private void clearControlsFocus(){
         View v = this.activity.getCurrentFocus();
 
         if(v != null){
@@ -113,7 +124,7 @@ public class StatsUIController {
             imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
             v.clearFocus();
         }
-    }
+    }*/
 
     private void updateChartHeight(){
         LinearLayout container;
@@ -127,7 +138,24 @@ public class StatsUIController {
         container.measure(View.MeasureSpec.makeMeasureSpec(getDislayWidthInPx(), View.MeasureSpec.AT_MOST),
                 View.MeasureSpec.makeMeasureSpec(getDislayHeightInPx(), View.MeasureSpec.AT_MOST));
 
-        this.chartHeight = (int) ((getDislayHeightInPx() - container.getMeasuredHeight()) * 0.9);
+        float percetnage = 0.8f;
+
+        if(this.monthStatsData.getRecordCount() < 2 || this.yearStatsData.getRecordCount() < 2) {
+            percetnage = 0.6f;
+        }
+
+        this.chartHeight = (int) ((getDislayHeightInPx() - container.getMeasuredHeight()) * percetnage);
+
+
+        //padding
+
+        float complement = 0.8f - percetnage;
+
+        //horizontal – currently not used
+        this.chartPadding[0] = (int) (getDislayWidthInPx() * complement)/2;
+
+        //vertical
+        this.chartPadding[1] = (int) (getDislayHeightInPx() * complement)/3;
     }
 
     private void customizeLandscapeOrientation(){
@@ -141,7 +169,7 @@ public class StatsUIController {
     }
 
 
-    public void buildStats(){
+    public void drawStats(){
         /*for(int i = 0; i < 3; i++) {
             StatsChart chart = (StatsChart) layoutInflater.inflate(R.layout.stats_chart, monthChartsContainer, false);
             this.monthChartsContainer.addView(chart);
@@ -149,17 +177,18 @@ public class StatsUIController {
             Log.i("Ondra-chart", "x");
         }*/
 
-        this.buildMonthStats();
-
-        //this.buildYearStats();
-
-
+        this.updateChartHeight();
+        this.drawMonthStats();
+        this.drawYearStats();
     }
 
-    private void buildMonthStats(){
+    private void drawMonthStats(){
+        this.setActiveChartContanerMonth();
         this.monthChartsContainer.removeAllViews();
 
         TextView monthNoData = (TextView) this.activity.findViewById(R.id.statisticsMonthNoDataLabel);
+        TextView monthLabel = (TextView) this.activity.findViewById(R.id.statisticsMonthHeadingLabel);
+        monthLabel.setText(JodaCalendar.getMonthName(this.monthStatsData.getMonth()));
 
         if(this.monthStatsData.isEmpty()) {
             //Log.i("Ondra-stats", "NO DATA");
@@ -173,20 +202,26 @@ public class StatsUIController {
         }
     }
 
-    private void buildYearStats(){
+    private void drawYearStats(){
+        this.setActiveChartContanerYear();
         this.yearChartsContainer.removeAllViews();
 
         TextView yearNoData = (TextView) this.activity.findViewById(R.id.statisticsYearNoDataLabel);
 
-        if(this.monthStatsData.isEmpty()) {
+        TextView yearLabel = (TextView) this.activity.findViewById(R.id.statisticsYearHeadingLabel);
+        yearLabel.setText(String.valueOf(this.yearStatsData.getYear()));
+
+
+
+        if(this.yearStatsData.isEmpty()) {
             //Log.i("Ondra-stats", "y NO DATA");
             yearNoData.setVisibility(View.VISIBLE);
         } else {
             //Log.i("Ondra-stats", "y DATA");
             yearNoData.setVisibility(View.GONE);
             this.buildYearBarChart(null);
-            /*this.buildYearLineChart(null);
-            this.buildYearPieChart(null);*/
+            this.buildYearLineChart(null);
+            this.buildYearPieChart(null);
         }
 
     }
@@ -194,7 +229,7 @@ public class StatsUIController {
 
     private StatsChart inflateChart(){
         StatsChart chart = (StatsChart) layoutInflater.inflate(R.layout.stats_chart, monthChartsContainer, false);
-        this.monthChartsContainer.addView(chart);
+        this.activeChartsContainer.addView(chart);
         return chart;
     }
 
@@ -202,14 +237,18 @@ public class StatsUIController {
         StatsChart chart = inflateChart();
         chart.setLabel(label);
         chart.setData(data);
-        chart.init(this.portraitOrientation, this.chartHeight);
+        chart.init(this.portraitOrientation, this.chartHeight, this.chartPadding);
         chart.buildBarChart();
     }
 
     private void buildLineChart(StatisticsChartObject data, String label){
+
+        //no sense in this case
+        if(data.getRecordCount() < 2) return;
+
         StatsChart chart = inflateChart();
         chart.setData(data);
-        chart.init(this.portraitOrientation, this.chartHeight);
+        chart.init(this.portraitOrientation, this.chartHeight, this.chartPadding);
         chart.buildLineChart();
     }
 
@@ -217,7 +256,7 @@ public class StatsUIController {
         StatsChart chart = inflateChart();
         chart.setLabel(label);
         chart.setData(data);
-        chart.init(this.portraitOrientation, this.chartHeight);
+        chart.init(this.portraitOrientation, this.chartHeight, this.chartPadding);
         chart.buildPieChart();
     }
 
@@ -243,6 +282,17 @@ public class StatsUIController {
 
     private void buildYearPieChart(String label){
         this.buildPieChart(this.yearStatsData, label);
+    }
+
+
+
+
+    private void setActiveChartContanerMonth(){
+        this.activeChartsContainer = this.monthChartsContainer;
+    }
+
+    private void setActiveChartContanerYear(){
+        this.activeChartsContainer = this.yearChartsContainer;
     }
 
     private void initCharts(){
@@ -272,26 +322,15 @@ public class StatsUIController {
      * @param d Selected day.
      */
     private void updateDateButton(int y, int m, int d){
-        DateTime now = new DateTime();
-        DateTime selected = new DateTime().withYearOfEra(y).withMonthOfYear(m).withDayOfMonth(d);
 
-        /*Log.i("Ondra-stats", "now: " + now);
-        Log.i("Ondra-stats", "sel: " + selected);*/
+        dateButton.setText(JodaCalendar.getMonthName(m) + ", " + y);
 
-        if(JodaCalendar.compareMonthYear(now, selected)) {
-            if(JodaCalendar.compareDateTimes(now, selected)) {
-                this.dateButton.setText("Today");
-                return;
-            } else if(JodaCalendar.compareDateTimes(now, JodaCalendar.clone(selected).plusDays(1))) {
-                this.dateButton.setText("Yesterday");
-                return;
-            } else if(JodaCalendar.compareDateTimes(now, JodaCalendar.clone(selected).minusDays(1))) {
-                this.dateButton.setText("Tomorrow");
-                return;
-            }
-        }
+    }
 
-        dateButton.setText(d + ". " + m + ". " + y);
+    private void updateDateButton(DateTime date){
+
+        dateButton.setText(JodaCalendar.getMonthName(date.getMonthOfYear()) + ", " + date.getYearOfEra());
+
     }
 
 
@@ -331,19 +370,8 @@ public class StatsUIController {
 
 
     public void buildCategoryControls(ArrayList<Category> categories){
-        final Spinner spinner = (Spinner) this.activity.findViewById(R.id.statsCategory);
-        ArrayAdapter<Category> adapter = new ArrayAdapter<Category>(this.activity, R.layout.spinner_item, categories);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
-
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                activity.handleDisplayCategoryChange((Category) spinner.getSelectedItem());
-            }
-
-            public void onNothingSelected(AdapterView<?> parent) {}
-        });
-
+        final CustomSpinner spinner = (CustomSpinner) this.activity.findViewById(R.id.statsCategory);
+        spinner.init(this.activity, categories);
     }
 
 

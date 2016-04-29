@@ -59,6 +59,8 @@ public class DBManager extends SQLiteOpenHelper {
 
         Log.i("Ondra", "All tables created.");
 
+        Log.i("Ondra-debugLand", "initializing DB manager.");
+
     }
 
 
@@ -99,6 +101,10 @@ public class DBManager extends SQLiteOpenHelper {
         return this.categories.selectAllCategories();
     }
 
+    public ArrayList<Currency> getStoredCurrencies(){
+        return this.currencies.selectAllCurrency();
+    }
+
     public ArrayList<Payment> getPaymentsByMonth(int month, int year){
         return this.payments.selectPaymentsOfMonth(month, year);
     }
@@ -115,6 +121,9 @@ public class DBManager extends SQLiteOpenHelper {
         return this.payments.selectPaymentsOfYear(year, category);
     }
 
+    public ArrayList<Payment> getCategorySummaryByYear(int year, String category){
+        return this.payments.selectCategorySummaryOfYear(year, category);
+    }
 
     public void updateDefaultCurrency(String curr){
         if(this.currencies.checkIfCurrencyExists(curr))
@@ -188,6 +197,9 @@ public class DBManager extends SQLiteOpenHelper {
         });
     }
 
+    public void eraseAllPayments(){
+        this.payments.deletePayments();
+    }
 
     public String packToJson() {
         Gson gson = new Gson();

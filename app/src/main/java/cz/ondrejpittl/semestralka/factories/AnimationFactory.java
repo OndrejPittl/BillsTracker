@@ -18,6 +18,7 @@ import cz.ondrejpittl.semestralka.R;
 import cz.ondrejpittl.semestralka.layout.PaymentRecord;
 import cz.ondrejpittl.semestralka.partial.PaymentRecordStateEnum;
 import cz.ondrejpittl.semestralka.partial.PaymentRecordsAnimation;
+import cz.ondrejpittl.semestralka.partial.SharedPrefs;
 
 /**
  * Created by OndrejPittl on 15.04.16.
@@ -27,9 +28,17 @@ public class AnimationFactory {
 
 
     public static void fadeInPaymentRecords(final ArrayList<PaymentRecord> records){
+        boolean animationAllowed = SharedPrefs.isPaymentAnimationSet() && SharedPrefs.getPaymentAnimation();
+
         int y = 0;
         for (final PaymentRecord rec : records) {
             final int i = y++;
+
+            if(!animationAllowed) {
+                rec.setAlpha(1f);
+                continue;
+            }
+
             new Handler().postDelayed(new Runnable() {
                 public void run() {
                     ObjectAnimator anim = ObjectAnimator.ofFloat(rec, "alpha", 0f, 1f);
@@ -44,7 +53,14 @@ public class AnimationFactory {
         if(records == null || records.size() <= 0)
             return;
 
+        boolean animationAllowed = SharedPrefs.isPaymentAnimationSet() && SharedPrefs.getPaymentAnimation();
+
         for (final PaymentRecord rec : records) {
+
+            if(!animationAllowed) {
+                rec.setAlpha(0f);
+                continue;
+            }
 
             Animation fadeout = new AlphaAnimation(1.f, 0.f);
             fadeout.setDuration(250);
@@ -173,22 +189,22 @@ public class AnimationFactory {
         if(rec.getCollapsedHeight() < 0)
             rec.setCollapsedHeight(v.getHeight() - 5);
 
-        //note height
+        /*//note height
         TextView tvNote = (TextView) v.findViewById(R.id.txtViewRecordNote);
         tvNote.measure(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        final int noteHeight = tvNote.getMeasuredHeight() + 10;
+        final int noteHeight = tvNote.getMeasuredHeight() + 10;*/
 
         //base height
         final int targetHeight = rec.getCollapsedHeight();
 
         if(rec.isCollapsed()) {
-            from = targetHeight;
-            to = from + noteHeight;
+            from = rec.getCollapsedRecHeight();
+            to = rec.getUncollapsedRecHeight();
             diff = to - from;
             rec.setCollapsed(false);
         } else {
-            to = targetHeight;
-            from = to + noteHeight;
+            to = rec.getCollapsedRecHeight();
+            from = rec.getUncollapsedRecHeight();
             diff = to - from;
             rec.setCollapsed(true);
         }
@@ -204,7 +220,15 @@ public class AnimationFactory {
         };
 
         // 1dp/ms
-        a.setDuration((int) (targetHeight + noteHeight / v.getContext().getResources().getDisplayMetrics().density));
+
+        boolean animationAllowed = SharedPrefs.isPaymentAnimationSet() && SharedPrefs.getPaymentAnimation();
+        int dur = (int) (to / v.getContext().getResources().getDisplayMetrics().density);
+
+        if(!animationAllowed) {
+            dur = 1;
+        }
+
+        a.setDuration(dur);
         a.setFillEnabled(true);
         a.setFillAfter(true);
         v.startAnimation(a);

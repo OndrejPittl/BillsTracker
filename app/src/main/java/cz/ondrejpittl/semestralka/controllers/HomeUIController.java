@@ -37,12 +37,14 @@ import java.util.Calendar;
 import cz.ondrejpittl.semestralka.HomeActivity;
 import cz.ondrejpittl.semestralka.R;
 import cz.ondrejpittl.semestralka.factories.AnimationFactory;
+import cz.ondrejpittl.semestralka.layout.CustomSpinner;
 import cz.ondrejpittl.semestralka.layout.PaymentRecord;
 import cz.ondrejpittl.semestralka.models.Category;
 import cz.ondrejpittl.semestralka.models.Payment;
 import cz.ondrejpittl.semestralka.models.Statistics;
 import cz.ondrejpittl.semestralka.models.Store;
 import cz.ondrejpittl.semestralka.partial.JodaCalendar;
+import cz.ondrejpittl.semestralka.partial.SharedPrefs;
 
 import static cz.ondrejpittl.semestralka.R.color.appError;
 import static cz.ondrejpittl.semestralka.R.drawable.shape_thin_border;
@@ -58,7 +60,7 @@ public class HomeUIController {
     /**
      * Activity its UI is being controlled.
      */
-    private Activity activity;
+    private HomeActivity activity;
 
     /**
      * Object inflating view defined as XML.
@@ -73,6 +75,8 @@ public class HomeUIController {
 
 
     private SharedPreferences prefs;
+
+    private boolean animationAllowed;
 
     /**
      * Calendar singleton object reference with actual date.
@@ -117,7 +121,7 @@ public class HomeUIController {
      * Constructor. Controller initialization.
      * @param activity  Activity its UI is being controlled.
      */
-    public HomeUIController(Activity activity){
+    public HomeUIController(HomeActivity activity){
         this.activity = activity;
     }
 
@@ -130,6 +134,8 @@ public class HomeUIController {
         this.prefs = this.activity.getSharedPreferences("cz.ondrejpittl.semestralka", Context.MODE_PRIVATE);
         this.layoutInflater = (LayoutInflater) this.activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.paymentRecordsContainer = (LinearLayout) this.activity.findViewById(R.id.recordsContainer);
+
+        this.animationAllowed = SharedPrefs.isPaymentAnimationSet() && SharedPrefs.getPaymentAnimation();
 
         buildControlPanel();
 
@@ -157,7 +163,7 @@ public class HomeUIController {
 
     }
 
-    private void hideKeyboard() {
+    /*private void hideKeyboard() {
         InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
 
         //skryj soft klávesnici
@@ -165,17 +171,23 @@ public class HomeUIController {
 
         //zobraz soft klávestnici
         //imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-    }
+    }*/
 
     public void updatePaymentRecords(final String month, final int year, final ArrayList<Payment> payments, final String currencyUnits, final HomeDataController dControl){
         AnimationFactory.fadeOutPaymentRecords(this.records);
+
+        int timeOffset = 230;
+
+        if(!animationAllowed) {
+            timeOffset = 1;
+        }
 
         new Handler().postDelayed(new Runnable() {
             public void run() {
                 updateDateLabels(month, year);
                 buildPaymentBoxes(payments, currencyUnits, dControl);
             }
-        }, 230);
+        }, timeOffset);
     }
 
     private void updateDateLabels(String month, int year){
@@ -200,7 +212,6 @@ public class HomeUIController {
 
         records = new ArrayList<>();
 
-
         for(Payment p : payments) {
             final PaymentRecord record = (PaymentRecord) layoutInflater.inflate(R.layout.payment_record, paymentRecordsContainer, false);
 
@@ -209,8 +220,9 @@ public class HomeUIController {
             //record.setPaymentId(p.getID());
 
             record.setAlpha(0);
-
             record.setPayment(p);
+            //record.updateIconVisibility();
+
             //record.setHomeController(dControl);
 
             record.getRecordDeleteBtn().setOnTouchListener(new View.OnTouchListener() {
@@ -271,7 +283,11 @@ public class HomeUIController {
 
             this.records.add(record);
             paymentRecordsContainer.addView(record);
+            record.updateRecordHeight(this.activity);
+            record.updateIconVisibility();
         }
+
+        updateRecordsHeight();
 
         AnimationFactory.fadeInPaymentRecords(this.records);
 
@@ -313,7 +329,7 @@ public class HomeUIController {
         this.dateButton = (Button) this.activity.findViewById(R.id.btn_date);
         this.dateButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                clearControlsFocus();
+                HomeActivity.clearControlsFocus(activity);
                 activity.showDialog(dateDialogID);
             }
         });
@@ -330,19 +346,25 @@ public class HomeUIController {
     }*/
 
     public void buildCategoryControls(ArrayList<Category> categories){
-        final Spinner spinner = (Spinner) this.activity.findViewById(R.id.spinner_category);
-        ArrayAdapter<Category> adapter = new ArrayAdapter<Category>(this.activity, R.layout.spinner_item, categories);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
+        final CustomSpinner spinner = (CustomSpinner) this.activity.findViewById(R.id.spinner_category);
+        spinner.init(this.activity, categories);
+
+        this.updateCategoryControlsSelection();
+
         spinner.setOnTouchListener(new View.OnTouchListener() {
             public boolean onTouch(View v, MotionEvent event) {
-                clearControlsFocus();
+                HomeActivity.clearControlsFocus(activity);
                 return false;
             }
         });
     }
 
-    private void clearControlsFocus(){
+    public void updateCategoryControlsSelection(){
+        CustomSpinner spinner = (CustomSpinner) this.activity.findViewById(R.id.spinner_category);
+        spinner.selectItem(SharedPrefs.getDefaultCategory());
+    }
+
+    /*private void clearControlsFocus(){
         View v = this.activity.getCurrentFocus();
 
         if(v != null){
@@ -350,7 +372,7 @@ public class HomeUIController {
             imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
             v.clearFocus();
         }
-    }
+    }*/
 
 
 
@@ -368,18 +390,21 @@ public class HomeUIController {
      * Initializes store selection controls.
      */
     public void buildStoreControls(ArrayList<Store> stores) {
-        Spinner spinner = (Spinner) this.activity.findViewById(R.id.spinner_store);
-        ArrayAdapter<Store> adapter = new ArrayAdapter<Store>(this.activity, R.layout.spinner_item, stores);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
+        final CustomSpinner spinner = (CustomSpinner) this.activity.findViewById(R.id.spinner_store);
+        spinner.init(this.activity, stores);
+        this.updateStoreControlsSelection();
         spinner.setOnTouchListener(new View.OnTouchListener() {
             public boolean onTouch(View v, MotionEvent event) {
-                clearControlsFocus();
+                HomeActivity.clearControlsFocus(activity);
                 return false;
             }
         });
     }
 
+    public void updateStoreControlsSelection(){
+        CustomSpinner spinner = (CustomSpinner) this.activity.findViewById(R.id.spinner_store);
+        spinner.selectItem(SharedPrefs.getDefaultStore());
+    }
 
 
     /**
@@ -532,8 +557,9 @@ public class HomeUIController {
         updateDateButton(y, m, d);
 
         //category spinner
-        Spinner catSpin = (Spinner) this.activity.findViewById(R.id.spinner_category);
-        catSpin.setSelection(0, true);
+        CustomSpinner catSpin = (CustomSpinner) this.activity.findViewById(R.id.spinner_category);
+        //catSpin.setSelection(0, true);
+        catSpin.selectItem(SharedPrefs.getDefaultCategory());
 
         //amount edittext
         EditText etA = (EditText) this.activity.findViewById(edTxt_amount);
@@ -544,14 +570,15 @@ public class HomeUIController {
         etN.setText("");
 
         //store spinner
-        Spinner stSpin = (Spinner) this.activity.findViewById(R.id.spinner_store);
-        stSpin.setSelection(0, true);
+        CustomSpinner stSpin = (CustomSpinner) this.activity.findViewById(R.id.spinner_store);
+        //stSpin.setSelection(0, true);
+        stSpin.selectItem(SharedPrefs.getDefaultStore());
 
 
         if(editingRecord != null)
             editingRecord.setEditing(false);
 
-        this.clearControlsFocus();
+        HomeActivity.clearControlsFocus(activity);
         this.unmarkInputAmountError();
     }
 
@@ -563,7 +590,7 @@ public class HomeUIController {
         contents[0] = String.valueOf(this.calendar.getMillis());
 
         //category
-        Spinner catSpin = (Spinner) this.activity.findViewById(R.id.spinner_category);
+        CustomSpinner catSpin = (CustomSpinner) this.activity.findViewById(R.id.spinner_category);
         contents[1] = ((Category) catSpin.getSelectedItem()).getName();
         contents[2] = String.valueOf(((Category) catSpin.getSelectedItem()).getID());
 
@@ -576,7 +603,7 @@ public class HomeUIController {
         contents[4] = String.valueOf(etN.getText());
 
         //store
-        Spinner stSpin = (Spinner) this.activity.findViewById(R.id.spinner_store);
+        CustomSpinner stSpin = (CustomSpinner) this.activity.findViewById(R.id.spinner_store);
         contents[5] = ((Store) stSpin.getSelectedItem()).getName();
         contents[6] = String.valueOf(((Store) stSpin.getSelectedItem()).getID());
 
@@ -618,8 +645,9 @@ public class HomeUIController {
         updateDateButton(y, m+1, d);
 
         //category spinner
-        Spinner catSpin = (Spinner) this.activity.findViewById(R.id.spinner_category);
-        catSpin.setSelection(findSpinnerItemIndex(catSpin, p.getCategory().getName()), true);
+        CustomSpinner catSpin = (CustomSpinner) this.activity.findViewById(R.id.spinner_category);
+        //catSpin.setSelection(catSpin.findSpinnerItemIndex(p.getCategory().getName()), true);
+        catSpin.selectItem(p.getCategory().getName());
 
         //amount edittext
         EditText etA = (EditText) this.activity.findViewById(edTxt_amount);
@@ -630,18 +658,11 @@ public class HomeUIController {
         etN.setText(p.getNote());
 
         //store spinner
-        Spinner stSpin = (Spinner) this.activity.findViewById(R.id.spinner_store);
-        stSpin.setSelection(findSpinnerItemIndex(stSpin, p.getStore().getName()), true);
+        CustomSpinner stSpin = (CustomSpinner) this.activity.findViewById(R.id.spinner_store);
+        //stSpin.setSelection(stSpin.findSpinnerItemIndex(p.getStore().getName()), true);
+        stSpin.selectItem(p.getCategory().getName());
     }
 
-    private int findSpinnerItemIndex(Spinner s, String value){
-        for(int i = 0; i < s.getCount(); i++) {
-            String val = s.getItemAtPosition(i).toString();
-            if(val.equals(value)) return i;
-        }
-
-        return 0;
-    }
 
     public void setInsertUpdateButtonText(boolean editing){
         Button btn = (Button) this.activity.findViewById(R.id.btn_ok);
@@ -653,6 +674,19 @@ public class HomeUIController {
         }
     }
 
+    public void updateRecordsHeight(){
+        boolean collapsed = SharedPrefs.isPaymentNoteDisplaySet() && !SharedPrefs.getPaymentNoteDisplay();
+            int childcount = paymentRecordsContainer.getChildCount();
+
+        if(childcount <= 0)
+            return;
+
+        for (int i=0; i < childcount; i++){
+            PaymentRecord rec = (PaymentRecord) paymentRecordsContainer.getChildAt(i);
+            rec.setCollapsed(collapsed);
+            rec.updateRecordHeight(this.activity);
+        }
+    }
 
 
 
@@ -660,8 +694,7 @@ public class HomeUIController {
     private void resetVisitOnDoubleTap(){
         final GestureDetector.SimpleOnGestureListener listener = new GestureDetector.SimpleOnGestureListener() {
             public boolean onDoubleTap(MotionEvent e) {
-                prefs.edit().clear();
-                prefs.edit().putBoolean("firstLaunch", true).commit();
+                SharedPrefs.reset();
                 Toast.makeText(activity, "Time-travelled back.", Toast.LENGTH_SHORT).show();
                 return true;
             }

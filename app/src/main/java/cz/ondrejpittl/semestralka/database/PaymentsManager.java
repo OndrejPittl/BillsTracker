@@ -149,14 +149,18 @@ public class PaymentsManager extends TableManager {
 
     public ArrayList<Payment> selectAllPayments(){
         Cursor c = selectAllRecords();
-        return this.buildPaymentArraylistFromCursor(c);
+        ArrayList<Payment> col = this.buildPaymentArraylistFromCursor(c);
+        c.close();
+        return col;
     }
 
     public ArrayList<Payment> selectPayments(String[][] wheres, String[][] orderBy) {
         //wheres: {{"name", "=", "John"}, {"age", "<", 27}}
         //orderBy: {{"id", "asc"}, {"name", "desc"}}
         Cursor c = selectRecord(wheres, orderBy);
-        return this.buildPaymentArraylistFromCursor(c);
+        ArrayList<Payment> col = this.buildPaymentArraylistFromCursor(c);
+        c.close();
+        return col;
     }
 
     public ArrayList<Payment> selectPaymentsDetailed(String tableCols, String tables, String[][] wheres, String[][] orderBy) {
@@ -166,13 +170,27 @@ public class PaymentsManager extends TableManager {
         //wheres: {{"name", "=", "John"}, {"age", "<", 27}}
         //orderBy: {{"id", "asc"}, {"name", "desc"}}
         Cursor c = selectRecord(wheres, orderBy);
-        return this.buildPaymentArraylistFromCursorAliased(c);
+        ArrayList<Payment> col = this.buildPaymentArraylistFromCursorAliased(c);
+        c.close();
+
+        return col;
     }
 
     public ArrayList<Payment> selectCategorySummaryOfMonth(int month, int year, String category){
         long from = this.jodaCalendar.getFirstDayOfMonth(month, year).getMillis(),
                 to = this.jodaCalendar.getLastDayOfMonth(month, year).getMillis();
 
+        return this.selectCategorySummaryIn(from, to, category);
+    }
+
+    public ArrayList<Payment> selectCategorySummaryOfYear(int year, String category){
+        long from = this.jodaCalendar.getFirstDayOfYear(year).getMillis(),
+               to = this.jodaCalendar.getLastDayOfYear(year).getMillis();
+
+        return this.selectCategorySummaryIn(from, to, category);
+    }
+
+    public ArrayList<Payment> selectCategorySummaryIn(long from, long to, String category){
         String  tableCols = "sum(tb_payments.amount) as amount, tb_categories.id as categories_id, tb_categories.name",
                 tables = "tb_payments inner join tb_categories on tb_payments.id_category = tb_categories.id";
 
@@ -182,9 +200,9 @@ public class PaymentsManager extends TableManager {
                 tableCols,
                 tables,
                 new String[][]{
-                    {PaymentsManager.COLUMN_DATE, ">=", "" + String.valueOf(from)},
-                    {PaymentsManager.COLUMN_DATE, "<=", String.valueOf(to)},
-                    {CategoryManager.getColumnName(), "like", "%" + category + "%"}
+                        {PaymentsManager.COLUMN_DATE, ">=", "" + String.valueOf(from)},
+                        {PaymentsManager.COLUMN_DATE, "<=", String.valueOf(to)},
+                        {CategoryManager.getColumnName(), "like", "%" + category + "%"}
                 },
                 new String[]{CategoryManager.getColumnIdAliased()},
                 new String[][]{{PaymentsManager.COLUMN_DATE, "asc"}},
@@ -202,6 +220,8 @@ public class PaymentsManager extends TableManager {
             c.moveToNext();
         }
 
+        c.close();
+
         return payments;
     }
 
@@ -212,7 +232,9 @@ public class PaymentsManager extends TableManager {
         int limit = -1;
 
         Cursor c = this.selectRecordsDetailed(tableCols, tables, wheres, null, orderBy, limit);
-        return this.buildPaymentArraylistFromCursorAliased(c);
+        ArrayList<Payment> col = this.buildPaymentArraylistFromCursorAliased(c);
+        c.close();
+        return col;
     }
 
     public ArrayList<Payment> selectPaymentsOfMonth(int month, int year, String category) {
@@ -333,6 +355,10 @@ public class PaymentsManager extends TableManager {
 
     public int deletePayment(String[][] wheres){
         return deleteRecord(wheres);
+    }
+
+    public int deletePayments(){
+        return deleteRecords();
     }
 
     public int updatePayment(String[][] changes, String[][] wheres) {

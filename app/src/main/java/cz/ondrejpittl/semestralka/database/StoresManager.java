@@ -111,14 +111,20 @@ public class StoresManager extends TableManager {
 
     public ArrayList<Store> selectAllStores(){
         Cursor c = selectAllRecords();
-        return this.buildStoresArraylistFromCursor(c);
+        ArrayList<Store> col = this.buildStoresArraylistFromCursor(c);
+        c.close();
+
+        return col;
     }
 
     public ArrayList<Store> selectStores(String[][] wheres, String[][] orderBy) {
         //wheres: {{"name", "=", "John"}, {"age", "<", 27}}
         //orderBy: {{"id", "asc"}, {"name", "desc"}}
         Cursor c = selectRecord(wheres, orderBy);
-        return this.buildStoresArraylistFromCursor(c);
+        ArrayList<Store> col = this.buildStoresArraylistFromCursor(c);
+        c.close();
+
+        return col;
     }
 
 

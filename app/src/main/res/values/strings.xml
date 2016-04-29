@@ -20,24 +20,31 @@
 
     <!-- Login Screen -->
     <!-- Register -->
-    <string name="loginPleaseLogin">Enter your PIN please.</string>
+    <string name="loginSettingUp">Setting up...</string>
+    <!--<string name="loginSettingUp">Just one step...</string>-->
+    <string name="loginLetsStart">Let\'s start setting you PIN.</string>
     <string name="loginLogin">– set PIN code –</string>
 
     <!-- Login -->
+    <!-- after setting up -->
+    <string name="loginExcellent">Excellent!</string>
+    <string name="loginShopping">Log in and go ahead shopping! :)</string>
+
+    <!-- other times -->
     <string name="loginWelcomeBack">Welcome back!</string>
     <string name="loginOtherTime">Some expenses? Again?</string>
+
     <string name="loginEnter">– enter –</string>
+    <string name="loginOK">Successfully logged in.</string>
+    <string name="loginERR">Sorry! Try again.</string>
 
 
     <!-- About activity -->
     <string name="title_activity_about">AboutActivity</string>
-    <string name="headingAboutApp">About this app</string>
-    <string name="loremIpsum">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-    tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-    quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-    consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-    cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-    proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</string>
+    <string name="headingAboutApp">About BillsTracker</string>
+    <string name="desc1">BillsTracker is an app monitoring your payments making you well informed about your expenses in the way of global point of view. Collected data are being classified and shown sorted in the first part of this app. In the second one stored payment records are being summarized and represented with charts inspecting them with their dependencies.</string>
+    <string name="desc2">This app was designed with emphasis on simple user-interface providing as easy usage as possible. Keeping records means a duty coming with laziness of observing this principle. This app should lend you a helping hand with it through a simple UI and easy usage that are its main priorities, besides clean design.</string>
+    <string name="descAuthor">BillsTracker was created by Ondřej Pittl, an IT student of the Faculty of Applied Science of University of West Bohemia.</string>
 
 
     <!-- Home activity -->
@@ -55,9 +62,9 @@
     <string name="price_mock">0</string>
 
 
-        <!-- controls -->
-        <string name="btn_dateTxt">today</string>
-        <string name="title_activity_statistics">StatisticsActivity</string>
+    <!-- controls -->
+    <string name="btn_dateTxt">today</string>
+    <string name="title_activity_statistics">StatisticsActivity</string>
 
 
     <!-- Statistics activity-->
@@ -66,7 +73,21 @@
     <string name="statisticsYearHeading">Year statistics</string>
     <string name="statisticsNoData">No statistics data.</string>
 
-
+    <!-- Settings activity -->
+    <string name="title_activity_settings">SettingsActivity</string>
+    <string name="settingsHeading">Settings</string>
+    <string name="settingsDisplay">Display</string>
+    <string name="settingsBehaviour">Behaviour</string>
+    <string name="settingsPasswordReq">Require password</string>
+    <string name="settingsAutocollapse">Display payment notes</string>
+    <string name="settingsAnimations">Payment animations</string>
+    <string name="settingsIcons">Display payment icons</string>
+    <string name="settingsDefaults">Defaults</string>
+    <string name="settingsDefCurrency">Currency</string>
+    <string name="settingsDefCategory">Category</string>
+    <string name="settingsDefStore">Store</string>
+    <string name="settingsRestore">Restore defaults.</string>
+    <string name="settingsErase">Erase all records.</string>
 
 
     <!--<string-array name="categories">

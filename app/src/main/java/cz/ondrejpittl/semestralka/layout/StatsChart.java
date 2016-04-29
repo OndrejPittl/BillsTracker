@@ -1,7 +1,6 @@
 package cz.ondrejpittl.semestralka.layout;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -11,30 +10,17 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.BarChart;
-import com.github.mikephil.charting.charts.BarLineChartBase;
 import com.github.mikephil.charting.charts.Chart;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
-import com.github.mikephil.charting.data.BarDataSet;
-import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.data.PieData;
-import com.github.mikephil.charting.data.PieDataSet;
-import com.github.mikephil.charting.utils.ColorTemplate;
-
-import org.w3c.dom.Text;
-
-import java.util.ArrayList;
 
 import cz.ondrejpittl.semestralka.R;
-import cz.ondrejpittl.semestralka.models.Statistics;
-import cz.ondrejpittl.semestralka.partial.ChartType;
 import cz.ondrejpittl.semestralka.partial.StatisticsChartObject;
-import cz.ondrejpittl.semestralka.partial.StatisticsType;
 
 /**
  * Created by OndrejPittl on 15.04.16.
@@ -44,6 +30,7 @@ public class StatsChart extends LinearLayout {
     private FrameLayout container;
 
     private int chartHeight;
+    private int[] chartPadding;
 
     private Chart chart;
 
@@ -58,7 +45,7 @@ public class StatsChart extends LinearLayout {
         super(context, attrs);
     }
 
-    public void init(boolean collapsed, int devHeight){
+    public void init(boolean collapsed, int devHeight, int[] chartPadding){
 
         /*switch (this.type) {
             case YEAR_SUMMARY:
@@ -73,12 +60,14 @@ public class StatsChart extends LinearLayout {
         this.container = (FrameLayout) findViewById(R.id.chContainer);
         this.collapsed = collapsed;
         this.chartHeight = devHeight;
-        this.updateChartHeight();
+        this.chartPadding = chartPadding;
+
+        this.updateChartDimensions();
 
         Log.i("Ondra-chart", "chart init");
     }
 
-    private void updateChartHeight(){
+    private void updateChartDimensions(){
         ViewGroup.LayoutParams params = this.getLayoutParams();
         params.height = this.chartHeight;
         this.setLayoutParams(params);
@@ -89,6 +78,10 @@ public class StatsChart extends LinearLayout {
 
         TextView lbl = (TextView) findViewById(R.id.txtViewChartLabel);
         lbl.setText(label);
+    }
+
+    private void setChartPadding(){
+        this.setPadding(0, this.chartPadding[1], 0, this.chartPadding[1]);
     }
 
     public void setData(StatisticsChartObject data){
@@ -161,6 +154,7 @@ public class StatsChart extends LinearLayout {
 
         this.chart = chart;
         this.container.addView(this.chart);
+        this.setChartPadding();
 
         this.chart.setData(data);
         //this.chart.highlightValues(null);
@@ -182,6 +176,7 @@ public class StatsChart extends LinearLayout {
 
         this.chart = chart;
         this.container.addView(this.chart);
+        this.setChartPadding();
 
         this.chart.setData(data);
         //this.chart.highlightValues(null);
@@ -200,8 +195,6 @@ public class StatsChart extends LinearLayout {
         this.container.addView(this.chart);
 
         this.chart.setData(data);
-        //this.chart.highlightValues(null);
-        //this.chart.setHighlightEnabled(false);
         this.chart.invalidate();
     }
 

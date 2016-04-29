@@ -21,10 +21,10 @@
 
     <!-- home controls-->
     <color name="appMainControlsBg">#66FFFFFF</color>
-    <color name="appButtonOK">#9ab47e</color>
-    <color name="appButtonOKStroke">#949d6e</color>
-    <color name="appButtonCancel">#bf9a7f</color>
-    <color name="appButtonCancelStroke">#bd947c</color>
+    <color name="appButtonOK">#92b588</color>
+    <color name="appButtonOKStroke">#86a87b</color>
+    <color name="appButtonCancel">#bf967f</color>
+    <color name="appButtonCancelStroke">#bb8c73</color>
 
     <!-- home payment records-->
     <color name="appPaymentRecordLabels">#bf9a7f</color>

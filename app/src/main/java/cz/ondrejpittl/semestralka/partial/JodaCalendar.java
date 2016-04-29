@@ -4,6 +4,10 @@ import android.util.Log;
 
 import org.joda.time.DateTime;
 
+import java.util.Locale;
+
+import cz.ondrejpittl.semestralka.models.Statistics;
+
 /**
  * Created by OndrejPittl on 08.04.16.
  *
@@ -13,6 +17,7 @@ public class JodaCalendar {
 
     private DateTime date;
 
+    private static Locale prevLocale;
 
 
 
@@ -123,6 +128,60 @@ public class JodaCalendar {
                 .withYearOfEra(orig.getYearOfEra())
                 .withMonthOfYear(orig.getMonthOfYear())
                 .withDayOfMonth(orig.getDayOfMonth());
+    }
+
+    public static String getMonthName(int month) {
+        String m;
+
+        JodaCalendar.changeLocaleUS();
+        m = new DateTime().withMonthOfYear(month).toString("MMMM");
+        JodaCalendar.changeLocaleDefault();
+
+        return m;
+    }
+
+    public static String getDayLabeled(int day) {
+        String suffix;
+
+        switch (day) {
+            case 1:
+                suffix = "st";
+                break;
+
+            case 2:
+                suffix = "nd";
+                break;
+
+            case 3:
+                suffix = "rd";
+                break;
+
+            default:
+                suffix = "th";
+                break;
+
+        }
+
+        return String.valueOf(day) + suffix;
+    }
+
+    public static int getDayCountInMonth(int month){
+        return new DateTime().withMonthOfYear(month).dayOfMonth().withMaximumValue().getDayOfMonth();
+    }
+
+
+
+
+
+
+
+    public static void changeLocaleDefault(){
+        Locale.setDefault(JodaCalendar.prevLocale);
+    }
+
+    public static void changeLocaleUS(){
+        JodaCalendar.prevLocale = Locale.getDefault();
+        Locale.setDefault(Locale.US);
     }
 
 }

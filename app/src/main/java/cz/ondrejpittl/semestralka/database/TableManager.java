@@ -150,7 +150,7 @@ public class TableManager {
 
         ////db.delete("tablename","id=? and name=?",new String[]{"1","jack"});
         String whereClause = DBQueryFactory.queryDeleteWhereClause(wheres),
-               whereArgs[] = DBQueryFactory.queryDeleteWhereArgs(wheres);
+                whereArgs[] = DBQueryFactory.queryDeleteWhereArgs(wheres);
 
         Log.i("Ondra", "Deleting from table " + TABLE_NAME);
         Log.i("Ondra", whereClause);
@@ -158,6 +158,12 @@ public class TableManager {
 
         db = dbManager.getWritableDatabase();
         return db.delete(TABLE_NAME, whereClause, whereArgs);
+    }
+
+    protected int deleteRecords() {
+        Log.i("Ondra", "Deleting ALL from table " + TABLE_NAME);
+        db = dbManager.getWritableDatabase();
+        return db.delete(TABLE_NAME, null, null);
     }
 
     /**

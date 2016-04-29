@@ -7,14 +7,12 @@ import android.util.Log;
 
 import org.joda.time.DateTime;
 
-import java.util.Calendar;
 import java.util.Locale;
 
 import cz.ondrejpittl.semestralka.controllers.StatsDataController;
 import cz.ondrejpittl.semestralka.controllers.StatsUIController;
 import cz.ondrejpittl.semestralka.database.DBManager;
 import cz.ondrejpittl.semestralka.models.Category;
-import cz.ondrejpittl.semestralka.models.Statistics;
 import cz.ondrejpittl.semestralka.partial.StatisticsChartObject;
 
 public class StatisticsActivity extends AppCompatActivity {
@@ -38,6 +36,8 @@ public class StatisticsActivity extends AppCompatActivity {
 
 
     protected void onCreate(Bundle savedInstanceState) {
+        Log.i("Ondra-init", "initializing Statistics activity");
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_statistics);
 
@@ -48,6 +48,10 @@ public class StatisticsActivity extends AppCompatActivity {
         this.originLocale = Locale.getDefault();
         this.calendar = new DateTime();
         //this.calendar = Calendar.getInstance();
+
+        Log.i("Ondra-debugLand", "-------------------------------------");
+
+        Log.i("Ondra-debugLand", "initializing Statistics Activity");
 
         //Log.i("Ondra-stats", this.calendar.getTime().toString());
         Log.i("Ondra-stats", this.calendar.toDateTime().toString());
@@ -63,7 +67,7 @@ public class StatisticsActivity extends AppCompatActivity {
         this.controllerData = new StatsDataController(this);
 
         this.buildStatistics();
-        //this.controllerUI.buildStats();
+        //this.controllerUI.drawStats();
     }
 
 
@@ -82,10 +86,10 @@ public class StatisticsActivity extends AppCompatActivity {
         StatisticsChartObject monthStatsData = this.controllerData.computeMonthStatsData(month, year, this.category);
         this.controllerUI.setMonthStatsData(monthStatsData);
 
-        /*StatisticsChartObject yearStatsData = this.controllerData.computeYearStatsData(month, year, this.category);
-        this.controllerUI.setYearStatsData(yearStatsData);*/
+        StatisticsChartObject yearStatsData = this.controllerData.computeYearStatsData(year, this.category);
+        this.controllerUI.setYearStatsData(yearStatsData);
 
-        this.controllerUI.buildStats();
+        this.controllerUI.drawStats();
     }
 
 
@@ -119,6 +123,12 @@ public class StatisticsActivity extends AppCompatActivity {
     @Override
     protected Dialog onCreateDialog(int id) {
         return this.controllerUI.handleDatePickerDialogCreation(id, this.calendar.toDateTime());
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Runtime.getRuntime().gc();
     }
 
     public static void changeLocaleDefault(){

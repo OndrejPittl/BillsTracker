@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import cz.ondrejpittl.semestralka.R;
+import cz.ondrejpittl.semestralka.models.Category;
 import cz.ondrejpittl.semestralka.models.Currency;
 
 /**
@@ -103,14 +104,18 @@ public class CurrencyManager extends TableManager {
 
     public ArrayList<Currency> selectAllCurrency(){
         Cursor c = selectAllRecords();
-        return this.buildCurrencyArraylistFromCursor(c);
+        ArrayList<Currency> col = this.buildCurrencyArraylistFromCursor(c);
+        c.close();
+        return col;
     }
 
     public ArrayList<Currency> selectCurrency(String[][] wheres, String[][] orderBy) {
         //wheres: {{"name", "=", "John"}, {"age", "<", 27}}
         //orderBy: {{"id", "asc"}, {"name", "desc"}}
         Cursor c = selectRecord(wheres, orderBy);
-        return this.buildCurrencyArraylistFromCursor(c);
+        ArrayList<Currency> col = this.buildCurrencyArraylistFromCursor(c);
+        c.close();
+        return col;
     }
 
 
@@ -141,19 +146,6 @@ public class CurrencyManager extends TableManager {
         return checkIfRecordExists(new String[][]{
                 {"name", "=", name}
         });
-    }
-
-    public String getFirstCurrency(){
-        Cursor c = selectOneRecord(null, null);
-
-        c.moveToFirst();
-        if(c.isAfterLast() == false) {
-            return c.getString(c.getColumnIndex(COLUMN_NAME));
-        }
-
-        Log.i("Ondra", "DEFAULT CURRENCY2: no first found!");
-
-        return null;
     }
 
 }

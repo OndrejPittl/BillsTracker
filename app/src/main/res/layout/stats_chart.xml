@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 
+
+<!--android:background="@drawable/shape_thin_border"-->
+
 <cz.ondrejpittl.semestralka.layout.StatsChart
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="300dp"
-    android:layout_margin="15dp"
     android:layout_marginTop="25dp"
     android:layout_marginBottom="25dp"
+    android:layout_marginLeft="10dp"
+    android:layout_marginRight="10dp"
     android:orientation="vertical">
 
     <TextView
@@ -15,8 +19,6 @@
         android:text=""
         android:textSize="20sp"
         android:textColor="@color/appTextWhite"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="5dp"
         android:id="@+id/txtViewChartLabel"
         android:layout_gravity="center_horizontal|top" />
 

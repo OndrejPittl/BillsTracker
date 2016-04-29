@@ -2,20 +2,18 @@ package cz.ondrejpittl.semestralka.controllers;
 
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.Toast;
 
 import cz.ondrejpittl.semestralka.R;
 import cz.ondrejpittl.semestralka.WelcomeActivity;
 import cz.ondrejpittl.semestralka.factories.ButtonFactory;
 import cz.ondrejpittl.semestralka.layout.MyShadowTextView;
+import cz.ondrejpittl.semestralka.layout.PinCodeFields;
+import cz.ondrejpittl.semestralka.partial.SharedPrefs;
 
 /**
  * Created by OndrejPittl on 30.03.16.
@@ -26,6 +24,10 @@ public class WelcomeUIController {
      * Activity that is being controlled.
      */
     private WelcomeActivity activity;
+
+    private PinCodeFields pinCodeFields;
+
+    private boolean firstTimeLaunch;
 
     /**
      * Number of PIN input fields.
@@ -44,13 +46,17 @@ public class WelcomeUIController {
     public WelcomeUIController(WelcomeActivity activity){
         this.activity = activity;
         this.pinFieldsCount = 4;
+        this.firstTimeLaunch = SharedPrefs.isFirstTimeLaunch();
         this.pinFields = new EditText[this.pinFieldsCount];
+
+        //this.pinCodeFields = new PinCodeFields(this.activity);
     }
 
     /**
      * Displays Welcome screen for the first-time launch.
      */
     public void displayWelcomeScreen(){
+        //showWelcomeDivider();
         showAboutButton();
         showContinueButton();
     }
@@ -61,9 +67,10 @@ public class WelcomeUIController {
     public void displayLoginScreen(){
 
         //login screen first-time
-        if(this.activity.isFirstTimeLaunch()) {
+        if(SharedPrefs.isFirstTimeLaunch()) {
 
             //user sets the PIN code
+            this.firstTimeLaunch = true;
             setLoginScreenRegisterTexts();
             showRegisterButton();
 
@@ -75,8 +82,10 @@ public class WelcomeUIController {
 
         }
 
+        //hideWelcomeDivider();
         showPinCodeFields();
-        setPinCodeListeners();
+        //setPinCodeListeners();
+        this.pinCodeFields.setPinCodeListeners();
     }
 
 
@@ -85,8 +94,11 @@ public class WelcomeUIController {
      * Changes Login screen texts of layout elements.
      */
     private void setLoginScreenRegisterTexts(){
+        MyShadowTextView hello = (MyShadowTextView) this.activity.findViewById(R.id.txtView_hello);
+        hello.setText(this.activity.getString(R.string.loginSettingUp));
+
         MyShadowTextView msg = (MyShadowTextView) this.activity.findViewById(R.id.txtView_firstTime);
-        msg.setText(this.activity.getString(R.string.loginPleaseLogin));
+        msg.setText(this.activity.getString(R.string.loginLetsStart));
     }
 
     /**
@@ -96,10 +108,17 @@ public class WelcomeUIController {
         MyShadowTextView greetings = (MyShadowTextView) this.activity.findViewById(R.id.txtView_hello),
                 msg = (MyShadowTextView) this.activity.findViewById(R.id.txtView_firstTime);
 
-        greetings.setText(this.activity.getString(R.string.loginWelcomeBack));
         greetings.setTextSize(30);
 
-        msg.setText(this.activity.getString(R.string.loginOtherTime));
+        if(firstTimeLaunch) {
+            greetings.setText(this.activity.getString(R.string.loginExcellent));
+            msg.setText(this.activity.getString(R.string.loginShopping));
+        } else {
+            greetings.setText(this.activity.getString(R.string.loginWelcomeBack));
+            msg.setText(this.activity.getString(R.string.loginOtherTime));
+        }
+
+
     }
 
     /**
@@ -113,8 +132,18 @@ public class WelcomeUIController {
         //if(upperControlWrapper == null) return;
 
         LayoutInflater layoutInflater = (LayoutInflater) this.activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        upperControlWrapper.addView(layoutInflater.inflate(R.layout.pin_code, (ViewGroup) this.activity.findViewById(R.id.pinCodeFieldsWrapper)));
+        this.pinCodeFields = (PinCodeFields) layoutInflater.inflate(R.layout.pin_code, (ViewGroup) this.activity.findViewById(R.id.pinCodeFieldsWrapper));
+        upperControlWrapper.addView(this.pinCodeFields);
     }
+
+    private void showWelcomeDivider(){
+        this.activity.findViewById(R.id.viewLine).setVisibility(View.VISIBLE);
+    }
+
+    private void hideWelcomeDivider(){
+        this.activity.findViewById(R.id.viewLine).setVisibility(View.GONE);
+    }
+
 
     /**
      * Displays About button.
@@ -197,12 +226,8 @@ public class WelcomeUIController {
                 ContextCompat.getColor(this.activity.getApplicationContext(), R.color.appTextLightGold),
                 new View.OnClickListener() {
                     public void onClick(View v) {
-                        String stored = activity.getPINCode();
-                        if(stored.equals(collectPINDigits())) {
-                            Toast.makeText(activity.getApplicationContext(), "PASSED!", Toast.LENGTH_SHORT).show();
+                        if(pinCodeFields.checkPINCode()) {
                             activity.startHomeActivity();
-                        } else {
-                            Toast.makeText(activity.getApplicationContext(), "ERR!", Toast.LENGTH_SHORT).show();
                         }
                     }
                 },
@@ -225,9 +250,7 @@ public class WelcomeUIController {
                 ContextCompat.getColor(this.activity.getApplicationContext(), R.color.appTextLightGold),
                 new View.OnClickListener() {
                     public void onClick(View v) {
-                        //store PIN code
-                        activity.storePINCode(collectPINDigits());
-                        activity.registerLoginScreenDisplayed();
+                        pinCodeFields.storePINCode();
                         displayLoginScreen();
                     }
                 },
@@ -237,74 +260,4 @@ public class WelcomeUIController {
         container.addView(regBtn);
     }
 
-    private String collectPINDigits(){
-        String output = "";
-
-        for(int i = 0; i <this.pinFieldsCount; i++) {
-            output += this.pinFields[i].getText();
-        }
-
-        return output;
-    }
-
-    /**
-     * Adds all PIN input field listeners.
-     */
-    private void setPinCodeListeners(){
-
-        //iteration through all PIN layout elements
-        for (int i = 0; i < 4; i++) {
-            //Toast.makeText(this.activity.getApplicationContext(), "xxx", Toast.LENGTH_SHORT).show();
-
-            //id of element
-            int resID = this.activity.getResources().getIdentifier("edTxt_pin" + (i+1), "id", this.activity.getPackageName());
-            this.pinFields[i] = (EditText) this.activity.findViewById(resID);
-            this.pinFields[i].setTag(i + 1);
-
-            //text change listener
-            this.setPinCodeTextChangeListener(this.pinFields[i]);
-        }
-    }
-
-    /**
-     * Handles requesting focus of next element after entering a value into a PIN input field.
-     *
-     * @param field Field its text is being changed.
-     */
-    private void setPinCodeTextChangeListener(final EditText field){
-        field.addTextChangedListener(new TextWatcher() {
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-
-            public void afterTextChanged(Editable s) {
-
-                //field EMPTY -> nothing to do
-                if (s.toString().length() <= 0) return;
-
-                //index of element
-                int tag = (int) field.getTag();
-
-                if (tag < pinFieldsCount) {
-
-                    //je-li index < počet fieldů, zažádej o focus následující field v řadě (o indexu o 1 vyšší)
-                    pinFields[tag].requestFocus();
-
-                } else {
-
-                    //je-li index roven počtu fieldů (tj. vyplňujeme poslední), skryj klávesnici
-                    InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
-                    //imm.toggleSoftInput (InputMethodManager.SHOW_FORCED, InputMethodManager.RESULT_HIDDEN);
-
-                    //skryj soft klávesnici
-                    imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-
-                    //zobraz soft klávestnici
-                    //imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-                }
-            }
-        });
-    }
 }

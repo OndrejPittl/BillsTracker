@@ -1,18 +1,24 @@
 package cz.ondrejpittl.semestralka.layout;
 
+import android.app.Activity;
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
+import cz.ondrejpittl.semestralka.HomeActivity;
 import cz.ondrejpittl.semestralka.Listeners.PaymentRecordTouchListener;
 import cz.ondrejpittl.semestralka.R;
 import cz.ondrejpittl.semestralka.factories.AnimationFactory;
 import cz.ondrejpittl.semestralka.models.Payment;
 import cz.ondrejpittl.semestralka.partial.PaymentRecordStateEnum;
+import cz.ondrejpittl.semestralka.partial.SharedPrefs;
 
 /**
  * Created by OndrejPittl on 08.04.16.
@@ -30,10 +36,17 @@ public class PaymentRecord extends LinearLayout {
     private Payment payment;
 
 
+    private int paymentCollapsedHeight = 45;
+    private int paymentUnCollapsedHeight = 65;
+
+
+
     /**
      * Flag indicating whether or not is payment record collapsed – whether or not is note visible.
      */
     private boolean collapsed;
+
+    private static boolean iconVisible;
 
     /**
      * Height of collapsed payment record.
@@ -96,16 +109,51 @@ public class PaymentRecord extends LinearLayout {
      * Payment record initialization.
      */
     private void init() {
-        this.collapsed = true;
+        this.updateCollapsed();
+        this.setIconVisibility();
+
         this.collapsedHeight = -1;
 
         ACTION_TAB_WIDTH = displayWidth / 6;
 
         this.touchListener = new PaymentRecordTouchListener(this);
         this.setOnTouchListener(this.touchListener);
+
+        //this.getLayoutParams().height = this.getCollapsedRecHeight();
     }
 
+    private void updateCollapsed(){
+        if(SharedPrefs.isPaymentNoteDisplaySet() && !SharedPrefs.getPaymentNoteDisplay()) {
+            this.collapsed = true;
+        } else {
+            this.collapsed = false;
+        }
+    }
 
+    private void setIconVisibility(){
+        PaymentRecord.iconVisible = SharedPrefs.isPaymentIconSet() && SharedPrefs.getPaymentIcons();
+    }
+
+    public void updateIconVisibility(){
+        FrameLayout ico = (FrameLayout) findViewById(R.id.recordImgHolder);
+
+        if(PaymentRecord.iconVisible) {
+            ico.setVisibility(VISIBLE);
+        } else {
+            ico.setVisibility(GONE);
+        }
+    }
+
+    public void updateRecordHeight(HomeActivity activity){
+        int h;
+        if(this.collapsed)
+            h = getCollapsedRecHeight(activity);
+        else
+            h = getUnCollapsedRecHeight(activity);
+
+        this.getLayoutParams().height = h;
+        this.requestLayout();
+    }
 
     /**
      * Sets button given via input param width.
@@ -168,6 +216,59 @@ public class PaymentRecord extends LinearLayout {
         }
     }
 
+    private int dpToPx(int dp) {
+        DisplayMetrics displayMetrics = getContext().getResources().getDisplayMetrics();
+        int px = Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
+        return px;
+    }
+
+    private int dpToPx(int dp, Activity activity) {
+        DisplayMetrics displayMetrics = activity.getResources().getDisplayMetrics();
+        int px = Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
+        return px;
+    }
+
+    public int getCollapsedRecHeight(){
+        /*int height = this.getHeight();
+
+        //note height
+        TextView tvNote = (TextView) findViewById(R.id.txtViewRecordNote);
+        tvNote.measure(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        int noteHeight = tvNote.getMeasuredHeight() + 10;
+
+        if(!this.isCollapsed()) {
+            height -= noteHeight;
+        }
+        */
+        return dpToPx(this.paymentCollapsedHeight);
+    }
+
+    public int getUncollapsedRecHeight(){
+        /*int height = this.getHeight();
+
+        //note height
+        TextView tvNote = (TextView) findViewById(R.id.txtViewRecordNote);
+        tvNote.measure(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        int noteHeight = tvNote.getMeasuredHeight() + 10;
+
+        if(this.isCollapsed()) {
+            height += noteHeight;
+        }*/
+
+        return dpToPx(this.paymentUnCollapsedHeight);
+    }
+
+    public int getCollapsedRecHeight(HomeActivity activity){
+        return dpToPx(this.paymentCollapsedHeight, activity);
+    }
+
+    public int getUnCollapsedRecHeight(HomeActivity activity){
+        return dpToPx(this.paymentUnCollapsedHeight, activity);
+    }
+
+    public void updateHeight(HomeActivity activity){
+
+    }
 
     public int getPaymentId() {
         return this.payment.getID();
@@ -223,5 +324,9 @@ public class PaymentRecord extends LinearLayout {
 
     public void setCollapsedHeight(int collapsedHeight) {
         this.collapsedHeight = collapsedHeight;
+    }
+
+    public static boolean isIconVisible() {
+        return iconVisible;
     }
 }

@@ -63,7 +63,7 @@
                     android:textSize="11sp"
                     android:singleLine="true" />
 
-                <Spinner
+                <cz.ondrejpittl.semestralka.layout.CategoryActionSpinner
                     android:layout_width="0dp"
                     android:layout_height="30dp"
                     android:layout_weight="1"
@@ -98,13 +98,12 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
                     android:text="@string/statisticsMonthHeading"
                     android:id="@+id/statisticsMonthHeadingLabel"
                     android:layout_gravity="center_horizontal|top"
                     android:textColor="@color/appWhite"
-                    android:padding="5dp"
-                    android:paddingTop="10dp"
+                    android:paddingTop="25dp"
                     android:layout_marginTop="10dp" />
 
                 <TextView
@@ -126,16 +125,16 @@
                     android:paddingBottom="15dp"
                     android:id="@+id/monthChartsContainer"></LinearLayout>
 
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
                     android:text="@string/statisticsYearHeading"
                     android:id="@+id/statisticsYearHeadingLabel"
                     android:layout_gravity="center_horizontal|top"
                     android:textColor="@color/appWhite"
-                    android:padding="5dp"
-                    android:paddingTop="10dp"
+                    android:paddingTop="50dp"
                     android:layout_marginTop="10dp" />
 
                 <TextView

@@ -111,7 +111,10 @@ public class CategoryManager extends TableManager {
 
     public ArrayList<Category> selectAllCategories(){
         Cursor c = selectAllRecords();
-        return this.buildCategoriesArraylistFromCursor(c);
+        ArrayList<Category> col = this.buildCategoriesArraylistFromCursor(c);
+        c.close();
+
+        return col;
     }
 
     private ArrayList<Category> buildCategoriesArraylistFromCursor(Cursor c){

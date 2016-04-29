@@ -23,6 +23,8 @@ public class PaymentRecordsAnimation extends AsyncTask<String, Void, String> {
     }
 
     protected String doInBackground(String... params) {
+        boolean animAllowed = SharedPrefs.isPaymentAnimationSet() && SharedPrefs.getPaymentAnimation();
+
         for(PaymentRecord rec : records) {
 
             /*AlphaAnimation a = new AlphaAnimation(0.2f, 1.0f);
@@ -31,7 +33,7 @@ public class PaymentRecordsAnimation extends AsyncTask<String, Void, String> {
             a.setFillAfter(true);
             rec.startAnimation(a);*/
 
-            ObjectAnimator anim = ObjectAnimator.ofFloat(rec, "alpha", 0f, 1f);
+            /*ObjectAnimator anim = ObjectAnimator.ofFloat(rec, "alpha", 0f, 1f);
             anim.setDuration(1000);
             anim.start();
 
@@ -40,7 +42,7 @@ public class PaymentRecordsAnimation extends AsyncTask<String, Void, String> {
                 Thread.sleep(300);
             } catch (InterruptedException e) {
                 e.printStackTrace();
-            }
+            }*/
         }
 
         return null;

@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="cz.ondrejpittl.semestralka.SettingsActivity"
+    tools:showIn="@layout/activity_settings">
+
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imgViewBG"
+        android:layout_gravity="center"
+        android:cropToPadding="false"
+        android:scaleType = "centerCrop"
+        android:src="@drawable/bg" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:paddingTop="80dp"
+            android:paddingBottom="30dp">
+
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="@string/settingsHeading"
+                android:id="@+id/textView2"
+                android:layout_gravity="center_horizontal"
+                android:textColor="#ffffff"
+                android:layout_marginBottom="30dp" />
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="30dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="@string/settingsBehaviour"
+                    android:id="@+id/textView7"
+                    android:textColor="@color/appTextLightGold"
+                    android:layout_marginBottom="10dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_margin="5dp" >
+
+                    <Switch
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"
+                        android:text="@string/settingsPasswordReq"
+                        android:id="@+id/settingsPassReq"
+                        android:layout_weight="1"
+                        android:textColor="@color/appWhite"
+                        android:enabled="true"
+                        android:checked="true" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="30dp"
+                android:onClick="restoreDefaults">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="@string/settingsDisplay"
+                    android:id="@+id/textView4"
+                    android:textColor="@color/appTextLightGold"
+                    android:layout_marginBottom="10dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_margin="5dp">
+
+                    <Switch
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"
+                        android:text="@string/settingsAutocollapse"
+                        android:id="@+id/settingsNoteSwitch"
+                        android:layout_weight="1"
+                        android:textColor="@color/appWhite"
+                        android:checked="false" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_margin="5dp">
+
+                    <Switch
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"
+                        android:text="@string/settingsAnimations"
+                        android:id="@+id/settingsAnimationSwitch"
+                        android:layout_weight="1"
+                        android:textColor="@color/appWhite"
+                        android:enabled="true"
+                        android:checked="true" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_margin="5dp" >
+
+                    <Switch
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"
+                        android:text="@string/settingsIcons"
+                        android:id="@+id/settingsIconSwitch"
+                        android:layout_weight="1"
+                        android:textColor="@color/appWhite"
+                        android:enabled="true"
+                        android:checked="true" />
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="30dp" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="@string/settingsDefaults"
+                    android:id="@+id/textView3"
+                    android:textColor="@color/appTextLightGold"
+                    android:layout_marginBottom="10dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:orientation="horizontal"
+                    android:layout_margin="5dp" >
+
+                    <FrameLayout
+                        android:orientation="vertical"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1" >
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:attr/textAppearanceSmall"
+                            android:text="@string/settingsDefCurrency"
+                            android:id="@+id/textView6"
+                            android:textColor="@color/appWhite"
+                            android:layout_gravity="center_vertical" />
+                    </FrameLayout>
+
+                    <cz.ondrejpittl.semestralka.layout.CustomSpinner
+                        android:layout_width="0dp"
+                        android:layout_height="25dp"
+                        android:id="@+id/settingsCurrencySpinner"
+                        android:layout_weight="1"
+                        android:background="@drawable/shape_thin_border"
+                        android:textSize="10sp"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:orientation="horizontal"
+                    android:layout_margin="5dp" >
+
+                    <FrameLayout
+                        android:orientation="vertical"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1" >
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:attr/textAppearanceSmall"
+                            android:text="@string/settingsDefCategory"
+                            android:id="@+id/textView5"
+                            android:textColor="@color/appWhite"
+                            android:layout_gravity="center_vertical" />
+                    </FrameLayout>
+
+                    <cz.ondrejpittl.semestralka.layout.CustomSpinner
+                        android:layout_width="0dp"
+                        android:layout_height="25dp"
+                        android:id="@+id/settingsCategorySpinner"
+                        android:layout_weight="1"
+                        android:background="@drawable/shape_thin_border"
+                        android:textSize="10sp"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:orientation="horizontal"
+                    android:layout_margin="5dp">
+
+
+                    <FrameLayout
+                        android:orientation="vertical"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:attr/textAppearanceSmall"
+                            android:text="@string/settingsDefStore"
+                            android:id="@+id/textView"
+                            android:textColor="@color/appWhite"
+                            android:layout_gravity="center_vertical" />
+                    </FrameLayout>
+
+                    <cz.ondrejpittl.semestralka.layout.CustomSpinner
+                        android:layout_width="0dp"
+                        android:layout_height="25dp"
+                        android:id="@+id/settingsStoreSpinner"
+                        android:layout_weight="1"
+                        android:background="@drawable/shape_thin_border"
+                        android:textSize="10sp"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"/>
+                </LinearLayout>
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="30dp" >
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="45dp"
+                    android:background="@drawable/shape_thin_border"
+                    android:paddingLeft="30dp"
+                    android:paddingRight="30dp"
+                    android:textColor="@color/appWhite"
+                    android:text="@string/settingsRestore"
+                    android:id="@+id/restoreBtn"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="15dp"
+                    android:onClick="restoreDefaults" />
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="45dp"
+                    android:background="@drawable/shape_thin_border"
+                    android:paddingLeft="28dp"
+                    android:paddingRight="28dp"
+                    android:textColor="@color/appWhite"
+                    android:text="@string/settingsErase"
+                    android:id="@+id/erasePaymentsBtn"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="15dp"
+                    android:onClick="eraseAllPayments" />
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+    </ScrollView>
+</FrameLayout>
+
+
+
+
+
+
+

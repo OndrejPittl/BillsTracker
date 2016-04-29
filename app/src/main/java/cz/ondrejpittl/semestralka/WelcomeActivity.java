@@ -1,12 +1,12 @@
 package cz.ondrejpittl.semestralka;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import cz.ondrejpittl.semestralka.controllers.WelcomeUIController;
+import cz.ondrejpittl.semestralka.partial.SharedPrefs;
 
 
 public class WelcomeActivity extends AppCompatActivity {
@@ -16,12 +16,12 @@ public class WelcomeActivity extends AppCompatActivity {
      */
     private WelcomeUIController controller;
 
-    private SharedPreferences prefs;
+    //private SharedPreferences prefs;
 
     /**
      *
      */
-    private boolean activityLoaded;
+    //private boolean activityLoaded;
 
 
 
@@ -43,13 +43,13 @@ public class WelcomeActivity extends AppCompatActivity {
         //displayLoginScreen();
 
         //app loaded flag
-        activityLoaded = true;
+        //activityLoaded = true;
     }
 
     protected void onResume() {
         super.onResume();
 
-        if (this.isFirstTimeLaunch()) {
+        if (SharedPrefs.isFirstTimeLaunch()) {
             displayWelcomeScreen();
         } else {
             displayLoginScreen();
@@ -60,9 +60,17 @@ public class WelcomeActivity extends AppCompatActivity {
      * Activity initialization.
      */
     private void init(){
-        this.activityLoaded = false;
-        this.prefs = getSharedPreferences("cz.ondrejpittl.semestralka", MODE_PRIVATE);
+        SharedPrefs.load(this);
+
+        if(SharedPrefs.isPasswordRequireSet() && !SharedPrefs.isPasswordRequired()) {
+            startHomeActivity();
+        }
+
+        //this.activityLoaded = false;
+        //this.prefs = getSharedPreferences("cz.ondrejpittl.semestralka", MODE_PRIVATE);
         this.controller = new WelcomeUIController(this);
+
+
     }
 
     /**
@@ -79,37 +87,6 @@ public class WelcomeActivity extends AppCompatActivity {
     private void displayLoginScreen(){
         //if(this.activityLoaded) return;
         this.controller.displayLoginScreen();
-    }
-
-    /**
-     * App was already launched.
-     */
-    public void registerLoginScreenDisplayed(){
-        this.prefs.edit().putBoolean("firstLaunch", false).commit();
-    }
-
-    public boolean isFirstTimeLaunch(){
-        return this.prefs.getBoolean("firstLaunch", true);
-        //return true;
-    }
-
-    /**
-     * @TODO DOCASNE!
-     *
-     * Stores PIN code in SharedPreferences.
-     * @param pin   PIN code from user input to store.
-     */
-    public void storePINCode(String pin){
-        this.prefs.edit().putString("pin", pin).commit();
-    }
-
-    /**
-     * @TODO DOCASNE!
-     *
-     * Loads PIN code from SharedPreferences.
-     */
-    public String getPINCode(){
-        return this.prefs.getString("pin", "");
     }
 
     /**

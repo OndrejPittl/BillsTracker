@@ -153,7 +153,7 @@ public class HomeDataController {
         this.controllerUI.buildCategoryControls(this.storedCategories);
     }
 
-    private void loadPaymentsOfMonth(){
+    public void loadPaymentsOfMonth(){
         //app launches with actual month displayed by default
 
         HomeActivity.changeLocaleUS();
@@ -202,8 +202,6 @@ public class HomeDataController {
         }
 
         Log.i("Ondra", "mesicek: " + this.jodaDate.getMonthOfYear());
-
-        this.loadPaymentsOfMonth();
     }
 
     public void handlePaymentCancel(){

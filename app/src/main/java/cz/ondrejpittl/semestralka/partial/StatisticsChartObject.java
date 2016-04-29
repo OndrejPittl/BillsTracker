@@ -26,6 +26,9 @@ public class StatisticsChartObject {
 
     private int count;
 
+    private int month;
+    private int year;
+
     private LineData lineData;
     private LineDataSet lineDataSet;
 
@@ -46,6 +49,10 @@ public class StatisticsChartObject {
 
     public boolean isEmpty(){
         return this.count == 0;
+    }
+
+    public int getRecordCount(){
+        return this.count;
     }
 
     public void buildLineChartData(ArrayList<String> xVals, ArrayList<Entry> yVals){
@@ -115,5 +122,21 @@ public class StatisticsChartObject {
 
     public void setPieDataSet(PieDataSet pieDataSet) {
         this.pieDataSet = pieDataSet;
+    }
+
+    public int getMonth() {
+        return month;
+    }
+
+    public void setMonth(int month) {
+        this.month = month;
+    }
+
+    public int getYear() {
+        return year;
+    }
+
+    public void setYear(int year) {
+        this.year = year;
     }
 }
