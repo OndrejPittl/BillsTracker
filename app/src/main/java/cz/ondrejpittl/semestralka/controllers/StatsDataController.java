@@ -81,6 +81,23 @@ public class StatsDataController {
         return amounts;
     }
 
+    private float[] computeDayWeekAmounts(ArrayList<Payment> payments){
+        int dayCount = 7;
+        float[] amounts = new float[dayCount];
+
+        for(int i = 0; i < payments.size(); i++) {
+            Payment p = payments.get(i);
+
+            int m = p.getDate().getMonthOfYear(),
+                d = p.getDate().getDayOfMonth(),
+                    day = JodaCalendar.getWeekDayNum(m, d);
+
+            amounts[day-1] += p.getAmount();
+        }
+
+        return amounts;
+    }
+
     private float[] computeYearAmounts(ArrayList<Payment> payments){
         float[] amounts = new float[]{ 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f };
 
@@ -96,13 +113,11 @@ public class StatsDataController {
         return amounts;
     }
 
-    private void computeMonthBarStatsData(StatisticsChartObject data, ArrayList<Payment> payments){
+    private void computeMonthDayMonthBarData(StatisticsChartObject data, ArrayList<Payment> payments){
         ArrayList<String> xVals = new ArrayList<>();
         ArrayList<BarEntry> yVals = new ArrayList<>();
 
         float[] amounts = computeDayAmounts(data, payments);
-
-        //StatisticsActivity.changeLocaleUS();
 
         int index = 0;
         for(int i = 0; i < amounts.length; i++) {
@@ -113,16 +128,51 @@ public class StatsDataController {
             yVals.add(new BarEntry(amount, index++));
         }
 
-        //StatisticsActivity.changeLocaleDefault();
+        data.buildBarChartData(xVals, yVals);
+    }
+
+    private void computeDayWeekBarData(StatisticsChartObject data, ArrayList<Payment> payments){
+        String[] days;
+        ArrayList<String> xVals = new ArrayList<>();
+        ArrayList<BarEntry> yVals = new ArrayList<>();
+
+        float[] amounts = computeDayWeekAmounts(payments);
 
 
-        /*for(int i = 0; i < payments.size(); i++) {
-            Payment p = payments.get(i);
-            xVals.add(JodaCalendar.getDayLabeled(p.getDate().getDayOfMonth()));
-            yVals.add(new BarEntry(p.getAmount(), i));
+        int notZero = 0;
+        for(int i = 0; i < amounts.length; i++) {
+            if(amounts[i] > 0) notZero++;
+        }
+
+        if(notZero > 4) {
+            days = JodaCalendar.buildDayWeekArray(true);
+        } else {
+            days = JodaCalendar.buildDayWeekArray(false);
+        }
+
+
+        for(int i = 0; i < amounts.length; i++) {
+            if(amounts[i] <= 0) continue;
+
+            String d = days[i];
+            xVals.add(d);
+            yVals.add(new BarEntry(amounts[i], i));
+        }
+
+
+        /*Iterator it = amounts.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry)it.next();
+
+            String d = (String) pair.getKey();
+
+            xVals.add(d);
+            yVals.add(new BarEntry((float) pair.getValue(), index++));
+
+            it.remove();
         }*/
 
-        data.buildBarChartData(xVals, yVals);
+        data.buildWeekDayBarChartData(xVals, yVals);
     }
 
     private void computePieStatsData(StatisticsChartObject data, ArrayList<Payment> payments){
@@ -138,7 +188,7 @@ public class StatsDataController {
         data.buildPieChartData(xVals, yVals);
     }
 
-    private void computeYearBarStatsData(StatisticsChartObject data, ArrayList<Payment> payments){
+    private void computeYearMonthBarData(StatisticsChartObject data, ArrayList<Payment> payments){
         ArrayList<String> xVals = new ArrayList<>();
         ArrayList<BarEntry> yVals = new ArrayList<>();
 
@@ -202,8 +252,9 @@ public class StatsDataController {
         //payments loaded from DB
         ArrayList<Payment> payments = this.dbManager.getPaymentsByMonth(month, year, category);
 
-        this.computeMonthBarStatsData(data, payments);
+        this.computeMonthDayMonthBarData(data, payments);
         this.computeMonthLineStatsData(data, payments);
+        this.computeDayWeekBarData(data, payments);
 
 
         payments = this.dbManager.getCategorySummaryByMonth(month, year, category);
@@ -229,8 +280,9 @@ public class StatsDataController {
         /*for (Payment p : payments)
             Log.i("Ondra-stats", "yearstats: " + p);*/
 
-        this.computeYearBarStatsData(data, payments);
+        this.computeYearMonthBarData(data, payments);
         this.computeYearLineStatsData(data, payments);
+        this.computeDayWeekBarData(data, payments);
 
         payments = this.dbManager.getCategorySummaryByYear(year, category);
         this.computePieStatsData(data, payments);
@@ -239,13 +291,6 @@ public class StatsDataController {
 
         return data;
     }
-
-
-
-
-
-
-
 
 
 }

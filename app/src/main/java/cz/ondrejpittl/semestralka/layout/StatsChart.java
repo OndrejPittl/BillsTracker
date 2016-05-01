@@ -20,6 +20,7 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.PieData;
 
 import cz.ondrejpittl.semestralka.R;
+import cz.ondrejpittl.semestralka.partial.ChartValueFormatter;
 import cz.ondrejpittl.semestralka.partial.StatisticsChartObject;
 
 /**
@@ -73,11 +74,19 @@ public class StatsChart extends LinearLayout {
         this.setLayoutParams(params);
     }
 
-    public void setLabel(String label) {
+    public void hideChart(){
+        FrameLayout container = (FrameLayout) findViewById(R.id.chContainer);
+        container.getLayoutParams().height = 0;
+    }
+
+    public void setLabels(String label, String desc) {
         if(label == null) return;
 
         TextView lbl = (TextView) findViewById(R.id.txtViewChartLabel);
         lbl.setText(label);
+
+        TextView ds = (TextView) findViewById(R.id.txtViewChartDesc);
+        ds.setText(desc);
     }
 
     private void setChartPadding(){
@@ -184,6 +193,22 @@ public class StatsChart extends LinearLayout {
         this.chart.invalidate();
     }
 
+    public void buildDayWeekBarChart(){
+        BarChart chart = new BarChart(getContext());
+
+        BarData data = this.data.getDayWeekBarData();
+        this.setBarChartData(data);
+        this.setChart(chart);
+        this.setBarChartAxis(chart, collapsed);
+
+        this.chart = chart;
+        this.container.addView(this.chart);
+        this.setChartPadding();
+
+        this.chart.setData(data);
+        this.chart.invalidate();
+    }
+
     public void buildPieChart() {
         PieChart chart = new PieChart(getContext());
 
@@ -234,6 +259,7 @@ public class StatsChart extends LinearLayout {
     private void setBarChartData(BarData data){
         data.setValueTextColor(ContextCompat.getColor(getContext(), R.color.appWhite));
         data.setValueTextSize(9);
+        data.setValueFormatter(new ChartValueFormatter());
     }
 
     private void setPieChartData(PieData data){

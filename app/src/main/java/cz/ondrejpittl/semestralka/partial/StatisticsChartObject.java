@@ -2,6 +2,7 @@ package cz.ondrejpittl.semestralka.partial;
 
 import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
@@ -35,6 +36,11 @@ public class StatisticsChartObject {
     private BarData barData;
     private BarDataSet barDataSet;
 
+    private BarData dayWeekBarData;
+    private BarDataSet dayWeekBarDataSet;
+
+    private boolean isPieChartBuildableChecked;
+    private boolean isPieChartBuildable;
     private PieData pieData;
     private PieDataSet pieDataSet;
 
@@ -45,6 +51,8 @@ public class StatisticsChartObject {
         this.colors = new ArrayList<>();
         this.colors.add(Color.WHITE);
         this.count = 0;
+        this.isPieChartBuildable = false;
+        this.isPieChartBuildableChecked = false;
     }
 
     public boolean isEmpty(){
@@ -71,6 +79,15 @@ public class StatisticsChartObject {
         this.barDataSet.setColors(this.colors);
         this.barData = new BarData(xVals, this.barDataSet);
         this.barData.setHighlightEnabled(false);
+    }
+
+    public void buildWeekDayBarChartData(ArrayList<String> xVals, ArrayList<BarEntry> yVals){
+        this.count = xVals.size();
+
+        this.dayWeekBarDataSet = new BarDataSet(yVals, "");
+        this.dayWeekBarDataSet.setColors(this.colors);
+        this.dayWeekBarData = new BarData(xVals, this.barDataSet);
+        this.dayWeekBarData.setHighlightEnabled(false);
     }
 
     public void buildPieChartData(ArrayList<String> xVals, ArrayList<Entry> yVals){
@@ -139,4 +156,32 @@ public class StatisticsChartObject {
     public void setYear(int year) {
         this.year = year;
     }
+
+    public BarData getDayWeekBarData() {
+        return dayWeekBarData;
+    }
+
+    public void setDayWeekBarData(BarData dayWeekBarData) {
+        this.dayWeekBarData = dayWeekBarData;
+    }
+
+    public BarDataSet getDayWeekBarDataSet() {
+        return dayWeekBarDataSet;
+    }
+
+    public void setDayWeekBarDataSet(BarDataSet dayWeekBarDataSet) {
+        this.dayWeekBarDataSet = dayWeekBarDataSet;
+    }
+
+    public boolean isPieChartBuildable(){
+        if(this.isPieChartBuildableChecked)
+            return this.isPieChartBuildable;
+
+        float min = this.pieData.getYMin(),
+              sum = this.pieData.getYValueSum();
+
+        Log.i("Ondra-pie", "piable: " + (sum/min));
+        return (sum/min) < 35;
+    }
+
 }

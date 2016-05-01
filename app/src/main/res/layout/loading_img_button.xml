@@ -37,7 +37,6 @@
             android:paddingBottom="5dp"
             android:paddingLeft="3dp"
             android:background="@null"
-            android:visibility="gone"
-            android:indeterminateTint="@color/appWhite" />
+            android:visibility="gone"/>
     </LinearLayout>
 </cz.ondrejpittl.semestralka.layout.LoadingImgButton>

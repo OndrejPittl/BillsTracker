@@ -53,11 +53,15 @@
     <string name="home_noteHint">( note )</string>
     <string name="home_btn_ok_insert_label">Insert</string>
     <string name="home_btn_ok_update_label">Update</string>
-    <string name="home_btn_clear_label">Clear</string>
+    <string name="home_btn_cancel_clear_label">Clear</string>
+    <string name="home_btn_cancel_label">Cancel</string>
     <string name="home_month_mock">March</string>
     <string name="home_stats_day_label">today:</string>
+    <string name="home_stats_d_label">T:</string>
     <string name="home_stats_week_label">week:</string>
+    <string name="home_stats_w_label">W:</string>
     <string name="home_stats_month_label">month:</string>
+    <string name="home_stats_m_label">M:</string>
     <string name="recordDeleteLabel">delete</string>
     <string name="price_mock">0</string>
 

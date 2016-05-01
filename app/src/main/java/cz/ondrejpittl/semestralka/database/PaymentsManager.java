@@ -190,7 +190,7 @@ public class PaymentsManager extends TableManager {
         c.moveToFirst();
         while(c.isAfterLast() == false){
             Payment p = new Payment();
-            p.setAmount(Integer.parseInt(c.getString(c.getColumnIndex("amount"))));
+            p.setAmount(Float.parseFloat(c.getString(c.getColumnIndex("amount"))));
             p.setCategory(Integer.parseInt(c.getString(c.getColumnIndex("categories_id"))),
                     c.getString(c.getColumnIndex("name")));
             payments.add(p);

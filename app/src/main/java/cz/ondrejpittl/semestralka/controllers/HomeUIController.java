@@ -6,6 +6,7 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.support.v4.content.ContextCompat;
@@ -31,6 +32,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.joda.time.DateTime;
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -330,6 +332,7 @@ public class HomeUIController {
     public void registerPaymentUpdateStart(PaymentRecord record){
         fillPaymentInfoOnUpdate(record.getPayment());
         setInsertUpdateButtonText(true);
+        setClearCancelButtonText(true);
         record.hideEditActionButton();
 
         if(this.editingRecord != null)
@@ -342,7 +345,8 @@ public class HomeUIController {
 
 
     public void registerPaymentUpdateFinished(){
-        setInsertUpdateButtonText(false);
+            setInsertUpdateButtonText(false);
+        setClearCancelButtonText(false);
         this.editingRecord.setEditing(true);
         this.editingRecord = null;
     }
@@ -562,21 +566,69 @@ public class HomeUIController {
         LinearLayout tW = (LinearLayout) this.activity.findViewById(R.id.statsTodayWrapper);
         LinearLayout wW = (LinearLayout) this.activity.findViewById(R.id.statsWeekWrapper);
 
+        TextView tvDayLbl = (TextView) this.activity.findViewById(R.id.txtView_statsTodayLabel);
+        TextView tvMonthLbl = (TextView) this.activity.findViewById(R.id.txtView_statsMonthLabel);
+        TextView tvWeekLbl = (TextView) this.activity.findViewById(R.id.txtView_statsWeekLabel);
+
+        //display month stats (always)
         TextView tvM = (TextView) this.activity.findViewById(R.id.txtView_statisticsMonth);
         tvM.setText(String.valueOf(month));
 
+
+
         if(dispayAll) {
+            //actual month
+
+            int statsWidth = 0;
             TextView tvT = (TextView) this.activity.findViewById(R.id.txtView_statisticsToday);
+            TextView tvW = (TextView) this.activity.findViewById(R.id.txtView_statisticsWeek);
+
+            //measuring labels
+            statsWidth += measureTextWidth(this.activity.getString(R.string.home_stats_day_label), tvDayLbl);
+            statsWidth += measureTextWidth(this.activity.getString(R.string.home_stats_week_label), tvWeekLbl);
+            statsWidth += measureTextWidth(this.activity.getString(R.string.home_stats_month_label), tvMonthLbl);
+
+            //measuring values
+            statsWidth += measureTextWidth(String.valueOf(today), tvT);
+            statsWidth += measureTextWidth(String.valueOf(week), tvW);
+            statsWidth += measureTextWidth(String.valueOf(month), tvM);
+
+
+            //update month label length ("Month" vs. "M")
+            Log.i("Ondra-ministats", "measured: " + statsWidth + ", max: " + (getDislayWidthInPx() * 0.8));
+            if(statsWidth > getDislayWidthInPx() * 0.80) {
+                tvDayLbl.setText(R.string.home_stats_d_label);
+                tvWeekLbl.setText(R.string.home_stats_w_label);
+                tvMonthLbl.setText(R.string.home_stats_m_label);
+            } else {
+                tvDayLbl.setText(R.string.home_stats_day_label);
+                tvWeekLbl.setText(R.string.home_stats_week_label);
+                tvMonthLbl.setText(R.string.home_stats_month_label);
+            }
+
+
+            //display today stats
             tvT.setText(String.valueOf(today));
             tW.setVisibility(View.VISIBLE);
 
-            TextView tvW = (TextView) this.activity.findViewById(R.id.txtView_statisticsWeek);
+            //display week stats
             tvW.setText(String.valueOf(week));
             wW.setVisibility(View.VISIBLE);
         } else {
+            //the other ones
+            //hide week and today stats
             tW.setVisibility(View.INVISIBLE);
             wW.setVisibility(View.INVISIBLE);
         }
+    }
+
+    private int measureTextWidth(String txt, TextView tv){
+        Rect bounds = new Rect();
+
+        //len-1?
+        tv.getPaint().getTextBounds(txt, 0, txt.length(), bounds);
+        int width = bounds.left + bounds.width();
+        return width;
     }
 
     public void clearControls(){
@@ -697,13 +749,23 @@ public class HomeUIController {
     }
 
 
-    public void setInsertUpdateButtonText(boolean editing){
+    public void setInsertUpdateButtonText(boolean editing) {
         Button btn = (Button) this.activity.findViewById(R.id.btn_ok);
 
-        if(editing) {
+        if (editing) {
             btn.setText(R.string.home_btn_ok_update_label);
         } else {
             btn.setText(R.string.home_btn_ok_insert_label);
+        }
+    }
+
+    public void setClearCancelButtonText(boolean editing){
+        Button btn = (Button) this.activity.findViewById(R.id.btn_clear);
+
+        if(editing) {
+            btn.setText(R.string.home_btn_cancel_label);
+        } else {
+            btn.setText(R.string.home_btn_cancel_clear_label);
         }
     }
 

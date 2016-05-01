@@ -4,6 +4,8 @@ import android.util.Log;
 
 import org.joda.time.DateTime;
 
+import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Locale;
 
 import cz.ondrejpittl.semestralka.models.Statistics;
@@ -163,6 +165,38 @@ public class JodaCalendar {
         }
 
         return String.valueOf(day) + suffix;
+    }
+
+    public static String getWeekDay(int month, int day) {
+        String output;
+
+        JodaCalendar.changeLocaleUS();
+        output = new DateTime().withMonthOfYear(month).withDayOfMonth(day).dayOfWeek().getAsText();
+        JodaCalendar.changeLocaleDefault();
+
+        return output;
+    }
+
+    public static int getWeekDayNum(int month, int day) {
+        return new DateTime().withMonthOfYear(month).withDayOfMonth(day).getDayOfWeek();
+    }
+
+    public static HashMap<String, Float> buildDayWeekHashmap(){
+        HashMap<String, Float> weekDay = new HashMap<>();
+        weekDay.put("Sunday", 0f);
+        weekDay.put("Saturday", 0f);
+        weekDay.put("Friday", 0f);
+        weekDay.put("Thursday", 0f);
+        weekDay.put("Wednesday", 0f);
+        weekDay.put("Tuesday", 0f);
+        weekDay.put("Monday", 0f);
+        return weekDay;
+    }
+
+    public static String[] buildDayWeekArray(boolean collapsed){
+        if(collapsed)
+            return new String[]{"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"};
+        return new String[]{"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
     }
 
     public static int getDayCountInMonth(int month){

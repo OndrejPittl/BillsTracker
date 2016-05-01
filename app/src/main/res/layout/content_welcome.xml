@@ -24,18 +24,20 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:paddingBottom="10dp"
         android:layout_gravity="center">
 
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:layout_gravity="center_horizontal"
-            android:layout_weight="2">
+            android:layout_weight="5">
+
 
             <ImageView
                 android:layout_width="wrap_content"
-                android:layout_height="200dp"
+                android:layout_height="180dp"
                 android:id="@+id/imgView_logo"
                 android:src="@drawable/logo"
                 android:layout_gravity="center|bottom" />
@@ -44,9 +46,9 @@
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:layout_gravity="center_horizontal"
-            android:layout_weight="1">
+            android:layout_weight="2">
 
             <LinearLayout
                 android:orientation="vertical"
@@ -81,9 +83,9 @@
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:weightSum="1">
+            android:layout_height="0dp"
+            android:layout_weight="2"
+            android:weightSum="2">
 
             <LinearLayout
                 android:orientation="vertical"
@@ -116,8 +118,6 @@
                     android:layout_below="@+id/viewLine">
 
                 </FrameLayout>
-
-
 
             </LinearLayout>
         </LinearLayout>

@@ -209,6 +209,7 @@ public class HomeDataController {
 
         if(this.edittingPayment){
             this.controllerUI.setInsertUpdateButtonText(false);
+            this.controllerUI.setClearCancelButtonText(false);
             this.edittingPayment = false;
         }
 
@@ -275,7 +276,7 @@ public class HomeDataController {
         //being chosen via spinner with limited options – no way of invalid input
 
 
-        if(!isNumericPositive(contents[3])) {
+        if(!isNumericPositive(contents[3]) || !isInAmountRange(contents[3])) {
             this.controllerUI.markInputAmountError();
             return false;
         }
@@ -292,6 +293,13 @@ public class HomeDataController {
             return false;
         }
 
+        return true;
+        //return num.matches("/^([1-9]\\d*|0)?(?:\\.\\d+)?$/");
+    }
+
+    private boolean isInAmountRange(String num){
+        Float f = Float.parseFloat(num);
+        if(f < 0 || f > 10000000) return false;
         return true;
         //return num.matches("/^([1-9]\\d*|0)?(?:\\.\\d+)?$/");
     }

@@ -194,7 +194,7 @@
                 <Button
                     android:layout_width="0dp"
                     android:layout_height="30dp"
-                    android:text="@string/home_btn_clear_label"
+                    android:text="@string/home_btn_cancel_clear_label"
                     android:textSize="13sp"
                     android:textColor="@color/appTextWhite"
                     android:id="@+id/btn_clear"

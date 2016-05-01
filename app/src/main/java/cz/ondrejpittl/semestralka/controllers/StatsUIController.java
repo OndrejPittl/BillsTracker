@@ -7,13 +7,9 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.LinearLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import org.joda.time.DateTime;
@@ -196,9 +192,10 @@ public class StatsUIController {
         } else {
             //Log.i("Ondra-stats", "DATA");
             monthNoData.setVisibility(View.GONE);
-            this.buildMonthBarChart(null);
-            this.buildMonthLineChart(null);
-            this.buildMonthPieChart(null);
+            this.buildMonthBarChart("Day-expense visualization", "Every single day you've spent some money is displayed below.");
+            this.buildMonthLineChart("Expense-increase visualization", "Here you go – this is how you've gone crazy you shopaholic!");
+            this.buildMonthWeekDayBarChart("The most expensive day.", "And what day of week is the most difficult day for your wallet?");
+            this.buildMonthPieChart("Do you know what do you pay for?", "Where is your money going?");
         }
     }
 
@@ -219,9 +216,11 @@ public class StatsUIController {
         } else {
             //Log.i("Ondra-stats", "y DATA");
             yearNoData.setVisibility(View.GONE);
-            this.buildYearBarChart(null);
-            this.buildYearLineChart(null);
-            this.buildYearPieChart(null);
+
+            this.buildYearBarChart("Month-expense visualization", "Some months are really expensive aren't they?");
+            this.buildYearLineChart("Expense-increase visualization", "Well, let's see how have you been going.");
+            this.buildYearWeekDayBarChart("The most expensive day.", "And what day of week is the most difficult day for your wallet?");
+            this.buildYearPieChart("Do you know what do you pay for?", "Where is your money going?");
         }
 
     }
@@ -233,55 +232,80 @@ public class StatsUIController {
         return chart;
     }
 
-    private void buildBarChart(StatisticsChartObject data, String label){
+    private void buildBarChart(StatisticsChartObject data, String label, String desc){
         StatsChart chart = inflateChart();
-        chart.setLabel(label);
+        chart.setLabels(label, desc);
         chart.setData(data);
         chart.init(this.portraitOrientation, this.chartHeight, this.chartPadding);
         chart.buildBarChart();
     }
 
-    private void buildLineChart(StatisticsChartObject data, String label){
+    private void buildDayWeekBarChart(StatisticsChartObject data, String label, String desc){
+        StatsChart chart = inflateChart();
+        chart.setLabels(label, desc);
+        chart.setData(data);
+        chart.init(this.portraitOrientation, this.chartHeight, this.chartPadding);
+        chart.buildDayWeekBarChart();
+    }
+
+    private void buildLineChart(StatisticsChartObject data, String label, String desc){
 
         //no sense in this case
         if(data.getRecordCount() < 2) return;
 
         StatsChart chart = inflateChart();
+        chart.setLabels(label, desc);
         chart.setData(data);
         chart.init(this.portraitOrientation, this.chartHeight, this.chartPadding);
         chart.buildLineChart();
     }
 
-    private void buildPieChart(StatisticsChartObject data, String label){
+    private void buildPieChart(StatisticsChartObject data, String label, String desc){
         StatsChart chart = inflateChart();
-        chart.setLabel(label);
+
+        if(!data.isPieChartBuildable()) {
+            chart.setLabels(label, "Sorry. Your payment data cannot be visualized.");
+            chart.hideChart();
+            return;
+        } else {
+            chart.setLabels(label, desc);
+        }
+
         chart.setData(data);
         chart.init(this.portraitOrientation, this.chartHeight, this.chartPadding);
         chart.buildPieChart();
     }
 
-    private void buildMonthBarChart(String label){
-        this.buildBarChart(this.monthStatsData, label);
+    private void buildMonthBarChart(String label, String desc){
+        this.buildBarChart(this.monthStatsData, label, desc);
     }
 
-    private void buildMonthLineChart(String label){
-        this.buildLineChart(this.monthStatsData, label);
+    private void buildMonthWeekDayBarChart(String label, String desc){
+        this.buildDayWeekBarChart(this.monthStatsData, label, desc);
     }
 
-    private void buildMonthPieChart(String label){
-        this.buildPieChart(this.monthStatsData, label);
+    private void buildYearWeekDayBarChart(String label, String desc){
+        this.buildDayWeekBarChart(this.yearStatsData, label, desc);
     }
 
-    private void buildYearBarChart(String label){
-        this.buildBarChart(this.yearStatsData, label);
+    private void buildMonthLineChart(String label, String desc){
+        this.buildLineChart(this.monthStatsData, label, desc);
     }
 
-    private void buildYearLineChart(String label){
-        this.buildLineChart(this.yearStatsData, label);
+    private void buildMonthPieChart(String label, String desc){
+        this.buildPieChart(this.monthStatsData, label, desc);
     }
 
-    private void buildYearPieChart(String label){
-        this.buildPieChart(this.yearStatsData, label);
+    private void buildYearBarChart(String label, String desc){
+        this.buildBarChart(this.yearStatsData, label, desc);
+    }
+
+    private void buildYearLineChart(String label, String desc){
+        this.buildLineChart(this.yearStatsData, label, desc);
+    }
+
+    private void buildYearPieChart(String label, String desc){
+        this.buildPieChart(this.yearStatsData, label, desc);
     }
 
 
