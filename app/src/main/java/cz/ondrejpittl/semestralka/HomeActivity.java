@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -69,8 +70,13 @@ public class HomeActivity extends AppCompatActivity {
 
     protected void onResume() {
         super.onResume();
+    }
 
-
+    @Override
+    protected void onDestroy() {
+        Log.i("Ondra-mem", "Home destroyed.");
+        super.onDestroy();
+        Runtime.getRuntime().gc();
     }
 
     /**

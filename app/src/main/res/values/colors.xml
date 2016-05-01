@@ -12,6 +12,12 @@
     <color name="appWhite">#FFFFFFFF</color>
     <color name="appError">#A60000</color>
 
+    <color name="appBlack25">#33000000</color>
+    <color name="appBlack40">#68000000</color>
+    <color name="appBlack50">#88000000</color>
+    <color name="appBlack75">#CC000000</color>
+    <color name="appBlack">#000</color>
+
     <!-- texts -->
     <color name="appTextWhite">#FFF</color>
     <color name="appTextBlack">#000</color>

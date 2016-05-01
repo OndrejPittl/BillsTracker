@@ -1,6 +1,8 @@
 <resources>
     <!-- general -->
     <string name="app_name">Bills Tracker</string>
+    <string name="appAuthor">Ondřej Pittl</string>
+    <string name="appAuthorLink"><a href="http://www.ondrejpittl.cz" style='text-decoration:none' >ondrejpittl.cz</a></string>
     <string name="arrow_left">&#9664;</string>
     <string name="arrow_right">&#9654;</string>
 

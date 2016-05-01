@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,6 +40,19 @@ public class SettingsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_settings);
 
         this.init();
+    }
+
+    @Override
+    protected void onStop() {
+        Log.i("Ondra-mem", "Settings stopped.");
+        super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        Log.i("Ondra-mem", "Settings destroyed.");
+        super.onDestroy();
+        Runtime.getRuntime().gc();
     }
 
     private void init(){

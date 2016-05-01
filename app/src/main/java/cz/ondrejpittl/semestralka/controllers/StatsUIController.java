@@ -192,9 +192,9 @@ public class StatsUIController {
         } else {
             //Log.i("Ondra-stats", "DATA");
             monthNoData.setVisibility(View.GONE);
-            this.buildMonthBarChart("Day-expense visualization", "Every single day you've spent some money is displayed below.");
-            this.buildMonthLineChart("Expense-increase visualization", "Here you go – this is how you've gone crazy you shopaholic!");
-            this.buildMonthWeekDayBarChart("The most expensive day.", "And what day of week is the most difficult day for your wallet?");
+            this.buildMonthBarChart("Day expenses visualization", "Every single day you've spent some money is displayed below.");
+            this.buildMonthLineChart("", "Here you go – this is how you've gone crazy you shopaholic!");
+            this.buildMonthWeekDayBarChart("The most expensive day.", "And what day of a week is the most difficult day for wallet of yours?");
             this.buildMonthPieChart("Do you know what do you pay for?", "Where is your money going?");
         }
     }
@@ -217,9 +217,9 @@ public class StatsUIController {
             //Log.i("Ondra-stats", "y DATA");
             yearNoData.setVisibility(View.GONE);
 
-            this.buildYearBarChart("Month-expense visualization", "Some months are really expensive aren't they?");
-            this.buildYearLineChart("Expense-increase visualization", "Well, let's see how have you been going.");
-            this.buildYearWeekDayBarChart("The most expensive day.", "And what day of week is the most difficult day for your wallet?");
+            this.buildYearBarChart("Month expenses visualization", "Some months are really expensive, aren't they?");
+            this.buildYearLineChart("", "Well, let's see how have you been going.");
+            this.buildYearWeekDayBarChart("The most expensive day.", "And what day of week is the most difficult day for wallet of yours?");
             this.buildYearPieChart("Do you know what do you pay for?", "Where is your money going?");
         }
 
