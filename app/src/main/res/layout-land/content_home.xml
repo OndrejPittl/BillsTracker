@@ -9,12 +9,12 @@
     tools:showIn="@layout/activity_home">
 
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:id="@+id/imgViewBG"
         android:layout_gravity="center"
         android:cropToPadding="false"
-        android:scaleType = "centerCrop"
+        android:scaleType = "fitXY"
         android:src="@drawable/bg"
         android:contentDescription="@string/lbl_background_image" />
 
@@ -437,24 +437,50 @@
                     </LinearLayout>
                 </FrameLayout>
             </LinearLayout>
-
-
         </LinearLayout>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="1dp"
+        android:layout_height="1dp"
+        android:visibility="invisible">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/overlayEmpty" />
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/overlay1Light" />
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/overlay1Light2" />
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/overlay1Light3" />
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/overlay2Light" />
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/overlay2Light2" />
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/overlay2Light3" />
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/overlay2Light4" />
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/overlay3Light" />
+    </FrameLayout>
 
 </FrameLayout>

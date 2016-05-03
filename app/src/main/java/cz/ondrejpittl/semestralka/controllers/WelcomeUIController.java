@@ -163,7 +163,7 @@ public class WelcomeUIController {
                 new int[]{0, 0, 0, 15},
                 new View.OnClickListener() {
                     public void onClick(View v) {
-                        activity.startHelpActivity(v);
+                        activity.startAboutActivity(v);
                     }
                 },
                 this.activity.getApplicationContext()

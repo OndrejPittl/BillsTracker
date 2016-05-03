@@ -60,6 +60,23 @@ public class SettingsActivity extends AppCompatActivity {
         this.initControls();
     }
 
+    public void replayTutorial(View v){
+        Log.i("Ondra-settings", "replayed!");
+        SharedPrefs.storeTutorialDisplayed(false);
+
+        setResult(Activity.RESULT_OK);
+        finish();
+    }
+
+    /**
+     * Starts activity with about-app info.
+     * @param v Reference of view that fires event.
+     */
+    public void startAboutActivity(View v){
+        Intent i = new Intent(this, AboutActivity.class);
+        startActivity(i);
+    }
+
     private void initControls(){
         String defCat = SharedPrefs.getDefaultCategory(),
                defSto = SharedPrefs.getDefaultStore(),
@@ -149,7 +166,7 @@ public class SettingsActivity extends AppCompatActivity {
         });
     }
 
-    public void storeSettings(){
+    private void storeSettings(){
 
         Switch swPassReq = (Switch) findViewById(R.id.settingsPassReq),
                swNotesDisplay = (Switch) findViewById(R.id.settingsNoteSwitch),

@@ -11,12 +11,12 @@
 
 
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:id="@+id/imgViewBG"
         android:layout_gravity="center"
         android:cropToPadding="false"
-        android:scaleType = "centerCrop"
+        android:scaleType = "fitXY"
         android:src="@drawable/bg"
         android:contentDescription="@string/lbl_background_image" />
 
@@ -225,239 +225,469 @@
                     </LinearLayout>
                 </LinearLayout>
 
-            <!--<LinearLayout
+            <FrameLayout
+                android:id="@+id/overlay1Light"
+                android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
-                android:background="@color/appBlack75" />-->
+                android:background="@color/appBlack75"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:visibility="gone">
 
-
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginBottom="10dp"
+                        android:text="@string/tutorialPaymentsListedBelow"
+                        android:textSize="15sp"
+                        android:textColor="@color/appWhite"
+                        android:textAlignment="center" />
+                </LinearLayout>
             </FrameLayout>
 
-        <LinearLayout
-            android:orientation="vertical"
+            <FrameLayout
+                android:id="@+id/overlay1Light2"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_marginTop="28dp"
+                android:background="@color/appBlack75"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginTop="9dp"
+                        android:text="@string/tutorialSettings"
+                        android:textSize="15sp"
+                        android:textColor="@color/appWhite"
+                        android:textAlignment="textStart" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginTop="9dp"
+                        android:text="@string/tutorialStats"
+                        android:textSize="15sp"
+                        android:textColor="@color/appWhite"
+                        android:textAlignment="textEnd" />
+                </LinearLayout>
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/overlay1Light3"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:background="@color/appBlack75"
+                android:visibility="gone">
+            </FrameLayout>
+
+
+        </FrameLayout>
+
+
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:paddingTop="3dp">
+            android:layout_weight="1">
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingTop="3dp">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/appWhite40"
+                    android:id="@+id/recordsListControls"
+                    android:layout_marginTop="5dp">
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/arrow_left"
+                        android:background="@color/transparent"
+                        android:id="@+id/btn_recordsListPrev"
+                        android:layout_gravity="left|center_vertical"
+                        android:textSize="20sp"
+                        android:textColor="@color/appTextWhite"
+                        android:onClick="activeMonthChangeHandler" />
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/arrow_right"
+                        android:background="@color/transparent"
+                        android:id="@+id/btn_recordsListNext"
+                        android:layout_gravity="right|center_vertical"
+                        android:textSize="20sp"
+                        android:textColor="@color/appTextWhite"
+                        android:onClick="activeMonthChangeHandler" />
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:text="@string/home_month_mock"
+                            android:id="@+id/txtView_recordsListMonth"
+                            android:layout_gravity="center|bottom"
+                            android:textSize="19sp"
+                            android:textColor="@color/appTextWhite" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:text="(2005)"
+                            android:id="@+id/txtView_recordsListYear"
+                            android:layout_gravity="center|bottom"
+                            android:textSize="13.5sp"
+                            android:textColor="@color/appWhite75"
+                            android:paddingLeft="6dp" />
+                    </LinearLayout>
+
+                </FrameLayout>
+
+                <cz.ondrejpittl.semestralka.layout.CustomScrollView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp">
+                    <LinearLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:orientation="vertical"
+                        android:paddingTop="5dp"
+                        android:id="@+id/recordsContainer"
+                        android:paddingBottom="5dp">
+                    </LinearLayout>
+                </cz.ondrejpittl.semestralka.layout.CustomScrollView>
+            </LinearLayout>
+
+            <FrameLayout
+                android:id="@+id/overlay2Light"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:background="@color/appBlack75"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginTop="13dp"
+                        android:text="@string/tutorialControls"
+                        android:textSize="15sp"
+                        android:textColor="@color/appWhite"
+                        android:textAlignment="center" />
+
+                </LinearLayout>
+            </FrameLayout>
+
+
+            <FrameLayout
+                android:id="@+id/overlay2Light2"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:background="@color/appBlack75"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginBottom="10dp"
+                        android:text="@string/tutorialUsefulStats"
+                        android:textSize="15sp"
+                        android:textColor="@color/appWhite"
+                        android:textAlignment="center" />
+
+                </LinearLayout>
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/overlay2Light3"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="60dp"
+                        android:background="@color/appBlack75"
+                        android:paddingLeft="15dp"
+                        android:paddingRight="15dp"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:background="@color/appBlack50"
+                        android:paddingLeft="15dp"
+                        android:paddingRight="15dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginTop="6dp"
+                            android:layout_marginRight="20dp"
+                            android:text="@string/tutorialPaymentDelete"
+                            android:textSize="15sp"
+                            android:textColor="@color/appWhite"
+                            android:textAlignment="textStart" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginTop="6dp"
+                            android:layout_marginLeft="20dp"
+                            android:text="@string/tutorialPaymentEdit"
+                            android:textSize="15sp"
+                            android:textColor="@color/appWhite"
+                            android:textAlignment="textEnd" />
+
+                    </LinearLayout>
+                </LinearLayout>
+            </FrameLayout>
+
+
+
+            <FrameLayout
+                android:id="@+id/overlay2Light4"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:background="@color/appBlack75"
+                android:visibility="gone">
+            </FrameLayout>
+
+
+        </FrameLayout>
+
+
+
+
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/appWhite40"
-                android:id="@+id/recordsListControls"
-                android:layout_marginTop="5dp">
-
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/arrow_left"
-                    android:background="@color/transparent"
-                    android:id="@+id/btn_recordsListPrev"
-                    android:layout_gravity="left|center_vertical"
-                    android:textSize="20sp"
-                    android:textColor="@color/appTextWhite"
-                    android:onClick="activeMonthChangeHandler" />
-
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/arrow_right"
-                    android:background="@color/transparent"
-                    android:id="@+id/btn_recordsListNext"
-                    android:layout_gravity="right|center_vertical"
-                    android:textSize="20sp"
-                    android:textColor="@color/appTextWhite"
-                    android:onClick="activeMonthChangeHandler" />
+                android:id="@+id/recordsListStatsContainer"
+                android:padding="5dp"
+                android:paddingTop="3dp"
+                android:background="@color/appWhite50">
 
                 <LinearLayout
                     android:orientation="horizontal"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_gravity="center">
+                    android:layout_weight="1"
+                    android:layout_gravity="center"
+                    android:id="@+id/statsYearWrapper">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:text="@string/home_month_mock"
-                        android:id="@+id/txtView_recordsListMonth"
-                        android:layout_gravity="center|bottom"
-                        android:textSize="19sp"
-                        android:textColor="@color/appTextWhite" />
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:id="@+id/txtView_statsMonthLabel"
+                        android:textAlignment="textEnd"
+                        android:textColor="@color/appTextWhite"
+                        android:textIsSelectable="true"
+                        android:textSize="15sp"
+                        android:text="@string/home_stats_month_label"
+                        android:paddingRight="3dp"
+                        android:layout_gravity="bottom" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:text="(2005)"
-                        android:id="@+id/txtView_recordsListYear"
-                        android:layout_gravity="center|bottom"
-                        android:textSize="13.5sp"
-                        android:textColor="@color/appWhite75"
-                        android:paddingLeft="6dp" />
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:text="@string/price_mock"
+                        android:id="@+id/txtView_statisticsMonth"
+                        android:layout_weight="1"
+                        android:textColor="@color/appTextWhite"
+                        android:layout_gravity="bottom"
+                        android:textAlignment="textEnd" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:id="@+id/txtView_statisticsMonthCurrency"
+                        android:layout_weight="1"
+                        android:textColor="@color/appTextWhite"
+                        android:textSize="10sp"
+                        android:paddingLeft="3dp"
+                        android:layout_gravity="bottom" />
                 </LinearLayout>
 
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_gravity="right|center_vertical"
+                    android:id="@+id/statsWeekWrapper">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:id="@+id/txtView_statsWeekLabel"
+                        android:textAlignment="center"
+                        android:textColor="@color/appTextWhite"
+                        android:textIsSelectable="true"
+                        android:textSize="15sp"
+                        android:text="@string/home_stats_week_label"
+                        android:paddingRight="3dp"
+                        android:layout_gravity="bottom" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:text="@string/price_mock"
+                        android:id="@+id/txtView_statisticsWeek"
+                        android:layout_weight="1"
+                        android:textColor="@color/appTextWhite"
+                        android:layout_gravity="bottom" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:id="@+id/txtView_statisticsWeekCurrency"
+                        android:layout_weight="1"
+                        android:textColor="@color/appTextWhite"
+                        android:textSize="10sp"
+                        android:paddingLeft="3dp"
+                        android:layout_gravity="bottom" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_gravity="left|center_vertical"
+                    android:id="@+id/statsTodayWrapper">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:id="@+id/txtView_statsTodayLabel"
+                        android:textAlignment="textStart"
+                        android:textColor="@color/appTextWhite"
+                        android:textIsSelectable="true"
+                        android:textSize="15sp"
+                        android:text="@string/home_stats_day_label"
+                        android:paddingRight="3dp"
+                        android:layout_gravity="bottom" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:text="@string/price_mock"
+                        android:id="@+id/txtView_statisticsToday"
+                        android:layout_weight="1"
+                        android:textColor="@color/appTextWhite"
+                        android:layout_gravity="bottom" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:id="@+id/txtView_statisticsTodayCurrency"
+                        android:layout_weight="1"
+                        android:textColor="@color/appTextWhite"
+                        android:textSize="10sp"
+                        android:paddingLeft="3dp"
+                        android:layout_gravity="bottom" />
+                </LinearLayout>
             </FrameLayout>
 
-            <cz.ondrejpittl.semestralka.layout.CustomScrollView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp">
-                <LinearLayout
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:orientation="vertical"
-                    android:paddingTop="5dp"
-                    android:id="@+id/recordsContainer"
-                    android:paddingBottom="5dp">
-                </LinearLayout>
-            </cz.ondrejpittl.semestralka.layout.CustomScrollView>
 
-
-        </LinearLayout>
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/recordsListStatsContainer"
-            android:padding="5dp"
-            android:paddingTop="3dp"
-            android:background="@color/appWhite50">
-
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="wrap_content"
+            <FrameLayout
+                android:id="@+id/overlay3Light"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
                 android:layout_gravity="center"
-                android:id="@+id/statsYearWrapper">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:id="@+id/txtView_statsMonthLabel"
-                    android:textAlignment="textEnd"
-                    android:textColor="@color/appTextWhite"
-                    android:textIsSelectable="true"
-                    android:textSize="15sp"
-                    android:text="@string/home_stats_month_label"
-                    android:paddingRight="3dp"
-                    android:layout_gravity="bottom" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:text="@string/price_mock"
-                    android:id="@+id/txtView_statisticsMonth"
-                    android:layout_weight="1"
-                    android:textColor="@color/appTextWhite"
-                    android:layout_gravity="bottom"
-                    android:textAlignment="textEnd" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:id="@+id/txtView_statisticsMonthCurrency"
-                    android:layout_weight="1"
-                    android:textColor="@color/appTextWhite"
-                    android:textSize="10sp"
-                    android:paddingLeft="3dp"
-                    android:layout_gravity="bottom" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:layout_gravity="right|center_vertical"
-                android:id="@+id/statsWeekWrapper">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:id="@+id/txtView_statsWeekLabel"
-                    android:textAlignment="center"
-                    android:textColor="@color/appTextWhite"
-                    android:textIsSelectable="true"
-                    android:textSize="15sp"
-                    android:text="@string/home_stats_week_label"
-                    android:paddingRight="3dp"
-                    android:layout_gravity="bottom" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:text="@string/price_mock"
-                    android:id="@+id/txtView_statisticsWeek"
-                    android:layout_weight="1"
-                    android:textColor="@color/appTextWhite"
-                    android:layout_gravity="bottom" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:id="@+id/txtView_statisticsWeekCurrency"
-                    android:layout_weight="1"
-                    android:textColor="@color/appTextWhite"
-                    android:textSize="10sp"
-                    android:paddingLeft="3dp"
-                    android:layout_gravity="bottom" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:layout_gravity="left|center_vertical"
-                android:id="@+id/statsTodayWrapper">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:id="@+id/txtView_statsTodayLabel"
-                    android:textAlignment="textStart"
-                    android:textColor="@color/appTextWhite"
-                    android:textIsSelectable="true"
-                    android:textSize="15sp"
-                    android:text="@string/home_stats_day_label"
-                    android:paddingRight="3dp"
-                    android:layout_gravity="bottom" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:text="@string/price_mock"
-                    android:id="@+id/txtView_statisticsToday"
-                    android:layout_weight="1"
-                    android:textColor="@color/appTextWhite"
-                    android:layout_gravity="bottom" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:id="@+id/txtView_statisticsTodayCurrency"
-                    android:layout_weight="1"
-                    android:textColor="@color/appTextWhite"
-                    android:textSize="10sp"
-                    android:paddingLeft="3dp"
-                    android:layout_gravity="bottom" />
-            </LinearLayout>
+                android:background="@color/appBlack75"
+                android:visibility="gone">
+            </FrameLayout>
         </FrameLayout>
+
     </LinearLayout>
 
+
+    <FrameLayout
+        android:id="@+id/overlayEmpty"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:background="@color/transparent"
+        android:visibility="gone">
+    </FrameLayout>
 
     <!--<FrameLayout
         android:layout_width="match_parent"

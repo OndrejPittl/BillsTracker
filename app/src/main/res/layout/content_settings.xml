@@ -10,13 +10,14 @@
 
 
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:id="@+id/imgViewBG"
         android:layout_gravity="center"
         android:cropToPadding="false"
-        android:scaleType = "centerCrop"
-        android:src="@drawable/bg" />
+        android:scaleType = "fitXY"
+        android:src="@drawable/bg"
+        android:contentDescription="@string/lbl_background_image" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -32,7 +33,6 @@
             android:paddingBottom="30dp">
 
 
-
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -43,10 +43,39 @@
                 android:textColor="#ffffff"
                 android:layout_marginBottom="30dp" />
 
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="25dp"
+                android:background="@color/transparent"
+                android:paddingLeft="30dp"
+                android:paddingRight="30dp"
+                android:textColor="@color/appWhite"
+                android:text="@string/settingsTutorial"
+                android:id="@+id/tutorialReplay"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                android:onClick="replayTutorial" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="25dp"
+                android:background="@color/transparent"
+                android:paddingLeft="30dp"
+                android:paddingRight="30dp"
+                android:textColor="@color/appWhite"
+                android:text="@string/settingsAboutApp"
+                android:id="@+id/aboutApp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="5dp"
+                android:onClick="startAboutActivity" />
+
+
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_marginTop="35dp"
                 android:layout_marginBottom="30dp">
 
                 <TextView

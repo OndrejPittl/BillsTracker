@@ -143,6 +143,10 @@ public class DBManager extends SQLiteOpenHelper {
 
     }
 
+    public boolean isDBEmpty(){
+        return this.payments.selectAllPayments().size() == 0;
+    }
+
     public Statistics computeCurrentStatistics(){
         int today, week,
             month, year, total;

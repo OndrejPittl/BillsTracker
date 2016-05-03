@@ -50,6 +50,7 @@ import cz.ondrejpittl.semestralka.models.Store;
 import cz.ondrejpittl.semestralka.partial.JodaCalendar;
 import cz.ondrejpittl.semestralka.partial.LoadingButtonType;
 import cz.ondrejpittl.semestralka.partial.SharedPrefs;
+import cz.ondrejpittl.semestralka.partial.TutorialManager;
 
 import static cz.ondrejpittl.semestralka.R.color.appError;
 import static cz.ondrejpittl.semestralka.R.drawable.shape_thin_border;
@@ -66,6 +67,9 @@ public class HomeUIController {
      * Activity its UI is being controlled.
      */
     private HomeActivity activity;
+
+    private TutorialManager tut;
+
 
     /**
      * Object inflating view defined as XML.
@@ -142,17 +146,15 @@ public class HomeUIController {
         //this.cal = Calendar.getInstance();
         this.calendar = new DateTime();
         this.prefs = this.activity.getSharedPreferences("cz.ondrejpittl.semestralka", Context.MODE_PRIVATE);
+        this.tut = new TutorialManager(this.activity);
         this.layoutInflater = (LayoutInflater) this.activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.paymentRecordsContainer = (LinearLayout) this.activity.findViewById(R.id.recordsContainer);
-
         this.animationAllowed = SharedPrefs.isPaymentAnimationSet() && SharedPrefs.getPaymentAnimation();
 
-        buildControlPanel();
+        this.buildControlPanel();
 
-
-
-
-        resetVisitOnDoubleTap();
+        //tmp
+        this.resetVisitOnDoubleTap();
     }
 
     /**
@@ -162,9 +164,12 @@ public class HomeUIController {
         this.buildDateControls();
         this.buildSettingsImgButton();
         this.buildStatsImgButton();
-
         //this.buildCategoryControls();
         //this.buildStoreControls();
+    }
+
+    public void startTutorial(){
+        this.tut.start();
     }
 
     private void buildSettingsImgButton(){

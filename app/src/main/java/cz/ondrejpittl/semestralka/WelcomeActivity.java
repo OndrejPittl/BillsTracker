@@ -93,7 +93,7 @@ public class WelcomeActivity extends AppCompatActivity {
      * Starts activity with about-app info.
      * @param v Reference of view that fires event.
      */
-    public void startHelpActivity(View v){
+    public void startAboutActivity(View v){
         Intent i = new Intent(this, AboutActivity.class);
         startActivity(i);
     }

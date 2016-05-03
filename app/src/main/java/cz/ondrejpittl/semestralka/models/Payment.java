@@ -41,6 +41,16 @@ public class Payment {
         this.setStore(Integer.parseInt(inputs[6]), inputs[5]);
     }
 
+    public static Payment getMockPayment(){
+        Payment p = new Payment();
+        p.setCategory(1, "Clothes", "@drawable/category_icon_clothes");
+        p.setStore(5, "Tesco");
+        p.setDate(new DateTime().getMillis());
+        p.setAmount(128);
+        p.setNote("Such a sale!");
+        return p;
+    }
+
     public int getID() {
         return ID;
     }

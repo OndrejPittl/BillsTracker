@@ -17,6 +17,7 @@ import cz.ondrejpittl.semestralka.models.Statistics;
 import cz.ondrejpittl.semestralka.models.Store;
 import cz.ondrejpittl.semestralka.partial.JodaCalendar;
 import cz.ondrejpittl.semestralka.partial.MonthChangeEnum;
+import cz.ondrejpittl.semestralka.partial.SharedPrefs;
 
 /**
  * Created by OndrejPittl on 01.04.16.
@@ -162,9 +163,15 @@ public class HomeDataController {
         String monthStr = this.jodaDate.toString("MMMM");
         HomeActivity.changeLocaleDefault();
 
-
         String currencyUnits = loadDefaultCurrencyFromPrefs();
+
+
+        if(this.dbManager.isDBEmpty() && !SharedPrefs.wasTutorialDisplayed()) {
+            this.dbManager.insertNewPayment(Payment.getMockPayment());
+        }
+
         this.displayedPayments = this.dbManager.getPaymentsByMonth(month, year);
+
         this.controllerUI.updatePaymentRecords(monthStr, year, this.displayedPayments, currencyUnits, this);
 
         logDisplayedPayments();

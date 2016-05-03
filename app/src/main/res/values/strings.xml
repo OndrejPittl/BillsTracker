@@ -73,6 +73,16 @@
     <string name="title_activity_statistics">StatisticsActivity</string>
 
 
+    <!-- tutorial -->
+    <string name="tutorialPaymentsListedBelow">All your payments will be listed below.</string>
+    <string name="tutorialSettings">Settings.</string>
+    <string name="tutorialStats">Statistics.</string>
+    <string name="tutorialControls">Inserting new payment or editing the old one is possible at this control panel.</string>
+    <string name="tutorialUsefulStats">Here are some statistics you may find useful.</string>
+    <string name="tutorialPaymentEdit">...or edit payment swiping right. &#9654;</string>
+    <string name="tutorialPaymentDelete">&#9664; You can remove payment swiping left...</string>
+
+
     <!-- Statistics activity-->
     <string name="statisticsHeading">Statistics summary</string>
     <string name="statisticsMonthHeading">Month statistics</string>
@@ -93,6 +103,8 @@
     <string name="settingsDefCategory">Category</string>
     <string name="settingsDefStore">Store</string>
     <string name="settingsRestore">Restore defaults.</string>
+    <string name="settingsTutorial">Replay tutorial  &#9654;</string>
+    <string name="settingsAboutApp">About app  &#9654;</string>
     <string name="settingsErase">Erase all records.</string>
 
 

@@ -4,13 +4,11 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 
 import android.view.inputmethod.InputMethodManager;
@@ -21,7 +19,6 @@ import java.util.Locale;
 import cz.ondrejpittl.semestralka.controllers.HomeDataController;
 import cz.ondrejpittl.semestralka.controllers.HomeUIController;
 import cz.ondrejpittl.semestralka.database.DBManager;
-import cz.ondrejpittl.semestralka.layout.PaymentRecord;
 import cz.ondrejpittl.semestralka.partial.MonthChangeEnum;
 import cz.ondrejpittl.semestralka.partial.SharedPrefs;
 
@@ -96,13 +93,8 @@ public class HomeActivity extends AppCompatActivity {
         //data
         this.controllerData = new HomeDataController(this);
 
-
-        //this.controllerData.loadStoredSettings();
-
-    }
-
-    private void updateSettings(){
-
+        //tutorial
+        this.handleTutorialStart();
     }
 
 
@@ -195,8 +187,9 @@ public class HomeActivity extends AppCompatActivity {
             this.controllerUI.updateCategoryControlsSelection();
             this.controllerUI.updateStoreControlsSelection();
 
-
             this.updatePaymentRecords();
+            this.handleTutorialStart();
+
 
         } else if(requestCode == 2) {
 
@@ -206,6 +199,10 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
+    private void handleTutorialStart(){
+        if(!SharedPrefs.wasTutorialDisplayed())
+            this.controllerUI.startTutorial();
+    }
 
 
 

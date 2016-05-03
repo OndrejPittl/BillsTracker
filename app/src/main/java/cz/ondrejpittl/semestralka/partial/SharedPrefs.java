@@ -22,6 +22,10 @@ import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESKeySpec;
 
+import cz.ondrejpittl.semestralka.models.Category;
+import cz.ondrejpittl.semestralka.models.Currency;
+import cz.ondrejpittl.semestralka.models.Store;
+
 /**
  * Created by OndrejPittl on 22.04.16.
  */
@@ -46,6 +50,21 @@ public class SharedPrefs {
 
     public static void load(Activity activity){
         prefs = activity.getSharedPreferences("cz.ondrejpittl.semestralka", activity.MODE_PRIVATE);
+
+        if(!SharedPrefs.isPasswordRequireSet())
+            SharedPrefs.storePasswordRequire(true);
+
+        if(!SharedPrefs.isPaymentNoteDisplaySet())
+            SharedPrefs.storePaymentNoteDisplay(false);
+
+        if(!SharedPrefs.isPaymentAnimationSet())
+            SharedPrefs.storePaymentAnimation(true);
+
+        if(!SharedPrefs.isPaymentIconSet())
+            SharedPrefs.storePaymentIcons(true);
+
+        if(!isTutorialDisplayedSet())
+            storeTutorialDisplayed(false);
 
         //clear();
     }
@@ -199,6 +218,26 @@ public class SharedPrefs {
         else
             return true;
     }
+
+    public static boolean isTutorialDisplayedSet(){
+        return prefs.getString("tutorialDisplayed", "").length() > 0;
+    }
+
+    public static void storeTutorialDisplayed(boolean value){
+        prefs.edit().putString("tutorialDisplayed", value == true ? "1" : "0").commit();
+    }
+
+    public static boolean wasTutorialDisplayed(){
+
+        int rs = Integer.parseInt(prefs.getString("tutorialDisplayed", ""));
+
+        if(rs == 0)
+            return false;
+        else
+            return true;
+    }
+
+
 
     /**
      * SHA-1 string password hash.

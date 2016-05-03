@@ -26,26 +26,45 @@ import cz.ondrejpittl.semestralka.partial.SharedPrefs;
 public class AnimationFactory {
 
 
-
-    public static void fadeInPaymentRecords(final ArrayList<PaymentRecord> records){
+    public static void fadeOut(final View v, int delay) {
         boolean animationAllowed = SharedPrefs.isPaymentAnimationSet() && SharedPrefs.getPaymentAnimation();
 
+        if(!animationAllowed) {
+            v.setAlpha(0f);
+            return;
+        }
+
+        new Handler().postDelayed(new Runnable() {
+            public void run() {
+                ObjectAnimator anim = ObjectAnimator.ofFloat(v, "alpha", 1f, 0f);
+                anim.setDuration(300);
+                anim.start();
+            }
+        }, delay);
+    }
+
+    public static void fadeIn(final View v, int delay){
+        boolean animationAllowed = SharedPrefs.isPaymentAnimationSet() && SharedPrefs.getPaymentAnimation();
+
+        if(!animationAllowed) {
+            v.setAlpha(1f);
+            return;
+        }
+
+        new Handler().postDelayed(new Runnable() {
+            public void run() {
+                ObjectAnimator anim = ObjectAnimator.ofFloat(v, "alpha", 0f, 1f);
+                anim.setDuration(300);
+                anim.start();
+            }
+        }, delay);
+    }
+
+    public static void fadeInPaymentRecords(final ArrayList<PaymentRecord> records){
         int y = 0;
         for (final PaymentRecord rec : records) {
             final int i = y++;
-
-            if(!animationAllowed) {
-                rec.setAlpha(1f);
-                continue;
-            }
-
-            new Handler().postDelayed(new Runnable() {
-                public void run() {
-                    ObjectAnimator anim = ObjectAnimator.ofFloat(rec, "alpha", 0f, 1f);
-                    anim.setDuration(300);
-                    anim.start();
-                }
-            }, i * 150);
+            fadeIn(rec, i * 150);
         }
     }
 
@@ -53,20 +72,8 @@ public class AnimationFactory {
         if(records == null || records.size() <= 0)
             return;
 
-        boolean animationAllowed = SharedPrefs.isPaymentAnimationSet() && SharedPrefs.getPaymentAnimation();
-
         for (final PaymentRecord rec : records) {
-
-            if(!animationAllowed) {
-                rec.setAlpha(0f);
-                continue;
-            }
-
-            Animation fadeout = new AlphaAnimation(1.f, 0.f);
-            fadeout.setDuration(250);
-            rec.startAnimation(fadeout);
-
-
+            fadeOut(rec, 0);
         }
     }
 

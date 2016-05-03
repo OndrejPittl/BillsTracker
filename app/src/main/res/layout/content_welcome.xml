@@ -12,13 +12,14 @@
     tools:showIn="@layout/activity_welcome">
 
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:id="@+id/imgViewBG"
         android:layout_gravity="center"
         android:cropToPadding="false"
-        android:scaleType = "centerCrop"
-        android:src="@drawable/bg" />
+        android:scaleType = "fitXY"
+        android:src="@drawable/bg"
+        android:contentDescription="@string/lbl_background_image" />
 
     <LinearLayout
         android:orientation="vertical"
