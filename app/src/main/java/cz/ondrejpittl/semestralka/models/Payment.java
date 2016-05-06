@@ -8,6 +8,8 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 
+import cz.ondrejpittl.semestralka.partial.JodaCalendar;
+
 /**
  * Created by OndrejPittl on 01.04.16.
  */
@@ -41,11 +43,11 @@ public class Payment {
         this.setStore(Integer.parseInt(inputs[6]), inputs[5]);
     }
 
-    public static Payment getMockPayment(){
+    public static Payment getMockPayment(int month, int year){
         Payment p = new Payment();
         p.setCategory(1, "Clothes", "@drawable/category_icon_clothes");
         p.setStore(5, "Tesco");
-        p.setDate(new DateTime().getMillis());
+        p.setDate(new JodaCalendar().getLastDayOfMonth(month, year).getMillis());
         p.setAmount(128);
         p.setNote("Such a sale!");
         return p;

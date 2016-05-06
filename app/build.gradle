@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'testfairy'
 
 android {
     compileSdkVersion 23

@@ -200,8 +200,10 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void handleTutorialStart(){
-        if(!SharedPrefs.wasTutorialDisplayed())
+        if(!SharedPrefs.wasTutorialDisplayed()) {
+            this.controllerData.createMockPaymentIfNeeded();
             this.controllerUI.startTutorial();
+        }
     }
 
 

@@ -148,7 +148,9 @@ public class SharedPrefs {
     }
 
     public static boolean isPaymentNoteDisplaySet(){
-        return prefs.getString("paymentNoteDisplay", "").length() > 0;
+        if(SharedPrefs.isNotNull())
+            return prefs.getString("paymentNoteDisplay", "").length() > 0;
+        return  false;
     }
 
     public static boolean getPaymentNoteDisplay(){
@@ -260,6 +262,9 @@ public class SharedPrefs {
 
     }
 
+    public static boolean isNotNull(){
+        return prefs != null;
+    }
 
 
 

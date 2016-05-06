@@ -143,8 +143,9 @@ public class DBManager extends SQLiteOpenHelper {
 
     }
 
-    public boolean isDBEmpty(){
-        return this.payments.selectAllPayments().size() == 0;
+    public boolean isDBEmpty(int month, int year){
+        ArrayList<Payment> payments = getPaymentsByMonth(month, year);
+        return payments.size() == 0;
     }
 
     public Statistics computeCurrentStatistics(){

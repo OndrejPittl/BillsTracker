@@ -109,9 +109,6 @@ public class PaymentRecord extends LinearLayout {
      * Payment record initialization.
      */
     private void init() {
-        this.updateCollapsed();
-        this.setIconVisibility();
-
         this.collapsedHeight = -1;
 
         ACTION_TAB_WIDTH = displayWidth / 6;
@@ -122,7 +119,12 @@ public class PaymentRecord extends LinearLayout {
         //this.getLayoutParams().height = this.getCollapsedRecHeight();
     }
 
-    private void updateCollapsed(){
+    public void update(){
+        this.updateCollapsed();
+        this.setIconVisibility();
+    }
+
+    public void updateCollapsed(){
         if(SharedPrefs.isPaymentNoteDisplaySet() && !SharedPrefs.getPaymentNoteDisplay()) {
             this.collapsed = true;
         } else {

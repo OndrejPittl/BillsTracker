@@ -154,7 +154,7 @@ public class HomeUIController {
         this.buildControlPanel();
 
         //tmp
-        this.resetVisitOnDoubleTap();
+        //this.resetVisitOnDoubleTap();
     }
 
     /**
@@ -261,6 +261,7 @@ public class HomeUIController {
 
             record.setAlpha(0);
             record.setPayment(p);
+            record.update();
             //record.updateIconVisibility();
 
             //record.setHomeController(dControl);

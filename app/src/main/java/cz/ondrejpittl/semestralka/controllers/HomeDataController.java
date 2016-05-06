@@ -165,17 +165,23 @@ public class HomeDataController {
 
         String currencyUnits = loadDefaultCurrencyFromPrefs();
 
-
-        if(this.dbManager.isDBEmpty() && !SharedPrefs.wasTutorialDisplayed()) {
-            this.dbManager.insertNewPayment(Payment.getMockPayment());
-        }
+        //this.createMockPaymentIfNeeded();
 
         this.displayedPayments = this.dbManager.getPaymentsByMonth(month, year);
-
         this.controllerUI.updatePaymentRecords(monthStr, year, this.displayedPayments, currencyUnits, this);
 
         logDisplayedPayments();
         computeStatistics();
+    }
+
+    public void createMockPaymentIfNeeded(){
+        int year = this.jodaDate.getYear();
+        int month = this.jodaDate.getMonthOfYear();
+
+        if(this.dbManager.isDBEmpty(month, year) && !SharedPrefs.wasTutorialDisplayed()) {
+            this.dbManager.insertNewPayment(Payment.getMockPayment(month, year));
+            this.loadPaymentsOfMonth();
+        }
     }
 
     private void computeStatistics(){
