@@ -100,7 +100,7 @@ public class LoadingImgButton extends FrameLayout {
                     public void run() {
                         activity.startActivityForResult(intent, i);
                     }
-                }, 500);
+                }, 300);
 
 
 

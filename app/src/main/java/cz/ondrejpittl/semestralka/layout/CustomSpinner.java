@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import cz.ondrejpittl.semestralka.R;
 import cz.ondrejpittl.semestralka.StatisticsActivity;
@@ -46,6 +47,11 @@ public class CustomSpinner extends Spinner {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         this.setAdapter(adapter);
     }
+
+    /*public void init(final Activity activity, List<String> source){
+        ArrayList<String> arrayList = new ArrayList<>(source);
+    }*/
+
 
     public void selectItem(String itemValue) {
         int index;

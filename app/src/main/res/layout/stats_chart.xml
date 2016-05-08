@@ -37,6 +37,16 @@
         android:id="@+id/txtViewChartDesc"
         android:layout_gravity="center_horizontal|top" />
 
+    <LinearLayout
+        android:id="@+id/alternateChartWrapper"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingTop="20dp"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp">
+    </LinearLayout>
+
     <FrameLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"

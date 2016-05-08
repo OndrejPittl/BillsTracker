@@ -190,7 +190,7 @@ public class TutorialManager {
             public void run() {
                 animating = false;
             }
-        }, delay + getAnimationDelay() + 700);
+        }, delay + getAnimationDelay() + 300);
     }
 
     private void hide(final View[] overlays, int delay){

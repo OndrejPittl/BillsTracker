@@ -4,8 +4,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 
 import cz.ondrejpittl.semestralka.controllers.WelcomeUIController;
+import cz.ondrejpittl.semestralka.partial.Designer;
 import cz.ondrejpittl.semestralka.partial.SharedPrefs;
 
 
@@ -16,43 +19,27 @@ public class WelcomeActivity extends AppCompatActivity {
      */
     private WelcomeUIController controller;
 
-    //private SharedPreferences prefs;
-
-    /**
-     *
-     */
-    //private boolean activityLoaded;
-
-
-
-
-
-
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        Designer.setFullscreenActivity(this);
+
         //setting content layout
-        setContentView(R.layout.activity_welcome);
+        this.setContentView(R.layout.activity_welcome);
 
         //initialization
         this.init();
-
-        //displaying welcome screen for first-time launch
-        //displayWelcomeScreen();
-        //displayLoginScreen();
-
-        //app loaded flag
-        //activityLoaded = true;
     }
 
     protected void onResume() {
         super.onResume();
+        Designer.updateDesign(this);
 
         if (SharedPrefs.isFirstTimeLaunch()) {
-            displayWelcomeScreen();
+            this.displayWelcomeScreen();
         } else {
-            displayLoginScreen();
+            this.displayLoginScreen();
         }
     }
 
@@ -63,21 +50,17 @@ public class WelcomeActivity extends AppCompatActivity {
         SharedPrefs.load(this);
 
         if(SharedPrefs.isPasswordRequireSet() && !SharedPrefs.isPasswordRequired()) {
-            startHomeActivity();
+            this.startHomeActivity();
         }
 
-        //this.activityLoaded = false;
-        //this.prefs = getSharedPreferences("cz.ondrejpittl.semestralka", MODE_PRIVATE);
+        Designer.updateDesign(this);
         this.controller = new WelcomeUIController(this);
-
-
     }
 
     /**
      * Displays Welcome screen for the first-time launch.
      */
     private void displayWelcomeScreen(){
-        //if(this.activityLoaded) return;
         this.controller.displayWelcomeScreen();
     }
 
@@ -85,7 +68,6 @@ public class WelcomeActivity extends AppCompatActivity {
      * Displays Login screen for the other-time launches.
      */
     private void displayLoginScreen(){
-        //if(this.activityLoaded) return;
         this.controller.displayLoginScreen();
     }
 
@@ -95,7 +77,7 @@ public class WelcomeActivity extends AppCompatActivity {
      */
     public void startAboutActivity(View v){
         Intent i = new Intent(this, AboutActivity.class);
-        startActivity(i);
+        this.startActivity(i);
     }
 
     /**
@@ -103,39 +85,6 @@ public class WelcomeActivity extends AppCompatActivity {
      */
     public void startHomeActivity(){
         Intent i = new Intent(this, HomeActivity.class);
-        startActivity(i);
+        this.startActivity(i);
     }
-
-
-
-
-
-
-
-
-    /*
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_welcome, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-    */
-
-
 }

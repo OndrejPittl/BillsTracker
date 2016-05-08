@@ -47,6 +47,7 @@ import cz.ondrejpittl.semestralka.models.Category;
 import cz.ondrejpittl.semestralka.models.Payment;
 import cz.ondrejpittl.semestralka.models.Statistics;
 import cz.ondrejpittl.semestralka.models.Store;
+import cz.ondrejpittl.semestralka.partial.Designer;
 import cz.ondrejpittl.semestralka.partial.JodaCalendar;
 import cz.ondrejpittl.semestralka.partial.LoadingButtonType;
 import cz.ondrejpittl.semestralka.partial.SharedPrefs;
@@ -259,7 +260,9 @@ public class HomeUIController {
             //record.setId(paymentID);
             //record.setPaymentId(p.getID());
 
-            record.setAlpha(0);
+            if(SharedPrefs.isPaymentAnimationSet())
+                record.setAlpha(0);
+
             record.setPayment(p);
             record.update();
             //record.updateIconVisibility();
@@ -293,7 +296,6 @@ public class HomeUIController {
             icon.setImageResource(imageResource);
 
 
-
             //payment day
             TextView d = (TextView) record.findViewById(R.id.txtViewRecordDay);
             Calendar cal = Calendar.getInstance();
@@ -314,7 +316,7 @@ public class HomeUIController {
             a.setText(String.valueOf(p.getAmount()));
 
             //payment amount currency
-            //TextView cur = (TextView) record.findViewById(R.id.txtViewRecordCurrency);
+            //TextVidatew cur = (TextView) record.findViewById(R.id.txtViewRecordCurrency);
             //cur.setText(currencyUnits);
 
 
@@ -645,7 +647,7 @@ public class HomeUIController {
                 d = cal.get(Calendar.DAY_OF_MONTH);
 
         //date button
-        updateDateButton(y, m, d);
+        updateDateButton(y, m+1, d);
 
         //category spinner
         CustomSpinner catSpin = (CustomSpinner) this.activity.findViewById(R.id.spinner_category);
@@ -751,7 +753,7 @@ public class HomeUIController {
         //store spinner
         CustomSpinner stSpin = (CustomSpinner) this.activity.findViewById(R.id.spinner_store);
         //stSpin.setSelection(stSpin.findSpinnerItemIndex(p.getStore().getName()), true);
-        stSpin.selectItem(p.getCategory().getName());
+        stSpin.selectItem(p.getStore().getName());
     }
 
 

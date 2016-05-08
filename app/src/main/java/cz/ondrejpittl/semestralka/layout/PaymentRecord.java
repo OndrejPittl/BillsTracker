@@ -8,12 +8,10 @@ import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import cz.ondrejpittl.semestralka.HomeActivity;
-import cz.ondrejpittl.semestralka.Listeners.PaymentRecordTouchListener;
+import cz.ondrejpittl.semestralka.listeners.PaymentRecordTouchListener;
 import cz.ondrejpittl.semestralka.R;
 import cz.ondrejpittl.semestralka.factories.AnimationFactory;
 import cz.ondrejpittl.semestralka.models.Payment;

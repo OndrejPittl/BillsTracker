@@ -1,5 +1,6 @@
 package cz.ondrejpittl.semestralka.controllers;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -9,12 +10,25 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import org.joda.time.DateTime;
+import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
 
+import org.joda.time.DateTime;
+import org.w3c.dom.Text;
+
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.TreeMap;
 
 import cz.ondrejpittl.semestralka.R;
 import cz.ondrejpittl.semestralka.StatisticsActivity;
@@ -22,6 +36,7 @@ import cz.ondrejpittl.semestralka.layout.CustomSpinner;
 import cz.ondrejpittl.semestralka.layout.StatsChart;
 import cz.ondrejpittl.semestralka.models.Category;
 import cz.ondrejpittl.semestralka.partial.JodaCalendar;
+import cz.ondrejpittl.semestralka.partial.SharedPrefs;
 import cz.ondrejpittl.semestralka.partial.StatisticsChartObject;
 
 /**
@@ -192,10 +207,22 @@ public class StatsUIController {
         } else {
             //Log.i("Ondra-stats", "DATA");
             monthNoData.setVisibility(View.GONE);
-            this.buildMonthBarChart("Day expenses visualization", "Every single day you've spent some money is displayed below.");
-            this.buildMonthLineChart("", "Here you go – this is how you've gone crazy you shopaholic!");
-            this.buildMonthWeekDayBarChart("The most expensive day.", "And what day of a week is the most difficult day for wallet of yours?");
-            this.buildMonthPieChart("Do you know what do you pay for?", "Where is your money going?");
+            this.buildMonthBarChart(
+                    this.activity.getString(R.string.statsMonthHeading1),
+                    this.activity.getString(R.string.statsMonthDesc1)
+            );
+            this.buildMonthLineChart(
+                    "",
+                    this.activity.getString(R.string.statsMonthDesc2)
+            );
+            this.buildMonthWeekDayBarChart(
+                    this.activity.getString(R.string.statsMonthHeading3),
+                    this.activity.getString(R.string.statsMonthDesc3)
+            );
+            this.buildMonthPieChart(
+                    this.activity.getString(R.string.statsMonthHeading4),
+                    this.activity.getString(R.string.statsMonthDesc4)
+            );
         }
     }
 
@@ -217,10 +244,22 @@ public class StatsUIController {
             //Log.i("Ondra-stats", "y DATA");
             yearNoData.setVisibility(View.GONE);
 
-            this.buildYearBarChart("Month expenses visualization", "Some months are really expensive, aren't they?");
-            this.buildYearLineChart("", "Well, let's see how have you been going.");
-            this.buildYearWeekDayBarChart("The most expensive day.", "And what day of week is the most difficult day for wallet of yours?");
-            this.buildYearPieChart("Do you know what do you pay for?", "Where is your money going?");
+            this.buildYearBarChart(
+                    this.activity.getString(R.string.statsYearHeading1),
+                    this.activity.getString(R.string.statsYearDesc1)
+            );
+            this.buildYearLineChart(
+                    "",
+                    this.activity.getString(R.string.statsYearDesc2)
+            );
+            this.buildYearWeekDayBarChart(
+                    this.activity.getString(R.string.statsYearHeading3),
+                    this.activity.getString(R.string.statsYearDesc3)
+            );
+            this.buildYearPieChart(
+                    this.activity.getString(R.string.statsYearHeading4),
+                    this.activity.getString(R.string.statsYearDesc4)
+            );
         }
 
     }
@@ -251,7 +290,7 @@ public class StatsUIController {
     private void buildLineChart(StatisticsChartObject data, String label, String desc){
 
         //no sense in this case
-        if(data.getRecordCount() < 2) return;
+        if(data.getLineDataSet().getEntryCount() < 2) return;
 
         StatsChart chart = inflateChart();
         chart.setLabels(label, desc);
@@ -263,18 +302,61 @@ public class StatsUIController {
     private void buildPieChart(StatisticsChartObject data, String label, String desc){
         StatsChart chart = inflateChart();
 
+        int alternateHeight = this.buildAlternativePieChart(data, chart);
+
+
         if(!data.isPieChartBuildable()) {
             chart.setLabels(label, "Sorry. Your payment data cannot be visualized.");
-            chart.hideChart();
-            return;
+            chart.init(this.portraitOrientation, 0, (int)(alternateHeight*1.3), this.chartPadding);
+            //chart.hideChart();
+            //this.buildAlternativePieChart(data, chart);
         } else {
             chart.setLabels(label, desc);
+            chart.setData(data);
+            chart.init(this.portraitOrientation, this.chartHeight, alternateHeight, this.chartPadding);
+            chart.buildPieChart();
         }
 
-        chart.setData(data);
-        chart.init(this.portraitOrientation, this.chartHeight, this.chartPadding);
-        chart.buildPieChart();
     }
+
+    private int buildAlternativePieChart(StatisticsChartObject data, StatsChart chart){
+        List<String> xData = data.getPieData().getXVals();
+        ArrayList<Entry> yData = (ArrayList<Entry>) data.getPieDataSet().getYVals();
+        Map<Float, String> items = new TreeMap<>();
+
+        for (Entry e : yData) {
+            items.put(e.getVal(), xData.get(e.getXIndex()));
+        }
+
+        int itemCount = items.size();
+        LinearLayout itemsContainer = (LinearLayout) chart.findViewById(R.id.alternateChartWrapper);
+
+        //for(Map.Entry<Float, String> item : items.entrySet()) {
+        for(int i = itemCount - 1; i >= 0; i--) {
+            Map.Entry<Float, String> item = (Map.Entry<Float, String>) items.entrySet().toArray()[i];
+            LinearLayout record = (LinearLayout) layoutInflater.inflate(R.layout.alternative_pie_item, itemsContainer, false);
+            TextView tvOrder = (TextView) record.findViewById(R.id.pieOrder),
+                    tvCat = (TextView) record.findViewById(R.id.pieCategory),
+                    tvVal = (TextView) record.findViewById(R.id.pieValue);
+
+            tvOrder.setText((itemCount - i) + ".");
+            tvCat.setText(item.getValue());
+            tvVal.setText(item.getKey() + " " + SharedPrefs.getDefaultCurrency());
+            itemsContainer.addView(record);
+
+            Log.i("Ondra-pieeee", item.getValue());
+
+        }
+
+        return (itemCount + 2) * dpToPx(25);
+    }
+
+    private int dpToPx(int dp) {
+        DisplayMetrics displayMetrics = activity.getResources().getDisplayMetrics();
+        int px = Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
+        return px;
+    }
+
 
     private void buildMonthBarChart(String label, String desc){
         this.buildBarChart(this.monthStatsData, label, desc);

@@ -17,7 +17,7 @@
         android:layout_gravity="center"
         android:cropToPadding="false"
         android:scaleType = "fitXY"
-        android:src="@drawable/bg"
+        android:src="@drawable/bg1"
         android:contentDescription="@string/lbl_background_image" />
 
 
@@ -79,9 +79,6 @@
                         android:id="@+id/statsBtnWrapper"
                         android:layout_width="40dp"
                         android:layout_height="32dp">
-
-
-
                     </FrameLayout>
 
 

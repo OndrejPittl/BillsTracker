@@ -6,7 +6,7 @@ android {
     buildToolsVersion "23.0.2"
 
     defaultConfig {
-        applicationId "cz.ondrejpittl.semestralka"
+        applicationId "cz.ondrejpittl.BillsTracker"
         minSdkVersion 15
         targetSdkVersion 23
         versionCode 1
@@ -17,6 +17,10 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+
+    testfairyConfig {
+        apiKey "ae3a769878d06c0c6359d53abb2c43018c23b0d1"
     }
 }
 

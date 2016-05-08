@@ -19,6 +19,7 @@ import java.util.Locale;
 import cz.ondrejpittl.semestralka.controllers.HomeDataController;
 import cz.ondrejpittl.semestralka.controllers.HomeUIController;
 import cz.ondrejpittl.semestralka.database.DBManager;
+import cz.ondrejpittl.semestralka.partial.Designer;
 import cz.ondrejpittl.semestralka.partial.MonthChangeEnum;
 import cz.ondrejpittl.semestralka.partial.SharedPrefs;
 
@@ -61,12 +62,14 @@ public class HomeActivity extends AppCompatActivity {
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Designer.setFullscreenActivity(this);
         setContentView(R.layout.activity_home);
         init();
     }
 
     protected void onResume() {
         super.onResume();
+        Designer.updateDesign(this);
     }
 
     @Override
@@ -80,7 +83,7 @@ public class HomeActivity extends AppCompatActivity {
      * Initializes Activity properties and major objects.
      */
     private void init(){
-
+        Designer.updateDesign(this);
         this.originLocale = Locale.getDefault();
 
         //build ui
@@ -181,6 +184,11 @@ public class HomeActivity extends AppCompatActivity {
         if(requestCode == 1) {
 
             //settings activity ended
+
+            if(SharedPrefs.isFirstTimeLaunch())
+                    finish();
+
+
             this.controllerUI.resetSettingsImgButton();
 
             this.controllerUI.updateCurrencyViews(SharedPrefs.getDefaultCurrency());

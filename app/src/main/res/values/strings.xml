@@ -44,9 +44,9 @@
     <!-- About activity -->
     <string name="title_activity_about">AboutActivity</string>
     <string name="headingAboutApp">About BillsTracker</string>
-    <string name="desc1">BillsTracker is an app monitoring your payments making you well informed about your expenses in the way of global point of view. Collected data are being classified and shown sorted in the first part of this app. In the second one stored payment records are being summarized and represented with charts inspecting them with their dependencies.</string>
-    <string name="desc2">This app was designed with emphasis on simple user-interface providing as easy usage as possible. Keeping records means a duty coming with laziness of observing this principle. This app should lend you a helping hand with it through a simple UI and easy usage that are its main priorities, besides clean design.</string>
-    <string name="descAuthor">BillsTracker was created by Ondřej Pittl, an IT student of the Faculty of Applied Science of University of West Bohemia.</string>
+    <string name="desc1">BillsTracker is an app monitoring your payments making you well informed about your expenses in the way of a global point of view. Collected data are being classified and sorted shown in the first part of this app. In the second one records are being summarized and represented with charts inspecting them with their dependencies.</string>
+    <string name="desc2">This app was designed with emphasis on a simple user-interface providing as easy usage as possible. Keeping records means a duty coming with a laziness of observing this principle. This app should lend you a helping hand with it through a simple UI and easy usage that are its main priorities besides clean design.</string>
+    <string name="descAuthor">BillsTracker was created by Ondřej Pittl, an IT student of the Faculty of Applied Science of University of West Bohemia based in Prague, in the Czech Republic.</string>
 
 
     <!-- Home activity -->
@@ -101,6 +101,8 @@
     <string name="settingsDefaults">Defaults</string>
     <string name="settingsDefCurrency">Currency</string>
     <string name="settingsDefCategory">Category</string>
+    <string name="settingsDesign">Design</string>
+    <string name="settingsTheme">Theme</string>
     <string name="settingsDefStore">Store</string>
     <string name="settingsRestore">Restore defaults.</string>
     <string name="settingsTutorial">Replay tutorial  &#9654;</string>
@@ -108,53 +110,33 @@
     <string name="settingsErase">Erase all records.</string>
 
 
-    <!--<string-array name="categories">
-        <item>Electronics</item>
-        <item>Entertainment</item>
-        <item>Food/Drink</item>
-        <item>Health</item>
-        <item>Hobby</item>
-        <item>Hygiene</item>
-        <item>Living</item>
-        <item>Payments</item>
-        <item>School</item>
-        <item>Travelling</item>
-        <item>Work</item>
+    <string name="statsMonthHeading1">Day by day</string>
+    <string name="statsMonthHeading3">The most expensive day.</string>
+    <string name="statsMonthHeading4">Do you know what do you pay for?</string>
+
+    <string name="statsMonthDesc1">Every single day you\'ve spent some money is displayed below.</string>
+    <string name="statsMonthDesc2">Here you go – this is how you\'ve gone crazy you shopaholic!</string>
+    <string name="statsMonthDesc3">And what day of a week is the most difficult day for the wallet of yours?</string>
+    <string name="statsMonthDesc4">Where is your money going?</string>
+
+    <string name="statsYearHeading1">Month by month</string>
+    <string name="statsYearHeading3">The most expensive day.</string>
+    <string name="statsYearHeading4">Do you know what do you pay for?</string>
+
+    <string name="statsYearDesc1">Some months are really expensive, aren\'t they?</string>
+    <string name="statsYearDesc2">Well, let\'s see how have you been going.</string>
+    <string name="statsYearDesc3">And what day of a week is the most difficult day for the wallet of yours?</string>
+    <string name="statsYearDesc4">Where is your money going?</string>
+
+
+
+    <string-array name="backgrounds">
+        <item>Greenhouse</item>
+        <item>Blueberry cream</item>
+        <item>Atlantis</item>
+        <item>Mystic sand</item>
+        <item>Wild rose</item>
     </string-array>
 
-    <string-array name="stores">
-        <item>Penny Market</item>
-        <item>Albert</item>
-        <item>Lidl</item>
-        <item>Billa</item>
-        <item>Tesco</item>
-        <item>Kaufland</item>
-        <item>Globus</item>
-        <item>Makro</item>
-
-        <item>Jysk</item>
-        <item>ASKO nábytek</item>
-        <item>SCONTO nábytek</item>
-        <item>Möbelix</item>
-        <item>Kika</item>
-        <item>IKEA</item>
-
-        <item>DM</item>
-        <item>Teta</item>
-        <item>Rossmann</item>
-
-        <item>H&amp;M</item>
-        <item>C&amp;A</item>
-        <item>New Yorker</item>
-        <item>Humanic</item>
-        <item>Baťa</item>
-        <item>Deichmann</item>
-
-        <item>McDonalds</item>
-        <item>KFC</item>
-        <item>Delish</item>
-        <item>Menza</item>
-
-    </string-array> -->
 
 </resources>

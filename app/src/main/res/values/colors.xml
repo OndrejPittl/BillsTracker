@@ -33,14 +33,17 @@
     <color name="appButtonCancelStroke">#bb8c73</color>
 
     <!-- home payment records-->
-    <color name="appPaymentRecordLabels">#bf9a7f</color>
-    <color name="appPaymentRecordLabelShadow">#FFF</color>
+
     <color name="appPaymentRecordLine">#68FFFFFF</color>
     <color name="appPaymentRecordEditing">#ee00a65a</color>
     <color name="appPaymentDeleteAction">#A60000</color>
     <color name="appPaymentEditAction">#00a65a</color>
 
-    <!--<color name="appPaymentEditAction">#e5be09</color>-->
+
+    <!-- Designer colors -->
+    <color name="appTextPaymentRecord1">#bf9a7f</color>
+    <color name="appTextPaymentRecord2">#fff</color>
+
 
 
 </resources>

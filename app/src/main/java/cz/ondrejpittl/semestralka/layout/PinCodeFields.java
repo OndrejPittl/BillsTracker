@@ -3,8 +3,6 @@ package cz.ondrejpittl.semestralka.layout;
 import android.app.Activity;
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -16,21 +14,13 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import java.math.BigInteger;
-import java.nio.charset.Charset;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-
-import cz.ondrejpittl.semestralka.HomeActivity;
 import cz.ondrejpittl.semestralka.R;
-import cz.ondrejpittl.semestralka.WelcomeActivity;
 import cz.ondrejpittl.semestralka.partial.SharedPrefs;
 
 /**
  * Created by OndrejPittl on 22.04.16.
  */
 public class PinCodeFields extends LinearLayout {
-
     private Context context;
 
     private Activity activity;
@@ -207,7 +197,7 @@ public class PinCodeFields extends LinearLayout {
         Log.i("Ondra-prefs", "entered: " + entered + " (" + encrypted + ")");*/
 
         SharedPrefs.storePINCode(entered);
-        SharedPrefs.registerFirstTimeLaunched();
+        SharedPrefs.storeFirstTimeLaunched(false);
     }
 
     public boolean checkPINCode(){

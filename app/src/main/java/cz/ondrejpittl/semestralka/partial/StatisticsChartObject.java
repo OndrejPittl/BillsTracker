@@ -86,7 +86,7 @@ public class StatisticsChartObject {
 
         this.dayWeekBarDataSet = new BarDataSet(yVals, "");
         this.dayWeekBarDataSet.setColors(this.colors);
-        this.dayWeekBarData = new BarData(xVals, this.barDataSet);
+        this.dayWeekBarData = new BarData(xVals, this.dayWeekBarDataSet);
         this.dayWeekBarData.setHighlightEnabled(false);
     }
 

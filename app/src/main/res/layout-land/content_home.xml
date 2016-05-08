@@ -15,7 +15,7 @@
         android:layout_gravity="center"
         android:cropToPadding="false"
         android:scaleType = "fitXY"
-        android:src="@drawable/bg"
+        android:src="@drawable/bg1"
         android:contentDescription="@string/lbl_background_image" />
 
 

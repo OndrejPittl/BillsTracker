@@ -68,13 +68,6 @@ public class DBManager extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         this.payments.createPaymentsTable(db);
 
-        this.payments.insertPayment("1", "2", "3", "123", "1459461600000", "prvního");
-        this.payments.insertPayment("2", "3", "4", "234", "1462053599999", "posledního");
-        this.payments.insertPayment("3", "4", "5", "345", "1462060599999", "moc pozdě");
-        this.payments.insertPayment("4", "5", "6", "456", "1459460600000", "moc brzo");
-        this.payments.insertPayment("5", "6", "7", "567", "1459469600000", "akorát");
-
-
         Resources res = this.context.getResources();
         this.stores.createStoresTable(db, res);
         this.categories.createCategoriesTable(db, res);
@@ -219,6 +212,15 @@ public class DBManager extends SQLiteOpenHelper {
 
     public SQLiteDatabase getDB(){
         return this.db;
+    }
+
+    private void insertMockPayments(){
+        //April payments
+        this.payments.insertPayment("1", "2", "3", "123", "1459461600000", "prvního");
+        this.payments.insertPayment("2", "3", "4", "234", "1462053599999", "posledního");
+        this.payments.insertPayment("3", "4", "5", "345", "1462060599999", "moc pozdě");
+        this.payments.insertPayment("4", "5", "6", "456", "1459460600000", "moc brzo");
+        this.payments.insertPayment("5", "6", "7", "567", "1459469600000", "akorát");
     }
 }
 

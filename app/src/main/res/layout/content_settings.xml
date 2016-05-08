@@ -16,7 +16,7 @@
         android:layout_gravity="center"
         android:cropToPadding="false"
         android:scaleType = "fitXY"
-        android:src="@drawable/bg"
+        android:src="@drawable/bg1"
         android:contentDescription="@string/lbl_background_image" />
 
     <ScrollView
@@ -172,6 +172,57 @@
 
                 </LinearLayout>
             </LinearLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="30dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="@string/settingsDesign"
+                    android:id="@+id/textView8"
+                    android:textColor="@color/appTextLightGold"
+                    android:layout_marginBottom="10dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:orientation="horizontal"
+                    android:layout_margin="5dp" >
+
+                    <FrameLayout
+                        android:orientation="vertical"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1" >
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:attr/textAppearanceSmall"
+                            android:text="@string/settingsTheme"
+                            android:textColor="@color/appWhite"
+                            android:layout_gravity="center_vertical" />
+                    </FrameLayout>
+
+                    <!--android:entries="@array/backgrounds"-->
+                    <cz.ondrejpittl.semestralka.layout.CustomSpinner
+                        android:layout_width="0dp"
+                        android:layout_height="25dp"
+                        android:id="@+id/bgSpinner"
+
+                        android:layout_weight="1"
+                        android:background="@drawable/shape_thin_border"
+                        android:textSize="10sp"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true" />
+                </LinearLayout>
+            </LinearLayout>
+
 
             <LinearLayout
                 android:orientation="vertical"

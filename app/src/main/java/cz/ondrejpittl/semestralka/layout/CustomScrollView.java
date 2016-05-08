@@ -2,11 +2,10 @@ package cz.ondrejpittl.semestralka.layout;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.ScrollView;
 
-import cz.ondrejpittl.semestralka.Listeners.PaymentRecordTouchListener;
+import cz.ondrejpittl.semestralka.listeners.PaymentRecordTouchListener;
 
 /**
  * Created by OndrejPittl on 21.04.16.

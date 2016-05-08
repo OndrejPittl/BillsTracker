@@ -151,12 +151,13 @@ public class StatsDataController {
         }
 
 
+        int index = 0;
         for(int i = 0; i < amounts.length; i++) {
             if(amounts[i] <= 0) continue;
 
             String d = days[i];
             xVals.add(d);
-            yVals.add(new BarEntry(amounts[i], i));
+            yVals.add(new BarEntry(amounts[i], index++));
         }
 
 

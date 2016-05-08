@@ -13,10 +13,14 @@ import cz.ondrejpittl.semestralka.controllers.StatsDataController;
 import cz.ondrejpittl.semestralka.controllers.StatsUIController;
 import cz.ondrejpittl.semestralka.database.DBManager;
 import cz.ondrejpittl.semestralka.models.Category;
+import cz.ondrejpittl.semestralka.partial.Designer;
 import cz.ondrejpittl.semestralka.partial.StatisticsChartObject;
 
 public class StatisticsActivity extends AppCompatActivity {
 
+    /**
+     * Intent identification.
+     */
     public static final int INTENT_INDEX = 2;
 
     /**
@@ -26,37 +30,59 @@ public class StatisticsActivity extends AppCompatActivity {
      */
     private static Locale originLocale;
 
+    /**
+     *
+     */
     private DateTime calendar;
-    //private Calendar calendar;
+
+    /**
+     *
+     */
     private String category;
 
-
+    /**
+     * Activity UI controller.
+     */
     private StatsUIController controllerUI;
-    private StatsDataController controllerData;
-    private DBManager dbManager;
 
+    /**
+     * Activity Model controller.
+     */
+    private StatsDataController controllerData;
+
+    /**
+     * Activity model layer reference.
+     */
+    private DBManager dbManager;
 
 
     protected void onCreate(Bundle savedInstanceState) {
         Log.i("Ondra-init", "initializing Statistics activity");
 
         super.onCreate(savedInstanceState);
+        Designer.setFullscreenActivity(this);
         setContentView(R.layout.activity_statistics);
 
         this.init();
     }
 
+    public void onDestroy() {
+        super.onDestroy();
+        Runtime.getRuntime().gc();
+    }
+
+    /**
+     * Activity initialization.
+     */
     private void init(){
+        Designer.updateDesign(this);
         this.originLocale = Locale.getDefault();
         this.calendar = new DateTime();
-        //this.calendar = Calendar.getInstance();
 
         Log.i("Ondra-debugLand", "-------------------------------------");
-
         Log.i("Ondra-debugLand", "initializing Statistics Activity");
-
-        //Log.i("Ondra-stats", this.calendar.getTime().toString());
         Log.i("Ondra-stats", this.calendar.toDateTime().toString());
+
         this.category = "";
 
         //view layer
@@ -68,33 +94,36 @@ public class StatisticsActivity extends AppCompatActivity {
         //data
         this.controllerData = new StatsDataController(this);
 
+        //build stats
         this.buildStatistics();
-        //this.controllerUI.drawStats();
     }
 
-
+    /**
+     * Builds statistics data and fires chart drawing.
+     */
     private void buildStatistics(){
         int month = this.calendar.getMonthOfYear(),
             year = this.calendar.getYearOfEra();
 
         Log.i("Ondra-stats", "init: " + this.calendar.toDateTime());
 
-
-        /*int month = this.calendar.get(Calendar.MONTH),
-                year = this.calendar.get(Calendar.YEAR);
-
-        Log.i("Ondra-stats", "init: " + this.calendar.getTime());*/
-
+        //Month stats
         StatisticsChartObject monthStatsData = this.controllerData.computeMonthStatsData(month, year, this.category);
         this.controllerUI.setMonthStatsData(monthStatsData);
 
+        //Year stats
         StatisticsChartObject yearStatsData = this.controllerData.computeYearStatsData(year, this.category);
         this.controllerUI.setYearStatsData(yearStatsData);
 
+        //fire drawing
         this.controllerUI.drawStats();
     }
 
-
+    /**
+     * Category change event handler.
+     * Rebuilds statistics data and redraws charts.
+     * @param category  changed category
+     */
     public void handleDisplayCategoryChange(Category category){
         Log.i("Ondra-stats", "selected category – id: " + category.getID() + ", name: " + category.getName());
 
@@ -108,11 +137,15 @@ public class StatisticsActivity extends AppCompatActivity {
     }
 
 
+    /**
+     * Date change event handler.
+     * Rebuilds statistics data and redraws charts.
+     *
+     * @param y changed year
+     * @param m changed month
+     * @param d changed day
+     */
     public void handleDisplayedDateChange(int y, int m, int d){
-        /*Log.i("Ondra-stats", "selected-y: " + y);
-        Log.i("Ondra-stats", "selected-m: " + m);
-        Log.i("Ondra-stats", "selected-d: " + d);*/
-
         this.calendar = this.calendar.withMonthOfYear(m).withDayOfMonth(d).withYearOfEra(y);
         this.buildStatistics();
     }
@@ -122,29 +155,37 @@ public class StatisticsActivity extends AppCompatActivity {
      * @param id    ID of dialog.
      * @return      Built DatePicker dialog.
      */
-    @Override
     protected Dialog onCreateDialog(int id) {
         return this.controllerUI.handleDatePickerDialogCreation(id, this.calendar.toDateTime());
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        Runtime.getRuntime().gc();
-    }
-
+    /**
+     * Restores default locale back to original one.
+     */
     public static void changeLocaleDefault(){
         Locale.setDefault(StatisticsActivity.originLocale);
     }
 
+    /**
+     * Sets default locale to US one.
+     * Forcing SDK components use american format.
+     */
     public static void changeLocaleUS(){
         Locale.setDefault(Locale.US);
     }
 
+    /**
+     * Model layer reference getter.
+     * @return  model layer reference
+     */
     public DBManager getDbManager(){
         return this.dbManager;
     }
 
+    /**
+     * UI controller reference getter.
+     * @return  UI controller reference
+     */
     public StatsUIController getControllerUI(){
         return this.controllerUI;
     }

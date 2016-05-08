@@ -17,7 +17,7 @@
         android:layout_gravity="center"
         android:cropToPadding="false"
         android:scaleType = "fitXY"
-        android:src="@drawable/bg"
+        android:src="@drawable/bg1"
         android:contentDescription="@string/lbl_background_image" />
 
     <ScrollView
@@ -78,6 +78,7 @@
                 android:layout_marginLeft="60dp"
                 android:layout_marginRight="60dp"
                 android:layout_marginTop="40dp"
+                android:textColor="@color/appWhite"
                 android:textAlignment="center" />
 
             <TextView
@@ -87,6 +88,7 @@
                 android:layout_marginLeft="60dp"
                 android:layout_marginRight="60dp"
                 android:layout_marginTop="25dp"
+                android:textColor="@color/appWhite"
                 android:textAlignment="center" />
 
             <TextView
@@ -96,6 +98,7 @@
                 android:layout_marginLeft="60dp"
                 android:layout_marginRight="60dp"
                 android:layout_marginTop="25dp"
+                android:textColor="@color/appWhite"
                 android:textAlignment="center" />
 
         </LinearLayout>

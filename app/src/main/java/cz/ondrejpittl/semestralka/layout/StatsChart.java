@@ -13,6 +13,7 @@ import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.Chart;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
@@ -30,7 +31,7 @@ public class StatsChart extends LinearLayout {
 
     private FrameLayout container;
 
-    private int chartHeight;
+    //private int chartHeight;
     private int[] chartPadding;
 
     private Chart chart;
@@ -46,32 +47,31 @@ public class StatsChart extends LinearLayout {
         super(context, attrs);
     }
 
-    public void init(boolean collapsed, int devHeight, int[] chartPadding){
-
-        /*switch (this.type) {
-            case YEAR_SUMMARY:
-
-                break;
-
-            default:
-            case MONTH_SUMMARY:
-                break;
-        }*/
-
+    public void init(boolean collapsed, int devHeight, int alternateHeight, int[] chartPadding){
         this.container = (FrameLayout) findViewById(R.id.chContainer);
         this.collapsed = collapsed;
-        this.chartHeight = devHeight;
+        //this.chartHeight = devHeight;
         this.chartPadding = chartPadding;
 
-        this.updateChartDimensions();
+        this.updateChartDimensions(devHeight, alternateHeight);
 
         Log.i("Ondra-chart", "chart init");
     }
 
-    private void updateChartDimensions(){
-        ViewGroup.LayoutParams params = this.getLayoutParams();
-        params.height = this.chartHeight;
-        this.setLayoutParams(params);
+    public void init(boolean collapsed, int devHeight, int[] chartPadding){
+        this.init(collapsed, devHeight, 0, chartPadding);
+    }
+
+    private void updateChartDimensions(int chartHeight, int alternateHeight){
+        ViewGroup.LayoutParams chParams = this.getLayoutParams();
+        chParams.height = chartHeight + alternateHeight;
+        this.setLayoutParams(chParams);
+
+        LinearLayout alter = (LinearLayout) this.findViewById(R.id.alternateChartWrapper);
+        ViewGroup.LayoutParams alParams = alter.getLayoutParams();
+        alParams.height = alternateHeight;
+        alter.setLayoutParams(alParams);
+
     }
 
     public void hideChart(){

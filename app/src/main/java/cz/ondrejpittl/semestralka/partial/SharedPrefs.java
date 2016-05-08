@@ -31,6 +31,16 @@ import cz.ondrejpittl.semestralka.models.Store;
  */
 public class SharedPrefs {
 
+    public static boolean DEFAULT_PASSWD_REQ = true;
+    public static boolean DEFAULT_FIRST_TIME_LAUNCHED = true;
+    public static boolean DEFAULT_ANIMATIONS = true;
+    public static boolean DEFAULT_ICON_DISPLAY = true;
+    public static boolean DEFAULT_NOTE_DISPLAY = false;
+    public static boolean DEFAULT_TUTORIAL_DISPLAYED = false;
+    public static String DEFAULT_STORE = "---";
+    public static String DEFAULT_CATEGORY = "Car";
+    public static int DEFAULT_DESIGN = 0;
+
     private static SharedPreferences prefs;
 
     /**
@@ -51,20 +61,7 @@ public class SharedPrefs {
     public static void load(Activity activity){
         prefs = activity.getSharedPreferences("cz.ondrejpittl.semestralka", activity.MODE_PRIVATE);
 
-        if(!SharedPrefs.isPasswordRequireSet())
-            SharedPrefs.storePasswordRequire(true);
-
-        if(!SharedPrefs.isPaymentNoteDisplaySet())
-            SharedPrefs.storePaymentNoteDisplay(false);
-
-        if(!SharedPrefs.isPaymentAnimationSet())
-            SharedPrefs.storePaymentAnimation(true);
-
-        if(!SharedPrefs.isPaymentIconSet())
-            SharedPrefs.storePaymentIcons(true);
-
-        if(!isTutorialDisplayedSet())
-            storeTutorialDisplayed(false);
+        SharedPrefs.restoreDefaults();
 
         //clear();
     }
@@ -72,18 +69,59 @@ public class SharedPrefs {
     //clears shared prefs
     public static void clear(){
         prefs.edit().clear().commit();
+        SharedPrefs.restoreDefaults();
+    }
+
+    private static void restoreDefaults(){
+
+        if(!SharedPrefs.isPasswordRequireSet())
+            SharedPrefs.storePasswordRequire(SharedPrefs.DEFAULT_PASSWD_REQ);
+
+        if(!isFirstTimeLaunchSet())
+            SharedPrefs.storeFirstTimeLaunched(SharedPrefs.DEFAULT_FIRST_TIME_LAUNCHED);
+
+        if(!SharedPrefs.isPaymentAnimationSet())
+            SharedPrefs.storePaymentAnimation(SharedPrefs.DEFAULT_ANIMATIONS);
+
+        if(!SharedPrefs.isPaymentIconSet())
+            SharedPrefs.storePaymentIcons(SharedPrefs.DEFAULT_ICON_DISPLAY);
+
+        if(!SharedPrefs.isPaymentNoteDisplaySet())
+            SharedPrefs.storePaymentNoteDisplay(SharedPrefs.DEFAULT_NOTE_DISPLAY);
+
+        if(!isTutorialDisplayedSet())
+            SharedPrefs.storeTutorialDisplayed(SharedPrefs.DEFAULT_TUTORIAL_DISPLAYED);
+
+        if(!isDefaultCategorySet())
+            SharedPrefs.storeDefaultCategory(SharedPrefs.DEFAULT_CATEGORY);
+
+        if(!isDefaultStoreSet())
+            SharedPrefs.storeDefaultStore(SharedPrefs.DEFAULT_STORE);
+
+        if(!isDefaultDesignSet())
+            SharedPrefs.storeDefaultDesign(SharedPrefs.DEFAULT_DESIGN);
     }
 
     /**
      * App was already launched.
      */
-    public static void registerFirstTimeLaunched(){
-        prefs.edit().putBoolean("firstLaunch", false).commit();
+    public static void storeFirstTimeLaunched(boolean firstLaunch){
+        //prefs.edit().putBoolean("firstLaunch", firstLaunch).commit();
+        prefs.edit().putString("firstLaunch", firstLaunch == true ? "1" : "0").commit();
     }
 
     public static boolean isFirstTimeLaunch(){
-        return prefs.getBoolean("firstLaunch", true);
-        //return true;
+        //return prefs.getBoolean("firstLaunch", true);
+        int rs = Integer.parseInt(prefs.getString("firstLaunch", ""));
+
+        if(rs == 0)
+            return false;
+        else
+            return true;
+    }
+
+    public static boolean isFirstTimeLaunchSet(){
+        return prefs.getString("firstLaunch", "").length() > 0;
     }
 
     /**
@@ -118,6 +156,12 @@ public class SharedPrefs {
         prefs.edit().putBoolean("firstLaunch", true).commit();
     }
 
+    public static boolean isDefaultCategorySet(){
+        if(SharedPrefs.isNotNull())
+            return prefs.getString("defaultCategory", "").length() > 0;
+        return  false;
+    }
+
     public static void storeDefaultCategory(String value){
         prefs.edit().putString("defaultCategory", value).commit();
     }
@@ -125,6 +169,12 @@ public class SharedPrefs {
     public static String getDefaultCategory(){
         String str = prefs.getString("defaultCategory", "");
         return str;
+    }
+
+    public static boolean isDefaultStoreSet(){
+        if(SharedPrefs.isNotNull())
+            return prefs.getString("defaultStore", "").length() > 0;
+        return  false;
     }
 
     public static void storeDefaultStore(String value){
@@ -239,6 +289,25 @@ public class SharedPrefs {
             return true;
     }
 
+    public static boolean isDefaultDesignSet(){
+        return prefs.getString("defaultDesign", "").length() > 0;
+    }
+
+    public static void storeDefaultDesign(int defaultDesign){
+        prefs.edit().putString("defaultDesign", String.valueOf(defaultDesign)).commit();
+    }
+
+    public static int getDefaultDesign(){
+        return Integer.parseInt(prefs.getString("defaultDesign", ""));
+    }
+
+
+
+
+
+
+
+
 
 
     /**
@@ -265,77 +334,5 @@ public class SharedPrefs {
     public static boolean isNotNull(){
         return prefs != null;
     }
-
-
-
-
-    /*private static String encryptIt(String value) {
-        try {
-            DESKeySpec keySpec = new DESKeySpec(secret.getBytes("UTF8"));
-            SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("DES");
-            SecretKey key = keyFactory.generateSecret(keySpec);
-
-            byte[] clearText = value.getBytes("UTF8");
-            // Cipher is not thread safe
-            Cipher cipher = Cipher.getInstance("DES");
-            cipher.init(Cipher.ENCRYPT_MODE, key);
-
-            String encrypedValue = Base64.encodeToString(cipher.doFinal(clearText), Base64.DEFAULT);
-            Log.i("Ondra-prefs", "Encrypted: " + value + " -> " + encrypedValue);
-            return encrypedValue;
-
-        } catch (InvalidKeyException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (InvalidKeySpecException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (BadPaddingException e) {
-            e.printStackTrace();
-        } catch (NoSuchPaddingException e) {
-            e.printStackTrace();
-        } catch (IllegalBlockSizeException e) {
-            e.printStackTrace();
-        }
-        return value;
-    };
-
-
-    public static String decryptIt(String value) {
-        try {
-            DESKeySpec keySpec = new DESKeySpec(secret.getBytes("UTF8"));
-            SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("DES");
-            SecretKey key = keyFactory.generateSecret(keySpec);
-
-            byte[] encrypedPwdBytes = Base64.decode(value, Base64.DEFAULT);
-            // cipher is not thread safe
-            Cipher cipher = Cipher.getInstance("DES");
-            cipher.init(Cipher.DECRYPT_MODE, key);
-            byte[] decrypedValueBytes = (cipher.doFinal(encrypedPwdBytes));
-
-            String decrypedValue = new String(decrypedValueBytes);
-            Log.d("Ondra-prefs", "Decrypted: " + value + " -> " + decrypedValue);
-            return decrypedValue;
-
-        } catch (InvalidKeyException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (InvalidKeySpecException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (BadPaddingException e) {
-            e.printStackTrace();
-        } catch (NoSuchPaddingException e) {
-            e.printStackTrace();
-        } catch (IllegalBlockSizeException e) {
-            e.printStackTrace();
-        }
-        return value;
-    }*/
-
 
 }

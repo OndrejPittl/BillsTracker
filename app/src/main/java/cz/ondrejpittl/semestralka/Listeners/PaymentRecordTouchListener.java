@@ -1,4 +1,4 @@
-package cz.ondrejpittl.semestralka.Listeners;
+package cz.ondrejpittl.semestralka.listeners;
 
 import android.graphics.Rect;
 import android.util.Log;
