@@ -31,4 +31,28 @@
     <store id="25" name="McDonalds" />
     <store id="26" name="KFC" />
     <store id="27" name="Delish" />
+    <store id="28" name="Hypernova" />
+    <store id="29" name="Žabka" />
+    <store id="30" name="Coop" />
+    <store id="31" name="Neoluxor" />
+    <store id="32" name="Bauhaus" />
+    <store id="33" name="OBI" />
+    <store id="34" name="Hornbach" />
+    <store id="35" name="Jamall" />
+    <store id="36" name="Sconto" />
+    <store id="37" name="XXX Lutz" />
+    <store id="38" name="Datart" />
+    <store id="39" name="Electro World" />
+    <store id="40" name="Euronics" />
+    <store id="41" name="OKAY" />
+    <store id="42" name="Planeo" />
+    <store id="43" name="Alza" />
+    <store id="44" name="Mall.cz" />
+    <store id="45" name="CZC" />
+    <store id="46" name="Giga sport" />
+    <store id="47" name="Intersport" />
+    <store id="48" name="Hervis" />
+    <store id="49" name="Sportisimo" />
+    <store id="50" name="Decathlon" />
+    <store id="51" name="Dobrovský" />
 </stores>

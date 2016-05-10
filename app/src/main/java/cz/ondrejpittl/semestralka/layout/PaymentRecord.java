@@ -34,8 +34,8 @@ public class PaymentRecord extends LinearLayout {
     private Payment payment;
 
 
-    private int paymentCollapsedHeight = 45;
-    private int paymentUnCollapsedHeight = 65;
+    private static int paymentCollapsedHeight = 45;
+    private static int paymentUnCollapsedHeight = 65;
 
 
 
@@ -144,7 +144,7 @@ public class PaymentRecord extends LinearLayout {
         }
     }
 
-    public void updateRecordHeight(HomeActivity activity){
+    public int updateRecordHeight(HomeActivity activity){
         int h;
         if(this.collapsed)
             h = getCollapsedRecHeight(activity);
@@ -153,6 +153,7 @@ public class PaymentRecord extends LinearLayout {
 
         this.getLayoutParams().height = h;
         this.requestLayout();
+        return h;
     }
 
     /**
@@ -328,5 +329,13 @@ public class PaymentRecord extends LinearLayout {
 
     public static boolean isIconVisible() {
         return iconVisible;
+    }
+
+    public static int getPaymentCollapsedHeight() {
+        return paymentCollapsedHeight;
+    }
+
+    public static int getPaymentUnCollapsedHeight() {
+        return paymentUnCollapsedHeight;
     }
 }

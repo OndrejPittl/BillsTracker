@@ -6,10 +6,13 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.CompoundButton;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.Toast;
@@ -21,11 +24,14 @@ import cz.ondrejpittl.semestralka.R;
 import cz.ondrejpittl.semestralka.SettingsActivity;
 import cz.ondrejpittl.semestralka.StatisticsActivity;
 import cz.ondrejpittl.semestralka.layout.CustomSpinner;
+import cz.ondrejpittl.semestralka.layout.EditRecord;
+import cz.ondrejpittl.semestralka.layout.LoadingImgButton;
 import cz.ondrejpittl.semestralka.layout.PinCodeFields;
 import cz.ondrejpittl.semestralka.models.Category;
 import cz.ondrejpittl.semestralka.models.Currency;
 import cz.ondrejpittl.semestralka.models.Store;
 import cz.ondrejpittl.semestralka.partial.Designer;
+import cz.ondrejpittl.semestralka.partial.EditRecordType;
 import cz.ondrejpittl.semestralka.partial.SharedPrefs;
 
 /**
@@ -38,6 +44,17 @@ public class SettingsUIController {
      */
     private SettingsActivity activity;
 
+    private SettingsDataController dataController;
+
+    private LayoutInflater layoutInflater = null;
+
+
+    private ArrayList<Store> stores;
+
+    private ArrayList<Category> categories;
+
+    private ArrayList<Currency> currencies;
+
 
     public SettingsUIController(SettingsActivity activity) {
         this.activity = activity;
@@ -47,30 +64,29 @@ public class SettingsUIController {
     /**
      * Initializes UI controls.
      */
-    public void init(ArrayList<Store> stores, ArrayList<Category> categories, ArrayList<Currency> currencies){
-        String defCat = SharedPrefs.getDefaultCategory(),
-                defSto = SharedPrefs.getDefaultStore(),
-                defCur = SharedPrefs.getDefaultCurrency();
-        
-        CustomSpinner spinCat = (CustomSpinner) this.activity.findViewById(R.id.settingsCategorySpinner);
-        spinCat.init(this.activity, categories);
-        spinCat.selectItem(defCat);
-        spinCat.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                activity.storeSettings();
-            }
-            public void onNothingSelected(AdapterView<?> parent) {}
-        });
+    public void init(SettingsDataController dataController) {
+        this.dataController = dataController;
+        this.layoutInflater = (LayoutInflater) this.activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        CustomSpinner spinSto = (CustomSpinner) this.activity.findViewById(R.id.settingsStoreSpinner);
-        spinSto.init(this.activity, stores);
-        spinSto.selectItem(defSto);
-        spinSto.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                activity.storeSettings();
-            }
-            public void onNothingSelected(AdapterView<?> parent) {}
-        });
+        this.loadData();
+        this.buildControls();
+        this.buildCategories();
+        this.buildStores();
+    }
+
+    private void loadData(){
+        this.categories = this.dataController.getStoredCategories();
+        this.stores = this.dataController.getStoredStores();
+        this.currencies = this.dataController.getStoredCurrencies();
+    }
+
+    private void buildControls(){
+        String defCur = SharedPrefs.getDefaultCurrency();
+
+
+        this.buildCategoryDefault();
+        this.buildStoreDefault();
+
 
         CustomSpinner spinCur = (CustomSpinner) this.activity.findViewById(R.id.settingsCurrencySpinner);
         spinCur.init(this.activity, currencies);
@@ -79,11 +95,13 @@ public class SettingsUIController {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 activity.storeSettings();
             }
-            public void onNothingSelected(AdapterView<?> parent) {}
+
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
         });
 
         Switch swPassReq = (Switch) this.activity.findViewById(R.id.settingsPassReq);
-        if(SharedPrefs.isPasswordRequireSet()) {
+        if (SharedPrefs.isPasswordRequireSet()) {
             swPassReq.setChecked(SharedPrefs.isPasswordRequired());
         } else {
             swPassReq.setChecked(true);
@@ -95,7 +113,7 @@ public class SettingsUIController {
         });
 
         Switch swNotesDisplay = (Switch) this.activity.findViewById(R.id.settingsNoteSwitch);
-        if(SharedPrefs.isPaymentNoteDisplaySet()) {
+        if (SharedPrefs.isPaymentNoteDisplaySet()) {
             swNotesDisplay.setChecked(SharedPrefs.getPaymentNoteDisplay());
         } else {
             swNotesDisplay.setChecked(false);
@@ -107,7 +125,7 @@ public class SettingsUIController {
         });
 
         Switch swPaymentAnim = (Switch) this.activity.findViewById(R.id.settingsAnimationSwitch);
-        if(SharedPrefs.isPaymentAnimationSet()) {
+        if (SharedPrefs.isPaymentAnimationSet()) {
             swPaymentAnim.setChecked(SharedPrefs.getPaymentAnimation());
         } else {
             swPaymentAnim.setChecked(true);
@@ -119,7 +137,7 @@ public class SettingsUIController {
         });
 
         Switch swPaymentIcons = (Switch) this.activity.findViewById(R.id.settingsIconSwitch);
-        if(SharedPrefs.isPaymentIconSet()) {
+        if (SharedPrefs.isPaymentIconSet()) {
             swPaymentIcons.setChecked(SharedPrefs.getPaymentIcons());
         } else {
             swPaymentIcons.setChecked(true);
@@ -132,7 +150,7 @@ public class SettingsUIController {
 
         CustomSpinner bgSelect = (CustomSpinner) this.activity.findViewById(R.id.bgSpinner);
         bgSelect.init(this.activity, new ArrayList<>(Arrays.asList(this.activity.getResources().getStringArray(R.array.backgrounds))));
-        if(SharedPrefs.isDefaultDesignSet()) {
+        if (SharedPrefs.isDefaultDesignSet()) {
             bgSelect.setSelection(SharedPrefs.getDefaultDesign());
         } else {
             bgSelect.setSelection(0);
@@ -143,13 +161,45 @@ public class SettingsUIController {
                 activity.storeSettings();
                 Designer.updateDesign(activity);
             }
-            public void onNothingSelected(AdapterView<?> parent) {}
-        });
 
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
     }
 
-    public void restoreDefaults(View v){
-        LayoutInflater layoutInflater = (LayoutInflater) this.activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+    private void buildCategoryDefault(){
+        String defCat = SharedPrefs.getDefaultCategory();
+
+        CustomSpinner spinCat = (CustomSpinner) this.activity.findViewById(R.id.settingsCategorySpinner);
+        spinCat.init(this.activity, categories);
+        spinCat.selectItem(defCat);
+        spinCat.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                activity.storeSettings();
+            }
+
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+    }
+
+    private void buildStoreDefault(){
+        String defSto = SharedPrefs.getDefaultStore();
+
+        CustomSpinner spinSto = (CustomSpinner) this.activity.findViewById(R.id.settingsStoreSpinner);
+        spinSto.init(this.activity, stores);
+        spinSto.selectItem(defSto);
+        spinSto.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                activity.storeSettings();
+            }
+
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+    }
+
+    public void restoreDefaults(View v) {
         final PinCodeFields fields = (PinCodeFields) layoutInflater.inflate(R.layout.pin_code, (ViewGroup) this.activity.findViewById(R.id.pinCodeFieldsWrapper));
         fields.setPinCodeListeners();
         fields.setFieldsColorBlack();
@@ -174,8 +224,7 @@ public class SettingsUIController {
         }).show();
     }
 
-    public void eraseAllPayments(View v){
-        LayoutInflater layoutInflater = (LayoutInflater) this.activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+    public void eraseAllPayments(View v) {
         final PinCodeFields fields = (PinCodeFields) layoutInflater.inflate(R.layout.pin_code, (ViewGroup) this.activity.findViewById(R.id.pinCodeFieldsWrapper));
         fields.setPinCodeListeners();
         fields.setFieldsColorBlack();
@@ -198,5 +247,75 @@ public class SettingsUIController {
             public void onClick(DialogInterface dialog, int whichButton) {
             }
         }).show();
+    }
+
+    private void allowScrollingChildScrollView(ScrollView sv){
+        sv.setOnTouchListener(new View.OnTouchListener() {
+
+            public boolean onTouch(View v, MotionEvent event) {
+
+                int action = event.getAction();
+                switch (action) {
+                    case MotionEvent.ACTION_DOWN:
+                        // Disallow ScrollView to intercept touch events.
+                        v.getParent().requestDisallowInterceptTouchEvent(true);
+                        break;
+
+                    case MotionEvent.ACTION_UP:
+                        // Allow ScrollView to intercept touch events.
+                        v.getParent().requestDisallowInterceptTouchEvent(false);
+                        break;
+                }
+
+                return false;
+            }
+        });
+    }
+
+    public void redrawRecordList(EditRecordType type){
+        this.loadData();
+
+        switch (type){
+            case CATEGORY:
+                this.buildCategories();
+                this.buildCategoryDefault();
+                break;
+
+            case STORE:
+                this.buildStores();
+                this.buildStoreDefault();
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    public void buildCategories() {
+        ScrollView sv = (ScrollView) this.activity.findViewById(R.id.settCategoryScrollView);
+        this.allowScrollingChildScrollView(sv);
+
+        LinearLayout container = (LinearLayout) this.activity.findViewById(R.id.settCategoryContainer);
+        container.removeAllViews();
+
+        for(Category c : this.categories) {
+            EditRecord rec = (EditRecord) layoutInflater.inflate(R.layout.edit_record, container, false);
+            rec.init(c.getID(), c.getName(), EditRecordType.CATEGORY, this.activity.getDataController(), this);
+            container.addView(rec);
+        }
+    }
+
+    public void buildStores() {
+        ScrollView sv = (ScrollView) this.activity.findViewById(R.id.settStoreScrollView);
+        this.allowScrollingChildScrollView(sv);
+
+        LinearLayout container = (LinearLayout) this.activity.findViewById(R.id.settStoreContainer);
+        container.removeAllViews();
+
+        for(Store s : this.stores) {
+            EditRecord rec = (EditRecord) layoutInflater.inflate(R.layout.edit_record, container, false);
+            rec.init(s.getID(), s.getName(), EditRecordType.STORE, this.activity.getDataController(), this);
+            container.addView(rec);
+        }
     }
 }

@@ -29,6 +29,7 @@ import cz.ondrejpittl.semestralka.models.Category;
 import cz.ondrejpittl.semestralka.models.Currency;
 import cz.ondrejpittl.semestralka.models.Store;
 import cz.ondrejpittl.semestralka.partial.Designer;
+import cz.ondrejpittl.semestralka.partial.EditRecordType;
 import cz.ondrejpittl.semestralka.partial.SharedPrefs;
 
 public class SettingsActivity extends AppCompatActivity {
@@ -71,7 +72,7 @@ public class SettingsActivity extends AppCompatActivity {
         Designer.updateDesign(this);
         this.controllerUI = new SettingsUIController(this);
         this.dbManager = new DBManager(this);
-        this.controllerData = new SettingsDataController(this);
+        this.controllerData = new SettingsDataController(this, this.dbManager);
         this.loadStoredSettings();
     }
 
@@ -105,10 +106,7 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private void loadStoredSettings(){
-        ArrayList<Store> storedStores = this.dbManager.getStoredStores();
-        ArrayList<Category> storedCategories = this.dbManager.getStoredCategories();
-        ArrayList<Currency> storedCurrencies = this.dbManager.getStoredCurrencies();
-        this.controllerUI.init(storedStores, storedCategories, storedCurrencies);
+        this.controllerUI.init(this.controllerData);
     }
 
     public void restoreDefaults(View v){
@@ -118,5 +116,44 @@ public class SettingsActivity extends AppCompatActivity {
     public void eraseAllPayments(View v){
         this.controllerUI.eraseAllPayments(v);
     }
+
+    public SettingsDataController getDataController(){
+        return this.controllerData;
+    }
+
+    public void createNewCategory(View v){
+        EditText et = (EditText) findViewById(R.id.settNewCategry);
+
+        String newCat = et.getText().toString();
+
+        if(newCat.length() <= 0){
+            et.setBackgroundResource(R.drawable.shape_thin_border_error);
+            return;
+        } else {
+            et.setBackgroundResource(R.drawable.shape_thin_border);
+        }
+
+        this.dbManager.insertNewCategory(newCat);
+        et.setText("");
+        this.controllerUI.redrawRecordList(EditRecordType.CATEGORY);
+    }
+
+    public void createNewStore(View v){
+        EditText et = (EditText) findViewById(R.id.settNewStore);
+
+        String newStore = et.getText().toString();
+
+        if(newStore.length() <= 0){
+            et.setBackgroundResource(R.drawable.shape_thin_border_error);
+            return;
+        } else {
+            et.setBackgroundResource(R.drawable.shape_thin_border);
+        }
+
+        this.dbManager.insertNewStore(et.getText().toString());
+        et.setText("");
+        this.controllerUI.redrawRecordList(EditRecordType.STORE);
+    }
+
 
 }

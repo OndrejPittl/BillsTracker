@@ -18,8 +18,7 @@
         android:layout_gravity="center"
         android:cropToPadding="false"
         android:scaleType = "fitXY"
-        android:src="@drawable/bg1"
-        android:contentDescription="@string/lbl_background_image" />
+        android:src="@drawable/bg1"/>
 
     <LinearLayout
         android:orientation="vertical"
@@ -29,16 +28,19 @@
         android:layout_gravity="center">
 
         <LinearLayout
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_gravity="center_horizontal"
             android:layout_weight="5">
 
-
             <ImageView
                 android:layout_width="match_parent"
-                android:layout_height="180dp"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:paddingTop="130dp"
+                android:paddingLeft="40dp"
+                android:paddingRight="40dp"
                 android:id="@+id/imgView_logo"
                 android:src="@drawable/logo"
                 android:layout_gravity="center|bottom" />
@@ -123,7 +125,23 @@
             </LinearLayout>
         </LinearLayout>
 
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_horizontal">
+
+            <TextView
+                android:id="@+id/tvSecretPIN"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:textColor="@color/appWhite50"
+                android:textSize="12sp"
+                android:textAlignment="center"
+                android:onClick="resetPrefs"
+                android:visibility="visible"
+                android:text="@string/resetPasswd" />
+        </LinearLayout>
     </LinearLayout>
-
-
 </FrameLayout>

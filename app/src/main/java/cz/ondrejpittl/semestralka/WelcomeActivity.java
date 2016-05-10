@@ -87,4 +87,10 @@ public class WelcomeActivity extends AppCompatActivity {
         Intent i = new Intent(this, HomeActivity.class);
         this.startActivity(i);
     }
+
+    public void resetPrefs(View v) {
+        this.controller.handleResetPrefs(v);
+    }
+
+
 }

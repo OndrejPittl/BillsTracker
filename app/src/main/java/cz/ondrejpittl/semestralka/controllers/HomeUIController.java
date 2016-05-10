@@ -1,38 +1,27 @@
 package cz.ondrejpittl.semestralka.controllers;
 
-import android.animation.ObjectAnimator;
-import android.app.Activity;
 import android.app.DatePickerDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.res.ResourcesCompat;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import org.joda.time.DateTime;
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -47,7 +36,7 @@ import cz.ondrejpittl.semestralka.models.Category;
 import cz.ondrejpittl.semestralka.models.Payment;
 import cz.ondrejpittl.semestralka.models.Statistics;
 import cz.ondrejpittl.semestralka.models.Store;
-import cz.ondrejpittl.semestralka.partial.Designer;
+import cz.ondrejpittl.semestralka.partial.InputFieldType;
 import cz.ondrejpittl.semestralka.partial.JodaCalendar;
 import cz.ondrejpittl.semestralka.partial.LoadingButtonType;
 import cz.ondrejpittl.semestralka.partial.SharedPrefs;
@@ -68,6 +57,7 @@ public class HomeUIController {
      * Activity its UI is being controlled.
      */
     private HomeActivity activity;
+
 
     private TutorialManager tut;
 
@@ -103,6 +93,9 @@ public class HomeUIController {
      * DatePicker dialog ID.
      */
     private int dateDialogID = 0;
+
+
+    private DatePickerDialog dateDPDialog;
 
     /**
      * Selected year.
@@ -266,8 +259,17 @@ public class HomeUIController {
             record.setPayment(p);
             record.update();
             //record.updateIconVisibility();
-
             //record.setHomeController(dControl);
+
+            /*int containerHeight = record.updateRecordHeight(this.activity);
+            float textSize = (int)(containerHeight * 0.9);*/
+
+            /*float textSize = record.isCollapsed()
+                    ? PaymentRecord.getPaymentCollapsedHeight()
+                    : PaymentRecord.getPaymentUnCollapsedHeight();*/
+
+
+
 
             record.getRecordDeleteBtn().setOnTouchListener(new View.OnTouchListener() {
                 public boolean onTouch(View v, MotionEvent event) {
@@ -302,18 +304,22 @@ public class HomeUIController {
             //cal.setTime(p.getDate());
             cal.setTime(p.getDate().toDate());
             d.setText(String.valueOf(cal.get(Calendar.DAY_OF_MONTH)) + ".");
+            //d.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
 
             //payment category name
             TextView c = (TextView) record.findViewById(R.id.txtViewRecordCategory);
             c.setText(p.getCategory().getName());
+            //c.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
 
             //payment store name
             TextView s = (TextView) record.findViewById(R.id.txtViewRecordStore);
             s.setText(p.getStore().getName());
+            //s.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
 
             //payment amount
             TextView a = (TextView) record.findViewById(R.id.txtViewRecordPrice);
             a.setText(String.valueOf(p.getAmount()));
+            //a.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
 
             //payment amount currency
             //TextVidatew cur = (TextView) record.findViewById(R.id.txtViewRecordCurrency);
@@ -323,10 +329,10 @@ public class HomeUIController {
             //paymentNote
             TextView v = (TextView) record.findViewById(R.id.txtViewRecordNote);
             v.setText(p.getNote());
+            //v.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
 
             this.records.add(record);
             paymentRecordsContainer.addView(record);
-            record.updateRecordHeight(this.activity);
             record.updateIconVisibility();
         }
 
@@ -371,11 +377,21 @@ public class HomeUIController {
         this.date_month = this.calendar.getMonthOfYear();
         this.date_day = this.calendar.getDayOfMonth();
 
+
+        this.dateDPDialog = new DatePickerDialog(this.activity, new DatePickerDialog.OnDateSetListener() {
+            public void onDateSet(DatePicker arg0, int y, int m, int d) {
+                updateDateButton(y, m+1, d);
+                saveSelectedDate(y, m+1, d);
+                HomeActivity.changeLocaleDefault();
+            }
+        }, this.date_year, this.date_month - 1, this.date_day);
+
         this.dateButton = (Button) this.activity.findViewById(R.id.btn_date);
         this.dateButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 HomeActivity.clearControlsFocus(activity);
-                activity.showDialog(dateDialogID);
+                dateDPDialog.updateDate(date_year, date_month-1, date_day);
+                dateDPDialog.show();
             }
         });
     }
@@ -520,13 +536,13 @@ public class HomeUIController {
         dateButton.setText(d + ". " + m + ". " + y);
     }
 
-    public Dialog handleDatePickerDialogCreation(int id){
+    /*public Dialog handleDatePickerDialogCreation(int id){
         if(id == this.dateDialogID) {
 
             //temporarily set US locale to force being set CalendarDialog English language
             HomeActivity.changeLocaleUS();
 
-            DatePickerDialog dpDialog = new DatePickerDialog(this.activity, new DatePickerDialog.OnDateSetListener() {
+             this.dateDPDialog = new DatePickerDialog(this.activity, new DatePickerDialog.OnDateSetListener() {
                 public void onDateSet(DatePicker arg0, int y, int m, int d) {
                     updateDateButton(y, m+1, d);
                     saveSelectedDate(y, m+1, d);
@@ -535,18 +551,13 @@ public class HomeUIController {
             }, this.date_year, this.date_month - 1, this.date_day);
 
 
-            //o 1 den navic oproti StackOverflow! @TODO otestovat!!!
-            //Calendar c = Calendar.getInstance();
-            //c.add(Calendar.DATE, 1);
-            //DatePicker datePicker = dpDialog.getDatePicker();
-            //datePicker.setMaxDate(c.getTimeInMillis());
 
             return dpDialog;
         }
 
 
         return null;
-    }
+    }*/
 
     public void updateCurrencyViews(String curr){
         //controls – price amount
@@ -672,7 +683,7 @@ public class HomeUIController {
             editingRecord.setEditing(false);
 
         HomeActivity.clearControlsFocus(activity);
-        this.unmarkInputAmountError();
+        this.unmarkInputErrorAll();
     }
 
     public String[] getControlsContents(){
@@ -684,8 +695,15 @@ public class HomeUIController {
 
         //category
         CustomSpinner catSpin = (CustomSpinner) this.activity.findViewById(R.id.spinner_category);
-        contents[1] = ((Category) catSpin.getSelectedItem()).getName();
-        contents[2] = String.valueOf(((Category) catSpin.getSelectedItem()).getID());
+        Category c = (Category) catSpin.getSelectedItem();
+        if(c != null) {
+            contents[1] = c.getName();
+            contents[2] = String.valueOf(c.getID());
+        } else {
+            contents[1] = "";
+            contents[2] = String.valueOf(-1);
+        }
+
 
         //amount
         EditText etA = (EditText) this.activity.findViewById(edTxt_amount);
@@ -697,25 +715,112 @@ public class HomeUIController {
 
         //store
         CustomSpinner stSpin = (CustomSpinner) this.activity.findViewById(R.id.spinner_store);
+        Store s = (Store) stSpin.getSelectedItem();
+        if(s != null) {
+            contents[5] = s.getName();
+            contents[6] = String.valueOf(s.getID());
+        } else {
+            contents[5] = "";
+            contents[6] = String.valueOf(-1);
+        }
+
+        /*
         contents[5] = ((Store) stSpin.getSelectedItem()).getName();
         contents[6] = String.valueOf(((Store) stSpin.getSelectedItem()).getID());
+        */
 
         return contents;
     }
 
-    public void markInputAmountError(){
+    public void markInputError(InputFieldType t){
         int errColor = ContextCompat.getColor(this.activity, appError);
 
-        EditText et = (EditText) this.activity.findViewById(edTxt_amount);
-        et.setTextColor(errColor);
-        et.setHintTextColor(errColor);
-        et.requestFocus();
 
-        LinearLayout layout = (LinearLayout) this.activity.findViewById(homeAmountContainer);
-        layout.setBackgroundResource(shape_thin_border_error);
+        switch(t) {
+            case EDIT_TEXT_AMOUNT:
+                EditText et = (EditText) this.activity.findViewById(edTxt_amount);
+                et.setTextColor(errColor);
+                et.setHintTextColor(errColor);
+                //et.requestFocus();
+
+                LinearLayout layout = (LinearLayout) this.activity.findViewById(homeAmountContainer);
+                layout.setBackgroundResource(shape_thin_border_error);
+
+                break;
+
+            case CUSTOM_SPINNER_CATEGORY:
+
+                CustomSpinner spinCat = (CustomSpinner) this.activity.findViewById(R.id.spinner_category);
+                spinCat.setBackgroundResource(shape_thin_border_error);
+
+                break;
+
+            case CUSTOM_SPINNER_STORE:
+
+                CustomSpinner spinSt = (CustomSpinner) this.activity.findViewById(R.id.spinner_store);
+                spinSt.setBackgroundResource(shape_thin_border_error);
+
+                break;
+        }
     }
 
-    public void unmarkInputAmountError(){
+    public void unmarkInputError(InputFieldType t){
+        int okColor = ContextCompat.getColor(this.activity, R.color.appWhite);
+
+        switch(t) {
+            case EDIT_TEXT_AMOUNT:
+
+                EditText et = (EditText) this.activity.findViewById(edTxt_amount);
+                et.setTextColor(okColor);
+                et.setHintTextColor(okColor);
+
+                LinearLayout layout = (LinearLayout) this.activity.findViewById(homeAmountContainer);
+                layout.setBackgroundResource(shape_thin_border);
+
+                break;
+
+            case CUSTOM_SPINNER_CATEGORY:
+
+                CustomSpinner spinCat = (CustomSpinner) this.activity.findViewById(R.id.spinner_category);
+                spinCat.setBackgroundResource(shape_thin_border);
+
+                break;
+
+            case CUSTOM_SPINNER_STORE:
+
+                CustomSpinner spinSt = (CustomSpinner) this.activity.findViewById(R.id.spinner_store);
+                spinSt.setBackgroundResource(shape_thin_border);
+
+                break;
+        }
+    }
+
+
+    public void unmarkInputErrorAll(){
+        int okColor = ContextCompat.getColor(this.activity, R.color.appWhite);
+
+        //amount
+        EditText et = (EditText) this.activity.findViewById(edTxt_amount);
+        et.setTextColor(okColor);
+        et.setHintTextColor(okColor);
+
+        LinearLayout layout = (LinearLayout) this.activity.findViewById(homeAmountContainer);
+        layout.setBackgroundResource(shape_thin_border);
+
+
+        //category
+        CustomSpinner spinCat = (CustomSpinner) this.activity.findViewById(R.id.spinner_category);
+        spinCat.setBackgroundResource(shape_thin_border);
+
+
+        //store
+        CustomSpinner spinSt = (CustomSpinner) this.activity.findViewById(R.id.spinner_store);
+        spinSt.setBackgroundResource(shape_thin_border);
+
+    }
+
+
+    /*public void unmarkInputError(){
         int okColor = ContextCompat.getColor(this.activity, R.color.appWhite);
 
         EditText et = (EditText) this.activity.findViewById(edTxt_amount);
@@ -724,7 +829,7 @@ public class HomeUIController {
 
         LinearLayout layout = (LinearLayout) this.activity.findViewById(homeAmountContainer);
         layout.setBackgroundResource(shape_thin_border);
-    }
+    }*/
 
     public void fillPaymentInfoOnUpdate(Payment p){
         Calendar cal = Calendar.getInstance();
@@ -791,6 +896,24 @@ public class HomeUIController {
         }
     }
 
+    public void updateDateViewed(DateTime date){
+        this.date_month = date.getMonthOfYear();
+
+        int y = date.getYearOfEra(),
+            m = date.getMonthOfYear(),
+            d = date.getDayOfMonth();
+
+        this.calendar = this.calendar.withYearOfEra(y)
+                                     .withMonthOfYear(m)
+                                     .withDayOfMonth(d);
+
+        this.updateDateButton(y, m, d);
+
+        this.date_year = y;
+        this.date_month = m;
+        this.date_day = d;
+    }
+
     /*public void hideImgButton(View v){
         this.lastImgButton = v;
         this.lastImgButton.setVisibility(View.INVISIBLE);
@@ -805,7 +928,7 @@ public class HomeUIController {
     private void resetVisitOnDoubleTap(){
         final GestureDetector.SimpleOnGestureListener listener = new GestureDetector.SimpleOnGestureListener() {
             public boolean onDoubleTap(MotionEvent e) {
-                SharedPrefs.reset();
+                SharedPrefs.clear();
                 Toast.makeText(activity, "Time-travelled back.", Toast.LENGTH_SHORT).show();
                 return true;
             }

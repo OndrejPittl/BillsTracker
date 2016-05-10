@@ -15,6 +15,7 @@ import cz.ondrejpittl.semestralka.models.Category;
 import cz.ondrejpittl.semestralka.models.Payment;
 import cz.ondrejpittl.semestralka.models.Statistics;
 import cz.ondrejpittl.semestralka.models.Store;
+import cz.ondrejpittl.semestralka.partial.InputFieldType;
 import cz.ondrejpittl.semestralka.partial.JodaCalendar;
 import cz.ondrejpittl.semestralka.partial.MonthChangeEnum;
 import cz.ondrejpittl.semestralka.partial.SharedPrefs;
@@ -24,9 +25,9 @@ import cz.ondrejpittl.semestralka.partial.SharedPrefs;
  */
 public class HomeDataController {
 
-    //store in-app local-shared preferences
     /**
      *  SharedPrefs holding app settings.
+     *  Stores in-app local-shared preferences.
      */
     SharedPreferences prefs;
 
@@ -50,17 +51,12 @@ public class HomeDataController {
     /**
      * Calendar holding actually displayed month.
      */
-    //private Calendar actualCalendar;
-
     private DateTime jodaDate;
 
-    private DateTime jodaDateCurrent;
-
     /**
-     *  Number of month being displayed.
+     *  Calendar holding current REAL date.
      */
-    //private int displayedMonth;
-
+    private DateTime jodaDateCurrent;
 
     /**
      * Collection of stored Stores in database.
@@ -84,78 +80,92 @@ public class HomeDataController {
     private ArrayList<Payment> displayedPayments;
 
 
-    private boolean edittingPayment;
+    /**
+     * Flag indicating a payment is being edited.
+     */
+    private boolean editingPayment;
 
-    private int edittingPaymentID;
+    /**
+     * ID of a payment being currently edited.
+     */
+    private int editingPaymentID;
 
 
-
+    /**
+     * Constructor. Initializes model layer of HomeActivity.
+     * @param activity  HomeActivity reference
+     */
     public HomeDataController(HomeActivity activity) {
         this.activity = activity;
         this.controllerUI = activity.getUIController();
         this.dbManager = activity.getDbManager();
-
-        init();
+        this.init();
     }
 
+    /**
+     * Initializes HomeActivity.
+     */
     private void init(){
         this.jodaDate = new DateTime();
         this.jodaDateCurrent = new DateTime();
 
-        this.edittingPayment = false;
+        this.editingPayment = false;
         this.prefs = this.activity.getSharedPreferences("cz.ondrejpittl.semestralka", Context.MODE_PRIVATE);
 
         //defaults
         this.loadStoredSettings();
-
         this.loadStoredCategories();
         this.loadStoredStores();
 
-
+        //payments being displayed
         this.loadPaymentsOfMonth();
-
-
-
     }
 
+    /**
+     * Loads settings being stored in SharedPreferences.
+     */
     private void loadStoredSettings(){
         this.loadDefaultCurrency();
-
-
     }
 
-    private String loadDefaultCurrencyFromPrefs(){
-        return this.prefs.getString("defaultCurrency", "");
-    }
-
+    /**
+     * Loads default currency from SharedPrefs.
+     * @return
+     */
     private void loadDefaultCurrency(){
-        String defaultCurrency = loadDefaultCurrencyFromPrefs();
+        String defaultCurrency = SharedPrefs.getDefaultCurrency();
 
         if(defaultCurrency == null || (defaultCurrency != null && defaultCurrency.length() <= 0)) {
-            //defaultCurrency = this.dbManager.getDefaultCurrency();
-
             Locale l = Locale.getDefault();
             defaultCurrency = java.util.Currency.getInstance(l).getCurrencyCode();
 
             this.dbManager.updateDefaultCurrency(defaultCurrency);
-            this.prefs.edit().putString("defaultCurrency", defaultCurrency).commit();
+            SharedPrefs.storeDefaultCurrency(defaultCurrency);
         }
 
         this.controllerUI.updateCurrencyViews(defaultCurrency);
     }
 
-    private void loadStoredStores(){
+    /**
+     *  Loads a list of stored stores from DB.
+     */
+    public void loadStoredStores(){
         this.storedStores = this.dbManager.getStoredStores();
         this.controllerUI.buildStoreControls(this.storedStores);
     }
 
-    private void loadStoredCategories(){
+    /**
+     *  Loads a list of stored categories from DB.
+     */
+    public void loadStoredCategories(){
         this.storedCategories = this.dbManager.getStoredCategories();
         this.controllerUI.buildCategoryControls(this.storedCategories);
     }
 
+    /**
+     *  Loads a list of stored payments from DB.
+     */
     public void loadPaymentsOfMonth(){
-        //app launches with actual month displayed by default
 
         HomeActivity.changeLocaleUS();
         int year = this.jodaDate.getYear();
@@ -163,17 +173,18 @@ public class HomeDataController {
         String monthStr = this.jodaDate.toString("MMMM");
         HomeActivity.changeLocaleDefault();
 
-        String currencyUnits = loadDefaultCurrencyFromPrefs();
-
-        //this.createMockPaymentIfNeeded();
+        String currencyUnits = SharedPrefs.getDefaultCurrency();
 
         this.displayedPayments = this.dbManager.getPaymentsByMonth(month, year);
         this.controllerUI.updatePaymentRecords(monthStr, year, this.displayedPayments, currencyUnits, this);
 
-        logDisplayedPayments();
-        computeStatistics();
+        this.logDisplayedPayments();
+        this.computeStatistics();
     }
 
+    /**
+     * Creates a mock payment for a first-launch tutorial.
+     */
     public void createMockPaymentIfNeeded(){
         int year = this.jodaDate.getYear();
         int month = this.jodaDate.getMonthOfYear();
@@ -184,11 +195,13 @@ public class HomeDataController {
         }
     }
 
+    /**
+     * Computes compact statistics placed in the footer of this activity.
+     */
     private void computeStatistics(){
         Statistics s;
 
         if(JodaCalendar.compareMonthYear(jodaDateCurrent, jodaDate)){
-            //if(this.jodaDateCurrent.compareMonthYear(this.jodaDate)) {
             //if currently viewd month is a current calendar one
             s = this.dbManager.computeCurrentStatistics();
             this.controllerUI.updateStatistics(s, true);
@@ -201,7 +214,10 @@ public class HomeDataController {
         }
     }
 
-
+    /**
+     * Handles change of a currently viewed month.
+     * @param event type of month change: increased/decreased
+     */
     public void registerActiveMonthChanged(MonthChangeEnum event){
         switch (event) {
             case NEXT:
@@ -213,17 +229,18 @@ public class HomeDataController {
                 this.jodaDate = this.jodaDate.minusMonths(1);
                 break;
         }
-
-        Log.i("Ondra", "mesicek: " + this.jodaDate.getMonthOfYear());
     }
 
+    /**
+     *
+     */
     public void handlePaymentCancel(){
         this.controllerUI.clearControls();
 
-        if(this.edittingPayment){
+        if(this.editingPayment){
             this.controllerUI.setInsertUpdateButtonText(false);
             this.controllerUI.setClearCancelButtonText(false);
-            this.edittingPayment = false;
+            this.editingPayment = false;
         }
 
     }
@@ -234,15 +251,15 @@ public class HomeDataController {
         if(!validatePaymentInputs(contents))
             return;
 
-        if(this.edittingPayment) {
+        if(this.editingPayment) {
 
             //old payment is being editted
             Payment p = new Payment(contents);
-            p.setID(this.edittingPaymentID);
+            p.setID(this.editingPaymentID);
 
             this.controllerUI.registerPaymentUpdateFinished();
             this.dbManager.updatePayment(p);
-            this.edittingPayment = false;
+            this.editingPayment = false;
 
         } else {
 
@@ -261,8 +278,8 @@ public class HomeDataController {
     }
 
     public void handlePaymentEdit(int paymentID){
-        this.edittingPayment = true;
-        this.edittingPaymentID = paymentID;
+        this.editingPayment = true;
+        this.editingPaymentID = paymentID;
         //this.controllerUI.fillPaymentInfoOnUpdate(p);
 
 
@@ -271,30 +288,42 @@ public class HomeDataController {
     }
 
     private boolean validatePaymentInputs(String[] contents){
+        boolean correct = true;
+
         //contents[0] ... date              (long)
         //being chosen via dialog with limited options – no way of invalid input
 
         //contents[1] ... category name     (String)
         //contents[2] ... category id       (int)
-        //being chosen via spinner with limited options – no way of invalid input
+        if(contents[1].length() == 0) {
+            this.controllerUI.markInputError(InputFieldType.CUSTOM_SPINNER_CATEGORY);
+            correct = false;
+        } else {
+            this.controllerUI.unmarkInputError(InputFieldType.CUSTOM_SPINNER_CATEGORY);
+        }
 
         //contents[3] ... amount            (int)
         //numeric keyboard, test with regex to eliminate multiple dots and commmas
+        if(!isNumericPositive(contents[3]) || !isInAmountRange(contents[3])) {
+            this.controllerUI.markInputError(InputFieldType.EDIT_TEXT_AMOUNT);
+            correct = false;
+        } else {
+            this.controllerUI.unmarkInputError(InputFieldType.EDIT_TEXT_AMOUNT);
+        }
 
         //contents[4] ... note              (String)
         //default keyboard, no limits = no need to test
 
-        //contents[0] ... store name
-        //contents[0] ... store id
-        //being chosen via spinner with limited options – no way of invalid input
-
-
-        if(!isNumericPositive(contents[3]) || !isInAmountRange(contents[3])) {
-            this.controllerUI.markInputAmountError();
-            return false;
+        //contents[5] ... store name
+        //contents[6] ... store id
+        if(contents[5].length() == 0) {
+            this.controllerUI.markInputError(InputFieldType.CUSTOM_SPINNER_STORE);
+            correct = false;
+        } else {
+            this.controllerUI.unmarkInputError(InputFieldType.CUSTOM_SPINNER_STORE);
         }
 
-        return true;
+        return correct;
     }
 
     private boolean isNumericPositive(String num){
@@ -315,6 +344,10 @@ public class HomeDataController {
         if(f < 0 || f > 10000000) return false;
         return true;
         //return num.matches("/^([1-9]\\d*|0)?(?:\\.\\d+)?$/");
+    }
+
+    public DateTime getViewedMonthDate(){
+        return this.jodaDate;
     }
 
 

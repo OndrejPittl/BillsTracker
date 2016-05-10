@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<cz.ondrejpittl.semestralka.layout.EditRecord
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="30dp">
+
+    <TextView
+        android:id="@+id/recTitle"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="5"
+        android:textColor="@color/appWhite">
+    </TextView>
+
+    <ImageButton
+        android:layout_width="0dp"
+        android:layout_height="30dp"
+        android:layout_weight="1"
+        android:padding="5dp"
+        android:background="@color/transparent"
+        android:scaleType="fitCenter"
+        android:src="@drawable/icon_del"
+        android:textColor="#FFFFFF"
+        android:id="@+id/btnRecDel">
+    </ImageButton>
+</cz.ondrejpittl.semestralka.layout.EditRecord>

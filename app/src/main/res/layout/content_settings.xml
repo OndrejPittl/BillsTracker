@@ -16,8 +16,7 @@
         android:layout_gravity="center"
         android:cropToPadding="false"
         android:scaleType = "fitXY"
-        android:src="@drawable/bg1"
-        android:contentDescription="@string/lbl_background_image" />
+        android:src="@drawable/bg1" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -31,6 +30,13 @@
             android:paddingRight="20dp"
             android:paddingTop="80dp"
             android:paddingBottom="30dp">
+
+            <!-- autofocus fix -->
+            <LinearLayout
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:layout_width="0px"
+                android:layout_height="0px"/>
 
 
             <TextView
@@ -340,6 +346,155 @@
                 </LinearLayout>
 
             </LinearLayout>
+
+
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="35dp"
+                android:layout_marginBottom="30dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="@string/settingsData"
+                    android:id="@+id/textView9"
+                    android:textColor="@color/appTextLightGold"
+                    android:layout_marginBottom="10dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_margin="5dp" >
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/settingsCategories"
+                        android:id="@+id/textView10"
+                        android:textColor="@color/appWhite"
+                        android:textAlignment="center"/>
+
+                    <ScrollView
+                        android:id="@+id/settCategoryScrollView"
+                        android:background="@drawable/shape_thin_border"
+                        android:layout_width="match_parent"
+                        android:layout_height="200dp"
+                        android:layout_marginTop="5dp"
+                        android:padding="7dp">
+
+                        <LinearLayout
+                            android:id="@+id/settCategoryContainer"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                        </LinearLayout>
+                    </ScrollView>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="30dp"
+                        android:layout_marginTop="7dp">
+
+                        <EditText
+                            android:id="@+id/settNewCategry"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/shape_thin_border"
+                            android:hint="@string/settingsNewCategory"
+                            android:singleLine="true"
+                            android:textColor="@color/appWhite"
+                            android:textSize="12sp"
+                            android:textColorHint="@color/appWhite40"
+                            android:textAlignment="center"
+                            android:layout_weight="5"/>
+
+                        <ImageButton
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:padding="5dp"
+                            android:background="@color/transparent"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/icon_add"
+                            android:textColor="@color/appWhite"
+                            android:id="@+id/btnCategoryAdd"
+                            android:onClick="createNewCategory">
+                        </ImageButton>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_margin="5dp"
+                    android:paddingTop="10dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/settingsStores"
+                        android:id="@+id/textView11"
+                        android:textColor="@color/appWhite"
+                        android:textAlignment="center"/>
+
+                    <ScrollView
+                        android:id="@+id/settStoreScrollView"
+                        android:background="@drawable/shape_thin_border"
+                        android:layout_width="match_parent"
+                        android:layout_height="200dp"
+                        android:layout_marginTop="5dp"
+                        android:padding="7dp">
+
+                        <LinearLayout
+                            android:id="@+id/settStoreContainer"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                        </LinearLayout>
+                    </ScrollView>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="30dp"
+                        android:layout_marginTop="7dp">
+
+                        <EditText
+                            android:id="@+id/settNewStore"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/shape_thin_border"
+                            android:hint="@string/settingsNewStore"
+                            android:singleLine="true"
+                            android:textColor="@color/appWhite"
+                            android:textSize="12sp"
+                            android:textColorHint="@color/appWhite40"
+                            android:textAlignment="center"
+                            android:layout_weight="5"/>
+
+                        <ImageButton
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:padding="5dp"
+                            android:background="@color/transparent"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/icon_add"
+                            android:textColor="@color/appWhite"
+                            android:id="@+id/btnStoreAdd"
+                            android:onClick="createNewStore">
+                        </ImageButton>
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+
 
 
             <LinearLayout

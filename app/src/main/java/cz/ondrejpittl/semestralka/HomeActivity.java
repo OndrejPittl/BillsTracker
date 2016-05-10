@@ -123,10 +123,10 @@ public class HomeActivity extends AppCompatActivity {
      * @param id    ID of dialog.
      * @return      Built DatePicker dialog.
      */
-    @Override
+   /* @Override
     protected Dialog onCreateDialog(int id) {
         return this.controllerUI.handleDatePickerDialogCreation(id);
-    }
+    }*/
 
     /**
      * Handles actual month change.
@@ -142,6 +142,7 @@ public class HomeActivity extends AppCompatActivity {
         }
 
         this.controllerData.registerActiveMonthChanged(event);
+        this.controllerUI.updateDateViewed(this.controllerData.getViewedMonthDate());
         this.updatePaymentRecords();
     }
 
@@ -184,12 +185,14 @@ public class HomeActivity extends AppCompatActivity {
         if(requestCode == 1) {
 
             //settings activity ended
-
             if(SharedPrefs.isFirstTimeLaunch())
                     finish();
 
 
             this.controllerUI.resetSettingsImgButton();
+
+            this.controllerData.loadStoredCategories();
+            this.controllerData.loadStoredStores();
 
             this.controllerUI.updateCurrencyViews(SharedPrefs.getDefaultCurrency());
             this.controllerUI.updateCategoryControlsSelection();

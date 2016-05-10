@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 
+    <!-- 45/65dp -->
+
     <cz.ondrejpittl.semestralka.layout.PaymentRecord
     xmlns:android="http://schemas.android.com/apk/res/android"
-
     android:layout_width="match_parent"
-    android:layout_height="65dp"
+    android:layout_height="45dp"
     android:orientation="vertical"
     android:layout_marginTop="2dp"
+    android:background="@color/appWhite25"
     android:layout_marginBottom="2dp">
-    <!--android:background="@color/appWhite25"-->
+
 
     <LinearLayout
         android:orientation="horizontal"
@@ -57,7 +59,7 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:id="@+id/recordImgHolder"
-                    android:padding="4dp">
+                    android:padding="7dp">
 
                     <ImageView
                         android:layout_width="match_parent"
@@ -67,7 +69,7 @@
                         android:layout_gravity="center" />
                 </FrameLayout>
 
-                <FrameLayout
+                    <FrameLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
@@ -86,7 +88,7 @@
                         android:shadowDx="0"
                         android:shadowDy="1"
                         android:shadowRadius="1"
-                        android:textSize="13sp"
+                        android:textSize="11dp"
                         android:textAlignment="center" />
                 </FrameLayout>
 
@@ -222,7 +224,7 @@
 
                 <TextView
                     android:layout_width="fill_parent"
-                    android:layout_height="15dp"
+                    android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:text="note1 note2 note3 note4 note5 note6 note7 note8 note9 note10 note11 note12 note13 note14"
                     android:id="@+id/txtViewRecordNote"

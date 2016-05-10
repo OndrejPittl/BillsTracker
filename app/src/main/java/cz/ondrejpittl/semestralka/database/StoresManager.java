@@ -102,10 +102,10 @@ public class StoresManager extends TableManager {
         });
     }
 
-    // TODO: 02.04.16 RADI SE ZATIM POUZE ABECEDNE
+
     public ArrayList<Store> selectAllStoresFrequencyOrdered(){
         return this.selectStores(null, new String[][]{
-                {"name", "asc"}
+                {"name COLLATE NOCASE", "asc"}
         });
     }
 

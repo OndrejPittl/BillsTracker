@@ -3,13 +3,17 @@ package cz.ondrejpittl.semestralka.controllers;
 import android.widget.Spinner;
 import android.widget.Switch;
 
+import java.util.ArrayList;
+
 import cz.ondrejpittl.semestralka.R;
 import cz.ondrejpittl.semestralka.SettingsActivity;
 import cz.ondrejpittl.semestralka.StatisticsActivity;
+import cz.ondrejpittl.semestralka.database.DBManager;
 import cz.ondrejpittl.semestralka.layout.CustomSpinner;
 import cz.ondrejpittl.semestralka.models.Category;
 import cz.ondrejpittl.semestralka.models.Currency;
 import cz.ondrejpittl.semestralka.models.Store;
+import cz.ondrejpittl.semestralka.partial.EditRecordType;
 import cz.ondrejpittl.semestralka.partial.SharedPrefs;
 
 /**
@@ -17,14 +21,17 @@ import cz.ondrejpittl.semestralka.partial.SharedPrefs;
  */
 public class SettingsDataController {
 
+    private DBManager dbManager;
+
     /**
      * Activity its UI is being controlled.
      */
     private SettingsActivity activity;
 
 
-    public SettingsDataController(SettingsActivity activity) {
+    public SettingsDataController(SettingsActivity activity, DBManager dbManager) {
         this.activity = activity;
+        this.dbManager = dbManager;
     }
 
     public void storeSettings(){
@@ -56,13 +63,41 @@ public class SettingsDataController {
         SharedPrefs.storeDefaultCurrency(cur.getName());
 
         Category cat = (Category) spinCat.getSelectedItem();
-        SharedPrefs.storeDefaultCategory(cat.getName());
+        if(cat != null)
+            SharedPrefs.storeDefaultCategory(cat.getName());
 
         int designIndex = designSelect.getSelectedItemPosition();
         SharedPrefs.storeDefaultDesign(designIndex);
 
         Store store = (Store) spinSto.getSelectedItem();
-        SharedPrefs.storeDefaultStore(store.getName());
+        if(store != null)
+            SharedPrefs.storeDefaultStore(store.getName());
+    }
 
+    public void deleteRecord(int id, EditRecordType type){
+        switch (type){
+            case CATEGORY:
+                this.dbManager.deleteCategory(id);
+                break;
+
+            case STORE:
+                this.dbManager.deleteStore(id);
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    public ArrayList<Store> getStoredStores(){
+        return this.dbManager.getStoredStores();
+    }
+
+    public ArrayList<Category> getStoredCategories(){
+        return this.dbManager.getStoredCategories();
+    }
+
+    public ArrayList<Currency> getStoredCurrencies(){
+        return this.dbManager.getStoredCurrencies();
     }
 }

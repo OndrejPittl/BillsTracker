@@ -1,12 +1,18 @@
 package cz.ondrejpittl.semestralka.controllers;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import cz.ondrejpittl.semestralka.R;
 import cz.ondrejpittl.semestralka.WelcomeActivity;
@@ -24,6 +30,8 @@ public class WelcomeUIController {
      * Activity that is being controlled.
      */
     private WelcomeActivity activity;
+
+    private LayoutInflater layoutInflater;
 
     private PinCodeFields pinCodeFields;
 
@@ -48,6 +56,7 @@ public class WelcomeUIController {
         this.pinFieldsCount = 4;
         this.firstTimeLaunch = SharedPrefs.isFirstTimeLaunch();
         this.pinFields = new EditText[this.pinFieldsCount];
+        this.layoutInflater = (LayoutInflater) this.activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         //this.pinCodeFields = new PinCodeFields(this.activity);
     }
@@ -59,6 +68,7 @@ public class WelcomeUIController {
         //showWelcomeDivider();
         showAboutButton();
         showContinueButton();
+        this.hideSecretPIN();
     }
 
     /**
@@ -66,19 +76,23 @@ public class WelcomeUIController {
      */
     public void displayLoginScreen(){
 
+        //this.hideSecretPIN();
+
         //login screen first-time
         if(SharedPrefs.isFirstTimeLaunch()) {
 
             //user sets the PIN code
             this.firstTimeLaunch = true;
-            setLoginScreenRegisterTexts();
-            showRegisterButton();
+            this.setLoginScreenRegisterTexts();
+            this.showRegisterButton();
+            this.hideSecretPIN();
 
         } else {
 
             //user enters PIN code
-            setLoginScreenTexts();
-            showEnterButton();
+            this.setLoginScreenTexts();
+            this.showEnterButton();
+            this.displaySecretPIN();
 
         }
 
@@ -89,6 +103,15 @@ public class WelcomeUIController {
     }
 
 
+    private void displaySecretPIN(){
+        TextView tv = (TextView) this.activity.findViewById(R.id.tvSecretPIN);
+        tv.setVisibility(View.VISIBLE);
+    }
+
+    private void hideSecretPIN(){
+        TextView tv = (TextView) this.activity.findViewById(R.id.tvSecretPIN);
+        tv.setVisibility(View.INVISIBLE);
+    }
 
     /**
      * Changes Login screen texts of layout elements.
@@ -251,13 +274,88 @@ public class WelcomeUIController {
                 new View.OnClickListener() {
                     public void onClick(View v) {
                         pinCodeFields.storePINCode();
+
                         displayLoginScreen();
+
+                        //set secret passwd for reset pin
+                        handleSecretPasswdSet();
                     }
                 },
                 this.activity.getApplicationContext()
         );
 
         container.addView(regBtn);
+    }
+
+
+
+
+
+    public void handleResetPrefs(View v) {
+        LinearLayout container = (LinearLayout) layoutInflater.inflate(R.layout.secret_input, null);
+        final EditText et = (EditText) container.findViewById(R.id.secretInput);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this.activity);
+        builder.setTitle("PIN reset.");
+        builder.setMessage("You are going to reset your password. Please, enter the secret PIN you were provided at first launch.");
+        builder.setView(container);
+        builder.setPositiveButton("Reset PIN", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {}});
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+
+            }});
+        final AlertDialog dialog = builder.create();
+        dialog.show();
+
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                String secret = et.getText().toString();
+                Log.i("Ondra-secret", "secret: " + secret);
+
+                if (SharedPrefs.checkSecretPINCode(secret)) {
+                    SharedPrefs.resetPINCode();
+                    Toast.makeText(activity, "Reset successful.", Toast.LENGTH_SHORT).show();
+                    Log.i("Ondra-secret", "secret stored");
+                    dialog.dismiss();
+                    activity.recreate();
+                } else {
+                    Toast.makeText(activity, "Secret password incorrect.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+    }
+
+    public void handleSecretPasswdSet() {
+        LinearLayout container = (LinearLayout) layoutInflater.inflate(R.layout.secret_input, null);
+        final EditText et = (EditText) container.findViewById(R.id.secretInput);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this.activity);
+        builder.setTitle(R.string.secretHeading);
+        builder.setMessage(this.activity.getResources().getString(R.string.secretDescription));
+        builder.setCancelable(false);
+        builder.setView(container);
+        builder.setPositiveButton("Set secret password.", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {}});
+        final AlertDialog dialog = builder.create();
+        dialog.show();
+
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                String secret = et.getText().toString();
+                Log.i("Ondra-secret", "secret: " + secret);
+
+                if(secret.length() <= 0){
+                    et.setBackgroundResource(R.drawable.shape_thin_border_error);
+                } else {
+                    Toast.makeText(activity, "Secret password was set.", Toast.LENGTH_SHORT).show();
+                    Log.i("Ondra-secret", "secret stored");
+                    SharedPrefs.storeSecretPINCode(secret);
+                    dialog.dismiss();
+                }
+            }
+        });
     }
 
 }

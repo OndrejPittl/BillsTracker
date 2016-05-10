@@ -14,6 +14,7 @@ import java.util.ArrayList;
 
 import cz.ondrejpittl.semestralka.R;
 import cz.ondrejpittl.semestralka.models.Category;
+import cz.ondrejpittl.semestralka.models.Store;
 
 /**
  * Created by OndrejPittl on 02.04.16.
@@ -109,7 +110,31 @@ public class CategoryManager extends TableManager {
         });
     }
 
+
+    public ArrayList<Category> selectAllCategoriesFrequencyOrdered(){
+        return this.selectCategories(null, new String[][]{
+                {"name COLLATE NOCASE", "asc"}
+        });
+    }
+
+    public ArrayList<Category> selectCategories(String[][] wheres, String[][] orderBy) {
+        //wheres: {{"name", "=", "John"}, {"age", "<", 27}}
+        //orderBy: {{"id", "asc"}, {"name", "desc"}}
+
+        Cursor c = selectRecord(wheres, orderBy);
+        ArrayList<Category> col = this.buildCategoriesArraylistFromCursor(c);
+        c.close();
+
+        return col;
+    }
+
+
+
     public ArrayList<Category> selectAllCategories(){
+        //selectRecordsDetailed(String tableCols, String tables, String[][] wheres,  String[] groupBy, String[][] orderBy, int limit)
+        //Cursor c = selectRecordsDetailed(getAllColumnsSelector(), TABLE_NAME, null, null, new String[][]{{getColumnNameAliased(), "asc"}}, -1);
+        //Cursor c = selectRecordsDetailed("*", TABLE_NAME, null, null, null, -1);
+
         Cursor c = selectAllRecords();
         ArrayList<Category> col = this.buildCategoriesArraylistFromCursor(c);
         c.close();

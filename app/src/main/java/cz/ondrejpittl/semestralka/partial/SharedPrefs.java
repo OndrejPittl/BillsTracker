@@ -13,6 +13,7 @@ import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.Random;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -56,6 +57,8 @@ public class SharedPrefs {
     private static String passwdNotReq = "pSSwDnotR3Quir3D";
 
 
+    private static int secretPIN = 0;
+
 
 
     public static void load(Activity activity){
@@ -63,7 +66,16 @@ public class SharedPrefs {
 
         SharedPrefs.restoreDefaults();
 
+
+        if(SharedPrefs.isFirstTimeLaunch())
+            SharedPrefs.generateSecretPIN();
+
         //clear();
+    }
+
+    private static void generateSecretPIN(){
+        Random r = new Random();
+        SharedPrefs.secretPIN = r.nextInt() * 9998 + 1;
     }
 
     //clears shared prefs
@@ -146,15 +158,27 @@ public class SharedPrefs {
 
     }
 
-
     public static boolean checkPINCode(String entered){
         return getPINCode().equals(encryptIt(entered));
     }
 
-    public static void reset(){
-        prefs.edit().clear();
-        prefs.edit().putBoolean("firstLaunch", true).commit();
+    public static void resetPINCode(){
+        SharedPrefs.storeFirstTimeLaunched(DEFAULT_FIRST_TIME_LAUNCHED);
     }
+
+    public static void storeSecretPINCode(String pin){
+        prefs.edit().putString("secretpin", encryptIt(pin)).commit();
+    }
+
+    public static String getSecretPINCode(){
+        return prefs.getString("secretpin", "");
+
+    }
+
+    public static boolean checkSecretPINCode(String entered){
+        return getSecretPINCode().equals(encryptIt(entered));
+    }
+
 
     public static boolean isDefaultCategorySet(){
         if(SharedPrefs.isNotNull())

@@ -5,9 +5,10 @@
     <string name="appAuthorLink"><a href="http://www.ondrejpittl.cz" style='text-decoration:none' >ondrejpittl.cz</a></string>
     <string name="arrow_left">&#9664;</string>
     <string name="arrow_right">&#9654;</string>
+    <string name="plus">+</string>
+    <string name="minus">-</string>
 
     <!-- temp -->
-    <string name="lbl_background_image">background_image</string>
     <string name="action_settings">Settings</string>
 
 
@@ -18,13 +19,17 @@
     <string name="loginFirstTime">First time here right?</string>
     <string name="loginTellMe">Tell me about this app.</string>
     <string name="loginContinue">– continue –</string>
+    <string name="resetPasswd">Reset password.</string>
+    <string name="secretHint">secret password</string>
+    <string name="secretHeading">Secret password.</string>
+    <string name="secretDescription">Please, enter a secret password you may need to reset PIN if you lose it.</string>
 
 
     <!-- Login Screen -->
     <!-- Register -->
     <string name="loginSettingUp">Setting up...</string>
     <!--<string name="loginSettingUp">Just one step...</string>-->
-    <string name="loginLetsStart">Let\'s start setting you PIN.</string>
+    <string name="loginLetsStart">Let\'s start setting your PIN.</string>
     <string name="loginLogin">– set PIN code –</string>
 
     <!-- Login -->
@@ -94,10 +99,15 @@
     <string name="settingsHeading">Settings</string>
     <string name="settingsDisplay">Display</string>
     <string name="settingsBehaviour">Behaviour</string>
+    <string name="settingsData">Data</string>
+    <string name="settingsCategories">Categories</string>
+    <string name="settingsStores">Stores</string>
+    <string name="settingsNewCategory">new category</string>
+    <string name="settingsNewStore">new store</string>
     <string name="settingsPasswordReq">Require password</string>
     <string name="settingsAutocollapse">Display payment notes</string>
-    <string name="settingsAnimations">Payment animations</string>
-    <string name="settingsIcons">Display payment icons</string>
+    <string name="settingsAnimations">Allow payment animations</string>
+    <string name="settingsIcons">Allow payment icons</string>
     <string name="settingsDefaults">Defaults</string>
     <string name="settingsDefCurrency">Currency</string>
     <string name="settingsDefCategory">Category</string>
@@ -108,6 +118,7 @@
     <string name="settingsTutorial">Replay tutorial  &#9654;</string>
     <string name="settingsAboutApp">About app  &#9654;</string>
     <string name="settingsErase">Erase all records.</string>
+
 
 
     <string name="statsMonthHeading1">Day by day</string>

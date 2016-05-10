@@ -91,7 +91,7 @@ public class DBManager extends SQLiteOpenHelper {
     }
 
     public ArrayList<Category> getStoredCategories(){
-        return this.categories.selectAllCategories();
+        return this.categories.selectAllCategoriesFrequencyOrdered();
     }
 
     public ArrayList<Currency> getStoredCurrencies(){
@@ -173,11 +173,28 @@ public class DBManager extends SQLiteOpenHelper {
         this.payments.insertPayment(p);
     }
 
+    public void insertNewCategory(String title){
+        this.categories.insertCategory(title, "@drawable/category_icon_default");
+    }
+
+    public void insertNewStore(String title){
+        this.stores.insertStore(title);
+    }
+
     public void deletePayment(int id){
         this.payments.deletePayment(new String[][]{
                 {"id", "=", String.valueOf(id)}
         });
     }
+
+    public void deleteCategory(int id){
+        this.categories.deleteCategory(new String[][]{{"id", "=", String.valueOf(id)}});
+    }
+
+    public void deleteStore(int id){
+        this.stores.deleteStore(new String[][]{{"id", "=", String.valueOf(id)}});
+    }
+
 
     public void updatePayment(Payment p){
         /*this.payments.deletePayment(new String[][]{

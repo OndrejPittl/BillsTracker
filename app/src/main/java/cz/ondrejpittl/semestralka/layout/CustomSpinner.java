@@ -5,6 +5,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
+import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
@@ -56,10 +57,20 @@ public class CustomSpinner extends Spinner {
     public void selectItem(String itemValue) {
         int index;
 
-        if(itemValue.length() > 0) {
+        /*if(itemValue.length() > 0) {
             index = this.findSpinnerItemIndex(itemValue);
         } else {
             index = 0;
+        }*/
+
+        Adapter a = this.getAdapter();
+        if(a == null || a.getCount() <= 0)
+            return;
+
+        if(itemValue.length() <= 0) {
+            index = 0;
+        } else {
+            index = this.findSpinnerItemIndex(itemValue);
         }
 
         this.setSelection(index);
