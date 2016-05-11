@@ -15,4 +15,5 @@ public class ChartValueFormatter implements ValueFormatter {
     public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
         return value + "  " + SharedPrefs.getDefaultCurrency();
     }
+
 }

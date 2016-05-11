@@ -31,7 +31,9 @@ public class CurrencyManager extends TableManager {
      */
     private static final String COLUMN_NAME = "name";
 
-
+    /**
+     * Resources.
+     */
     private Resources res;
 
 
@@ -46,6 +48,11 @@ public class CurrencyManager extends TableManager {
         Log.i("Ondra", "Currency Manager constructor");
     }
 
+    /**
+     * Creates a currencies table.
+     * @param db    a db reference
+     * @param res   a resource reference
+     */
     public void createCurrenciesTable(SQLiteDatabase db, Resources res) {
         this.db = db;
         this.res = res;
@@ -59,6 +66,9 @@ public class CurrencyManager extends TableManager {
         fillCurrencyTableFromXML();
     }
 
+    /**
+     * Fills an empty table with data stored in xml.
+     */
     private void fillCurrencyTableFromXML() {
 
         try {
@@ -77,18 +87,27 @@ public class CurrencyManager extends TableManager {
             }
             parser.close();
         } catch (XmlPullParserException e) {
-            Log.e("Ondra", e.getMessage(), e);
+            //Log.e("Ondra", e.getMessage(), e);
         } catch (IOException e) {
-            Log.e("Ondra", e.getMessage(), e);
+            //Log.e("Ondra", e.getMessage(), e);
         }
     }
 
+    /**
+     * Inserts a new currency record.
+     * @param name  a new currency name
+     */
     public void insertCurrency(String name){
         insertRecord(new String[][]{
                 {COLUMN_NAME, name}
         });
     }
 
+    /**
+     * Inserts a new currency.
+     * @param id    a new currency id
+     * @param name  a new currency name
+     */
     private void insertCurrency(String id, String name){
         insertRecord(new String[][]{
                 {COLUMN_ID, id},
@@ -96,12 +115,10 @@ public class CurrencyManager extends TableManager {
         });
     }
 
-    public ArrayList<Currency> selectAllCurrencyAlphabeticalOrdered(){
-        return this.selectCurrency(null, new String[][]{
-                {"name", "asc"}
-        });
-    }
-
+    /**
+     * Selects all currencies.
+     * @return  a collection of currencies
+     */
     public ArrayList<Currency> selectAllCurrency(){
         Cursor c = selectAllRecords();
         ArrayList<Currency> col = this.buildCurrencyArraylistFromCursor(c);
@@ -109,16 +126,11 @@ public class CurrencyManager extends TableManager {
         return col;
     }
 
-    public ArrayList<Currency> selectCurrency(String[][] wheres, String[][] orderBy) {
-        //wheres: {{"name", "=", "John"}, {"age", "<", 27}}
-        //orderBy: {{"id", "asc"}, {"name", "desc"}}
-        Cursor c = selectRecord(wheres, orderBy);
-        ArrayList<Currency> col = this.buildCurrencyArraylistFromCursor(c);
-        c.close();
-        return col;
-    }
-
-
+    /**
+     * Transforms data from a cursor into a collection.
+     * @param c a cursor reference
+     * @return  a collection of currencies
+     */
     private ArrayList<Currency> buildCurrencyArraylistFromCursor(Cursor c){
         ArrayList<Currency> currency = new ArrayList<Currency>();
 
@@ -134,18 +146,14 @@ public class CurrencyManager extends TableManager {
         return currency;
     }
 
-    public int deleteCurrency(String[][] wheres){
-        return deleteRecord(wheres);
-    }
-
-    public int getCurrencyCount(){
-        return getRecordCount();
-    }
-
+    /**
+     * Checks existence of a currency in a DB.
+     * @param name  a new currency name
+     * @return  true – exists, false – not
+     */
     public boolean checkIfCurrencyExists(String name){
         return checkIfRecordExists(new String[][]{
                 {"name", "=", name}
         });
     }
-
 }

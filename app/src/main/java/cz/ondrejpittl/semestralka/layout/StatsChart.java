@@ -29,39 +29,70 @@ import cz.ondrejpittl.semestralka.partial.StatisticsChartObject;
  */
 public class StatsChart extends LinearLayout {
 
+    /**
+     * Chart container.
+     */
     private FrameLayout container;
 
-    //private int chartHeight;
+    /**
+     * Chart padding.
+     */
     private int[] chartPadding;
 
+    /**
+     * Chart reference.
+     */
     private Chart chart;
 
+    /**
+     * Collapsed/expanded flag.
+     */
     private boolean collapsed;
 
-
+    /**
+     * Statistics container holding charts data.
+     */
     private StatisticsChartObject data;
 
 
-
+    /**
+     * A constructor. Basics initialization.
+     * @param context   an activity context reference
+     * @param attrs     xml attributes
+     */
     public StatsChart(Context context, AttributeSet attrs){
         super(context, attrs);
     }
 
+    /**
+     * Initialization.
+     * @param collapsed         a collapsed/expanded flag
+     * @param devHeight         a device height
+     * @param alternateHeight   an alternate chart height
+     * @param chartPadding      a chart padding
+     */
     public void init(boolean collapsed, int devHeight, int alternateHeight, int[] chartPadding){
         this.container = (FrameLayout) findViewById(R.id.chContainer);
         this.collapsed = collapsed;
-        //this.chartHeight = devHeight;
         this.chartPadding = chartPadding;
-
         this.updateChartDimensions(devHeight, alternateHeight);
-
-        Log.i("Ondra-chart", "chart init");
     }
 
+    /**
+     * Initialization.
+     * @param collapsed     a collapsed/expanded flag
+     * @param devHeight     a device height
+     * @param chartPadding  a chart padding
+     */
     public void init(boolean collapsed, int devHeight, int[] chartPadding){
         this.init(collapsed, devHeight, 0, chartPadding);
     }
 
+    /**
+     * Updates chart dimensions.
+     * @param chartHeight       a chart height
+     * @param alternateHeight   an alternate chart height
+     */
     private void updateChartDimensions(int chartHeight, int alternateHeight){
         ViewGroup.LayoutParams chParams = this.getLayoutParams();
         chParams.height = chartHeight + alternateHeight;
@@ -71,14 +102,13 @@ public class StatsChart extends LinearLayout {
         ViewGroup.LayoutParams alParams = alter.getLayoutParams();
         alParams.height = alternateHeight;
         alter.setLayoutParams(alParams);
-
     }
 
-    public void hideChart(){
-        FrameLayout container = (FrameLayout) findViewById(R.id.chContainer);
-        container.getLayoutParams().height = 0;
-    }
-
+    /**
+     * Sets texts of a chart.
+     * @param label a label
+     * @param desc  a description
+     */
     public void setLabels(String label, String desc) {
         if(label == null) return;
 
@@ -89,69 +119,24 @@ public class StatsChart extends LinearLayout {
         ds.setText(desc);
     }
 
+    /**
+     * Sets s chart padding.
+     */
     private void setChartPadding(){
         this.setPadding(0, this.chartPadding[1], 0, this.chartPadding[1]);
     }
 
+    /**
+     * Sets a data collection.
+     * @param data  data collection
+     */
     public void setData(StatisticsChartObject data){
         this.data = data;
     }
 
-    public void buildPieChart(String[] xData, int[] yData){
-        /*this.xData = xData;
-        this.yData = yData;
-
-        this.chart = new PieChart(getContext());
-        this.container.addView(this.chart);
-
-        ArrayList<Entry> yVals = new ArrayList<>();
-        for(int i = 0; i < yData.length; i++) {
-            yVals.add(new Entry(yData[i], i));
-        }
-
-        ArrayList<String> xVals = new ArrayList<>();
-        for(int i = 0; i < xData.length; i++) {
-            xVals.add(xData[i]);
-        }
-
-        PieDataSet dataSet = new PieDataSet(yVals, "Market Share");
-        dataSet.setSliceSpace(2);
-        dataSet.setSelectionShift(5);
-
-
-        ArrayList<Integer> colors = new ArrayList<>();
-        for(int c : ColorTemplate.VORDIPLOM_COLORS)
-            colors.add(c);
-
-        for(int c : ColorTemplate.COLORFUL_COLORS)
-            colors.add(c);
-
-        for(int c : ColorTemplate.JOYFUL_COLORS)
-            colors.add(c);
-
-        for(int c : ColorTemplate.LIBERTY_COLORS)
-            colors.add(c);
-
-        for(int c : ColorTemplate.PASTEL_COLORS)
-            colors.add(c);
-
-        colors.add(ColorTemplate.getHoloBlue());
-        //colors.add(Color.WHITE);
-        dataSet.setColors(colors);
-
-
-        PieData data = new PieData(xVals, dataSet);
-        //data.setValueFormatter(new PercentFormatter());
-
-        chart.setData(data);
-        chart.highlightValues(null);
-        chart.invalidate();*/
-    }
-
-    public void setCollapsed(boolean collapsed) {
-        this.collapsed = collapsed;
-    }
-
+    /**
+     * Builds a line chart.
+     */
     public void buildLineChart(){
         LineChart chart = new LineChart(getContext());
 
@@ -166,21 +151,18 @@ public class StatsChart extends LinearLayout {
         this.setChartPadding();
 
         this.chart.setData(data);
-        //this.chart.highlightValues(null);
-        //this.chart.setHighlightEnabled(false);
         this.chart.invalidate();
     }
 
-
-    //SELECT sum(tb_payments.amount) as amount, tb_categories.name, tb_categories.id FROM tb_payments inner join tb_categories on tb_payments.id_category = tb_categories.id WHERE tb_payments.date >= '1459461600000' AND tb_payments.date <= '1462053599999' group by tb_categories.id
-
+    /**
+     * Builds a bar chart.
+     */
     public void buildBarChart(){
         BarChart chart = new BarChart(getContext());
 
         BarData data = this.data.getBarData();
         this.setBarChartData(data);
         this.setChart(chart);
-        //this.setBarChart(chart);
         this.setBarChartAxis(chart, collapsed);
 
         this.chart = chart;
@@ -188,11 +170,12 @@ public class StatsChart extends LinearLayout {
         this.setChartPadding();
 
         this.chart.setData(data);
-        //this.chart.highlightValues(null);
-        //this.chart.setHighlightEnabled(false);
         this.chart.invalidate();
     }
 
+    /**
+     * Builds a day-week bar chart.
+     */
     public void buildDayWeekBarChart(){
         BarChart chart = new BarChart(getContext());
 
@@ -209,6 +192,9 @@ public class StatsChart extends LinearLayout {
         this.chart.invalidate();
     }
 
+    /**
+     * Builds a pie chart.
+     */
     public void buildPieChart() {
         PieChart chart = new PieChart(getContext());
 
@@ -223,7 +209,9 @@ public class StatsChart extends LinearLayout {
         this.chart.invalidate();
     }
 
-
+    /**
+     * Chart initialization.
+     */
     private void setChart(Chart chart){
         chart.setDescription("");
         chart.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.transparent));
@@ -232,43 +220,49 @@ public class StatsChart extends LinearLayout {
         chart.setHardwareAccelerationEnabled(true);
     }
 
+    /**
+     * Line chart modification.
+     * @param chart chart reference
+     */
     private void setLineChart(LineChart chart) {
         chart.setBorderColor(ContextCompat.getColor(getContext(), R.color.appWhite));
         chart.setGridBackgroundColor(ContextCompat.getColor(getContext(), R.color.appWhite));
     }
 
-    private void setBarChart(BarChart chart) {
-        chart.setBorderColor(ContextCompat.getColor(getContext(), R.color.appWhite));
-        chart.setGridBackgroundColor(ContextCompat.getColor(getContext(), R.color.appWhite));
-    }
-
-
-
+    /**
+     * Line chart data modification.
+     * @param data chart data
+     */
     private void setLineChartData(LineData data){
         data.setValueFormatter(null);
         data.setValueTextColor(ContextCompat.getColor(getContext(), R.color.appWhite));
         data.setValueTextSize(9);
-        //data.getFirstLeft().setDrawValues(false);
-        //data.getFirstRight().setDrawValues(false);
-
-        if(collapsed) {
-            //data.setDrawValues(false);
-        }
     }
 
+    /**
+     * Bar chart data modification.
+     * @param data chart data
+     */
     private void setBarChartData(BarData data){
         data.setValueTextColor(ContextCompat.getColor(getContext(), R.color.appWhite));
         data.setValueTextSize(9);
         data.setValueFormatter(new ChartValueFormatter());
     }
 
+    /**
+     * Pie chart data modification.
+     * @param data chart data
+     */
     private void setPieChartData(PieData data){
         data.setValueTextColor(ContextCompat.getColor(getContext(), R.color.appTextBlack));
         data.setValueTextSize(9);
     }
 
-
-    //collapsed – true: portrait orientation –> yAxis left visible
+    /**
+     * Line chart axis configuration.
+     * @param chart     chart reference
+     * @param collapsed collapsed flag
+     */
     private void setLineChartAxis(LineChart chart, boolean collapsed){
         XAxis xAxis = chart.getXAxis();
         xAxis.setDrawGridLines(false);
@@ -287,20 +281,19 @@ public class StatsChart extends LinearLayout {
             lAxis.setDrawGridLines(false);
             lAxis.setDrawAxisLine(false);
             lAxis.setDrawLabels(false);
-            //lAxis.setShowOnlyMinMax(true);
-
             lAxis.setXOffset(0);
         }
 
         YAxis rAxis = chart.getAxisRight();
         rAxis.setEnabled(false);
-        /*rAxis.setTextColor(ContextCompat.getColor(getContext(), R.color.appWhite));
-        rAxis.setGridColor(ContextCompat.getColor(getContext(), R.color.appWhite));
-        rAxis.setAxisLineColor(ContextCompat.getColor(getContext(), R.color.appWhite));*/
     }
 
-    //collapsed – true: portrait orientation –> yAxis left visible
-    private void setBarChartAxis(BarChart chart, boolean collapsed){
+    /**
+     * Bar chart axis configuration.
+     * @param chart     chart reference
+     * @param collapsed collapsed flag
+     */
+    private void setBarChartAxis(BarChart chart, boolean collapsed) {
         XAxis xAxis = chart.getXAxis();
         xAxis.setDrawGridLines(false);
         xAxis.setTextColor(ContextCompat.getColor(getContext(), R.color.appWhite));
@@ -314,7 +307,7 @@ public class StatsChart extends LinearLayout {
         lAxis.setAxisLineColor(ContextCompat.getColor(getContext(), R.color.appWhite));
         lAxis.setXOffset(15);
 
-        if(collapsed) {
+        if (collapsed) {
             lAxis.setDrawGridLines(false);
             lAxis.setDrawAxisLine(false);
             lAxis.setDrawLabels(false);
@@ -324,9 +317,4 @@ public class StatsChart extends LinearLayout {
         YAxis rAxis = chart.getAxisRight();
         rAxis.setEnabled(false);
     }
-
-
-
-
-
 }

@@ -31,10 +31,19 @@ public class WelcomeUIController {
      */
     private WelcomeActivity activity;
 
+    /**
+     * Layout inflater.
+     */
     private LayoutInflater layoutInflater;
 
+    /**
+     * PIN code fields reference.
+     */
     private PinCodeFields pinCodeFields;
 
+    /**
+     * First-time-launch flag.
+     */
     private boolean firstTimeLaunch;
 
     /**
@@ -65,7 +74,6 @@ public class WelcomeUIController {
      * Displays Welcome screen for the first-time launch.
      */
     public void displayWelcomeScreen(){
-        //showWelcomeDivider();
         showAboutButton();
         showContinueButton();
         this.hideSecretPIN();
@@ -75,9 +83,6 @@ public class WelcomeUIController {
      * Displays Login screen for the other-time launches.
      */
     public void displayLoginScreen(){
-
-        //this.hideSecretPIN();
-
         //login screen first-time
         if(SharedPrefs.isFirstTimeLaunch()) {
 
@@ -102,12 +107,17 @@ public class WelcomeUIController {
         this.pinCodeFields.setPinCodeListeners();
     }
 
-
+    /**
+     * Displays possibility of changing a PIN.
+     */
     private void displaySecretPIN(){
         TextView tv = (TextView) this.activity.findViewById(R.id.tvSecretPIN);
         tv.setVisibility(View.VISIBLE);
     }
 
+    /**
+     * Hides possibility of changing a PIN.
+     */
     private void hideSecretPIN(){
         TextView tv = (TextView) this.activity.findViewById(R.id.tvSecretPIN);
         tv.setVisibility(View.INVISIBLE);
@@ -140,8 +150,6 @@ public class WelcomeUIController {
             greetings.setText(this.activity.getString(R.string.loginWelcomeBack));
             msg.setText(this.activity.getString(R.string.loginOtherTime));
         }
-
-
     }
 
     /**
@@ -151,32 +159,17 @@ public class WelcomeUIController {
         hideUpperLayoutControls();
 
         FrameLayout upperControlWrapper = (FrameLayout) this.activity.findViewById(R.id.welcomeUpperControlWrapper);
-
-        //if(upperControlWrapper == null) return;
-
         LayoutInflater layoutInflater = (LayoutInflater) this.activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.pinCodeFields = (PinCodeFields) layoutInflater.inflate(R.layout.pin_code, (ViewGroup) this.activity.findViewById(R.id.pinCodeFieldsWrapper));
         upperControlWrapper.addView(this.pinCodeFields);
     }
-
-    private void showWelcomeDivider(){
-        this.activity.findViewById(R.id.viewLine).setVisibility(View.VISIBLE);
-    }
-
-    private void hideWelcomeDivider(){
-        this.activity.findViewById(R.id.viewLine).setVisibility(View.GONE);
-    }
-
 
     /**
      * Displays About button.
      */
     private void showAboutButton(){
         hideUpperLayoutControls();
-
-
         FrameLayout container = (FrameLayout) this.activity.findViewById(R.id.welcomeUpperControlWrapper);
-
 
         //button creation
         MyShadowTextView aboutBtn = ButtonFactory.createMyShadowTxtView (
@@ -287,11 +280,10 @@ public class WelcomeUIController {
         container.addView(regBtn);
     }
 
-
-
-
-
-    public void handleResetPrefs(View v) {
+    /**
+     * Handles preferences reset.
+     */
+    public void handleResetPrefs() {
         LinearLayout container = (LinearLayout) layoutInflater.inflate(R.layout.secret_input, null);
         final EditText et = (EditText) container.findViewById(R.id.secretInput);
 
@@ -327,6 +319,9 @@ public class WelcomeUIController {
 
     }
 
+    /**
+     * Handles a secret password set.
+     */
     public void handleSecretPasswdSet() {
         LinearLayout container = (LinearLayout) layoutInflater.inflate(R.layout.secret_input, null);
         final EditText et = (EditText) container.findViewById(R.id.secretInput);
@@ -357,5 +352,4 @@ public class WelcomeUIController {
             }
         });
     }
-
 }

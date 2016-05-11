@@ -23,20 +23,40 @@ import cz.ondrejpittl.semestralka.models.Store;
  */
 public class CustomSpinner extends Spinner {
 
+    /**
+     *  A flag indicating just now initialized spinner.
+     *  Prevents a select item callback on initialization.
+     */
     protected boolean initialized = false;
 
+    /**
+     * An activity reference.
+     */
     protected Activity activity;
 
 
+    /**
+     * Constructor. Basics initialization.
+     * @param context   an activity context reference
+     * @param attrs     xml attributes
+     */
     public CustomSpinner(Context context, AttributeSet attrs){
         super(context, attrs);
     }
 
+    /**
+     * Constructor. Basics initialization.
+     * @param context   an activity context reference
+     */
     public CustomSpinner(Context context) {
         super(context);
     }
 
-    //public void init(final StatisticsActivity activity, ArrayList<Category> source){
+    /**
+     * Initialization.
+     * @param activity  an activity reference
+     * @param source    a source of a spinner
+     */
     public void init(final Activity activity, ArrayList source){
         if(activity == null || source == null)
             return;
@@ -49,19 +69,12 @@ public class CustomSpinner extends Spinner {
         this.setAdapter(adapter);
     }
 
-    /*public void init(final Activity activity, List<String> source){
-        ArrayList<String> arrayList = new ArrayList<>(source);
-    }*/
-
-
+    /**
+     * Selects an item of a spinner defined with its text.
+     * @param itemValue text of an item of a spinner
+     */
     public void selectItem(String itemValue) {
         int index;
-
-        /*if(itemValue.length() > 0) {
-            index = this.findSpinnerItemIndex(itemValue);
-        } else {
-            index = 0;
-        }*/
 
         Adapter a = this.getAdapter();
         if(a == null || a.getCount() <= 0)
@@ -72,17 +85,19 @@ public class CustomSpinner extends Spinner {
         } else {
             index = this.findSpinnerItemIndex(itemValue);
         }
-
         this.setSelection(index);
     }
 
+    /**
+     * Finds an index of an item of a spinner
+     * @param value  text of an item of a spinner
+     * @return       index of a value
+     */
     public int findSpinnerItemIndex(String value){
         for(int i = 0; i < this.getCount(); i++) {
             String val = this.getItemAtPosition(i).toString();
             if(val.equals(value)) return i;
         }
-
         return 0;
     }
-
 }

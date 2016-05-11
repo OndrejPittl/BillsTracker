@@ -17,23 +17,51 @@ import cz.ondrejpittl.semestralka.partial.EditRecordType;
  */
 public class EditRecord extends LinearLayout {
 
+    /**
+     * An ID of a category/store item.
+     */
     private int id;
 
+    /**
+     * Differs category/store.
+     */
     private EditRecordType type;
 
+    /**
+     * DataController reference.
+     */
     private SettingsDataController data;
 
+    /**
+     * UIController reference.
+     */
     private SettingsUIController ui;
 
-
+    /**
+     * A constructor. Basics initialization.
+     * @param context   an activity context reference
+     */
     public EditRecord(Context context) {
         super(context);
     }
 
+    /**
+     * A constructor. Basics initialization.
+     * @param context   an activity context reference
+     * @param attrs     xml attributes
+     */
     public EditRecord(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
+    /**
+     * Initialization.
+     * @param id        an id of a category/store
+     * @param title     a title of a category/store
+     * @param type      a type of an input – category/store
+     * @param controller    model layer reference
+     * @param ui            view layer reference
+     */
     public void init(int id, String title, EditRecordType type, SettingsDataController controller, SettingsUIController ui){
         this.id = id;
         this.type = type;
@@ -46,6 +74,9 @@ public class EditRecord extends LinearLayout {
         this.setHandlers();
     }
 
+    /**
+     * Sets event handlers.
+     */
     private void setHandlers(){
         ImageButton btn = (ImageButton) this.findViewById(R.id.btnRecDel);
         btn.setOnClickListener(new OnClickListener() {
@@ -55,5 +86,4 @@ public class EditRecord extends LinearLayout {
             }
         });
     }
-
 }

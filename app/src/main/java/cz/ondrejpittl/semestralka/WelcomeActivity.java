@@ -19,7 +19,7 @@ public class WelcomeActivity extends AppCompatActivity {
      */
     private WelcomeUIController controller;
 
-
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -32,6 +32,7 @@ public class WelcomeActivity extends AppCompatActivity {
         this.init();
     }
 
+    @Override
     protected void onResume() {
         super.onResume();
         Designer.updateDesign(this);
@@ -88,8 +89,12 @@ public class WelcomeActivity extends AppCompatActivity {
         this.startActivity(i);
     }
 
+    /**
+     * Resets preferences.
+     * @param v view that triggered event
+     */
     public void resetPrefs(View v) {
-        this.controller.handleResetPrefs(v);
+        this.controller.handleResetPrefs();
     }
 
 

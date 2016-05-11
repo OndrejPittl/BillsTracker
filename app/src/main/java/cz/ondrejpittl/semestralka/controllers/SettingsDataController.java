@@ -21,6 +21,9 @@ import cz.ondrejpittl.semestralka.partial.SharedPrefs;
  */
 public class SettingsDataController {
 
+    /**
+     * DB managing object reference.
+     */
     private DBManager dbManager;
 
     /**
@@ -29,13 +32,20 @@ public class SettingsDataController {
     private SettingsActivity activity;
 
 
+    /**
+     * Construcotr. Initializes a model layer of this activity.
+     * @param activity  SettingsActivity reference
+     * @param dbManager a DB managing object reference
+     */
     public SettingsDataController(SettingsActivity activity, DBManager dbManager) {
         this.activity = activity;
         this.dbManager = dbManager;
     }
 
+    /**
+     * Stores settings in SharedPrefs.
+     */
     public void storeSettings(){
-
         Switch swPassReq = (Switch) this.activity.findViewById(R.id.settingsPassReq),
                 swNotesDisplay = (Switch) this.activity.findViewById(R.id.settingsNoteSwitch),
                 swPaymentAnim = (Switch) this.activity.findViewById(R.id.settingsAnimationSwitch),
@@ -74,6 +84,11 @@ public class SettingsDataController {
             SharedPrefs.storeDefaultStore(store.getName());
     }
 
+    /**
+     * Deletes a record od a category/store from a DB.
+     * @param id    id of a category/store
+     * @param type  differs category/store
+     */
     public void deleteRecord(int id, EditRecordType type){
         switch (type){
             case CATEGORY:
@@ -89,14 +104,26 @@ public class SettingsDataController {
         }
     }
 
+    /**
+     * Getter of stored stores from DB.
+     * @return  stored stores in DB
+     */
     public ArrayList<Store> getStoredStores(){
         return this.dbManager.getStoredStores();
     }
 
+    /**
+     * Getter of stored categories from DB.
+     * @return  stored categories in DB
+     */
     public ArrayList<Category> getStoredCategories(){
         return this.dbManager.getStoredCategories();
     }
 
+    /**
+     * Getter of stored currencies from DB.
+     * @return  stored currencies in DB
+     */
     public ArrayList<Currency> getStoredCurrencies(){
         return this.dbManager.getStoredCurrencies();
     }

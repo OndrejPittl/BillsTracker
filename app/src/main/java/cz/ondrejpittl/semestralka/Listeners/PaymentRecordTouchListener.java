@@ -15,6 +15,9 @@ import cz.ondrejpittl.semestralka.partial.PaymentRecordStateEnum;
  */
 public class PaymentRecordTouchListener implements View.OnTouchListener {
 
+    /**
+     * Active flag.
+     */
     private static boolean isActive;
 
     /**
@@ -23,15 +26,21 @@ public class PaymentRecordTouchListener implements View.OnTouchListener {
      */
     private static final int MIN_SWIPE_DISTANCE = 70;
 
+    /**
+     * Payment record reference.
+     */
     private PaymentRecord rec;
 
     /**
      * Width of hidden delete button.
      */
-    //private int deleteActionWidth = 0;
     private int actionButtonWidth = 0;
 
 
+    /**
+     * Constructor.
+     * @param rec   payment record reference
+     */
     public PaymentRecordTouchListener(PaymentRecord rec) {
         super();
         this.rec = rec;
@@ -41,6 +50,12 @@ public class PaymentRecordTouchListener implements View.OnTouchListener {
     int start = 0, end = 0, current = 0, delta = 0;
     Rect rect;
 
+    /**
+     * OnTouch event handler.
+     * @param view  Payment record view.
+     * @param event event
+     * @return
+     */
     public boolean onTouch(View view, MotionEvent event) {
         switch (event.getAction()) {
 
@@ -52,16 +67,8 @@ public class PaymentRecordTouchListener implements View.OnTouchListener {
                 Log.i("Ondra", "delta: " + delta);
 
                 if (!rec.isActionBtnAnimating()) {
-                    /*if(!rect.contains(rec.getLeft() + (int) event.getX(), rec.getTop() + (int) event.getY())){
-                        Log.i("Ondra", "OUT OF BOUNDS!!!!!!!!!");
-                    } else {
-                        doSwipe(delta, view);
-                    }*/
-
-                    doSwipe(delta, view);
+                      doSwipe(delta, view);
                 }
-
-
                 break;
 
             //finger release
@@ -121,10 +128,10 @@ public class PaymentRecordTouchListener implements View.OnTouchListener {
         if(isSwipe(delta) && !this.rec.isCollapsed())
             onTap(v);
 
-        if(isSwipe(delta)) PaymentRecordTouchListener.isActive = true;
+        if(isSwipe(delta))
+            PaymentRecordTouchListener.isActive = true;
 
         if (delta < 0) {
-
             //swipe left
             if (this.rec.getState() == PaymentRecordStateEnum.DELETE_ACTIVE || this.rec.getState() == PaymentRecordStateEnum.EDIT_ACTIVE) {
                 if (isSwipe(delta)) onSwipeFinished(delta, v);
@@ -133,7 +140,6 @@ public class PaymentRecordTouchListener implements View.OnTouchListener {
 
             actionButtonWidth = deleteActionBtnW = normalizeActionBtnWidth(Math.abs(delta) - MIN_SWIPE_DISTANCE);
             editActionBtnW = 0;
-
 
         } else {
 
@@ -145,10 +151,7 @@ public class PaymentRecordTouchListener implements View.OnTouchListener {
 
             actionButtonWidth = editActionBtnW = normalizeActionBtnWidth(delta - MIN_SWIPE_DISTANCE);
             deleteActionBtnW = 0;
-
         }
-
-        Log.i("Ondra", "action button width: " + actionButtonWidth);
 
         this.rec.setActionButtonWidth(deleteActionBtnW, v.findViewById(R.id.recordDeleteWrapper));
         this.rec.setActionButtonWidth(editActionBtnW, v.findViewById(R.id.recordEditWrapper));
@@ -164,7 +167,6 @@ public class PaymentRecordTouchListener implements View.OnTouchListener {
         FrameLayout actionBtn;
 
         if (delta < 0) {
-
             //swipe left
             if (this.rec.getState() == PaymentRecordStateEnum.NORMAL) {
                 actionBtn = (FrameLayout) v.findViewById(R.id.recordDeleteWrapper);
@@ -176,14 +178,11 @@ public class PaymentRecordTouchListener implements View.OnTouchListener {
                     //hide btn
                     this.rec.hideAnimateActionBtn(actionBtn, PaymentRecordStateEnum.DELETE_ACTIVE);
                 }
-
             } else if (this.rec.getState() == PaymentRecordStateEnum.EDIT_ACTIVE) {
                 actionBtn = (FrameLayout) v.findViewById(R.id.recordEditWrapper);
                 this.rec.hideAnimateActionBtn(actionBtn, PaymentRecordStateEnum.EDIT_ACTIVE);
             }
-
         } else {
-
             //swipe right
             if (this.rec.getState() == PaymentRecordStateEnum.NORMAL) {
                 actionBtn = (FrameLayout) v.findViewById(R.id.recordEditWrapper);
@@ -193,7 +192,6 @@ public class PaymentRecordTouchListener implements View.OnTouchListener {
                 } else {
                     this.rec.hideAnimateActionBtn(actionBtn, PaymentRecordStateEnum.EDIT_ACTIVE);
                 }
-
             } else if (this.rec.getState() == PaymentRecordStateEnum.DELETE_ACTIVE) {
                 actionBtn = (FrameLayout) v.findViewById(R.id.recordDeleteWrapper);
                 this.rec.hideAnimateActionBtn(actionBtn, PaymentRecordStateEnum.DELETE_ACTIVE);
@@ -222,11 +220,18 @@ public class PaymentRecordTouchListener implements View.OnTouchListener {
         return Math.abs(delta) > MIN_SWIPE_DISTANCE;
     }
 
-
+    /**
+     * Getter of an action button width.
+     * @return  button width
+     */
     public int getActionButtonWidth(){
         return this.actionButtonWidth;
     }
 
+    /**
+     * Getter of an active flag.
+     * @return  true – is active, false – not
+     */
     public static boolean isActive(){
         return PaymentRecordTouchListener.isActive;
     }

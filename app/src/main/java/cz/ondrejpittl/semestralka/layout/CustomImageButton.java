@@ -10,27 +10,35 @@ import android.widget.ImageButton;
  */
 public class CustomImageButton extends ImageButton {
 
+    /**
+     * A flag indicating whether was a button clicked or not.
+     */
     private boolean clicked;
 
 
-
+    /**
+     * A constructor. Basics initialization.
+     * @param context   an activity context reference
+     */
     public CustomImageButton(Context context) {
         super(context);
         this.init();
     }
 
+    /**
+     * A constructor. Basics initialization.
+     * @param context   an activity context reference
+     * @param attrs     attributes
+     */
     public CustomImageButton(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.init();
     }
 
+    /**
+     * Initialization.
+     */
     private void init(){
         this.clicked = false;
-    }
-
-    public void updateBackground(){
-        if(this.clicked) {
-
-        }
     }
 }

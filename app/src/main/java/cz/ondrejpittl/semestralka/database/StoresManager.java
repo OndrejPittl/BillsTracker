@@ -37,9 +37,10 @@ public class StoresManager extends TableManager {
      */
     private static final String ALIAS_PREFIX = "stores_";
 
-
+    /**
+     * A resources reference.
+     */
     private Resources res;
-
 
 
     /**
@@ -49,9 +50,14 @@ public class StoresManager extends TableManager {
      */
     public StoresManager(DBManager dbManager) {
         super("tb_stores", dbManager);
-        Log.i("Ondra", "Stores Manager constructor");
+        //Log.i("Ondra", "Stores Manager constructor");
     }
 
+    /**
+     * Creates a Stores table.
+     * @param db    a db reference
+     * @param res   a resource reference
+     */
     public void createStoresTable(SQLiteDatabase db, Resources res) {
         this.db = db;
         this.res = res;
@@ -65,6 +71,9 @@ public class StoresManager extends TableManager {
         fillStoresTableFromXML();
     }
 
+    /**
+     * Fills an empty table with data stored in xml.
+     */
     private void fillStoresTableFromXML() {
 
         try {
@@ -77,24 +86,28 @@ public class StoresManager extends TableManager {
                     String id = parser.getAttributeValue(null, COLUMN_ID);
                     String name = parser.getAttributeValue(null, COLUMN_NAME);
                     insertStore(id, name);
-                    Log.e("Ondra", "STORE: " + name);
                 }
                 eventType = parser.next();
             }
             parser.close();
-        } catch (XmlPullParserException e) {
-            Log.e("Ondra", e.getMessage(), e);
-        } catch (IOException e) {
-            Log.e("Ondra", e.getMessage(), e);
-        }
+        } catch (XmlPullParserException e) {} catch (IOException e) {}
     }
 
+    /**
+     * Inserts a new store.
+     * @param name  a store name
+     */
     public void insertStore(String name){
         insertRecord(new String[][]{
                 {COLUMN_NAME, name}
         });
     }
 
+    /**
+     * Inserts a new store.
+     * @param id    store id
+     * @param name  store name
+     */
     private void insertStore(String id, String name){
         insertRecord(new String[][]{
                 {COLUMN_ID, id},
@@ -102,21 +115,22 @@ public class StoresManager extends TableManager {
         });
     }
 
-
-    public ArrayList<Store> selectAllStoresFrequencyOrdered(){
+    /**
+     *
+     * @return
+     */
+    public ArrayList<Store> selectAllStoresAlphabeticalOrdered(){
         return this.selectStores(null, new String[][]{
                 {"name COLLATE NOCASE", "asc"}
         });
     }
 
-    public ArrayList<Store> selectAllStores(){
-        Cursor c = selectAllRecords();
-        ArrayList<Store> col = this.buildStoresArraylistFromCursor(c);
-        c.close();
-
-        return col;
-    }
-
+    /**
+     * Selects all stores.
+     * @param wheres    where criteria
+     * @param orderBy   order by criteria
+     * @return
+     */
     public ArrayList<Store> selectStores(String[][] wheres, String[][] orderBy) {
         //wheres: {{"name", "=", "John"}, {"age", "<", 27}}
         //orderBy: {{"id", "asc"}, {"name", "desc"}}
@@ -127,9 +141,13 @@ public class StoresManager extends TableManager {
         return col;
     }
 
-
+    /**
+     * Transforms data from a cursor into a collection od stores.
+     * @param c a cursor reference
+     * @return  a collection of stores
+     */
     private ArrayList<Store> buildStoresArraylistFromCursor(Cursor c){
-        ArrayList<Store> stores = new ArrayList<Store>();
+        ArrayList<Store> stores = new ArrayList<>();
 
         c.moveToFirst();
         while(c.isAfterLast() == false){
@@ -143,34 +161,37 @@ public class StoresManager extends TableManager {
         return stores;
     }
 
+    /**
+     * Getter of aliased ID column
+     * @return  an aliased column name
+     */
     public static String getColumnIdAliased(){
         return ALIAS_PREFIX + COLUMN_ID;
     }
 
+    /**
+     * Getter of name column
+     * @return  a column name
+     */
     public static String getColumnNameAliased(){
         return ALIAS_PREFIX + COLUMN_NAME;
     }
 
-    public static String getColumnId(){
-        return COLUMN_ID;
-    }
-
-    public static String getColumnName(){
-        return COLUMN_NAME;
-    }
-
-
+    /**
+     * Getter of all aliased column list.
+     * @return  list of all aliased columns.
+     */
     public String getAllColumnsSelector(){
         return TABLE_NAME + "." + COLUMN_ID + " as " + getColumnIdAliased() + ", "
                 + TABLE_NAME + "." + COLUMN_NAME + " as " + getColumnNameAliased();
     }
 
+    /**
+     * Deletes a store.
+     * @param wheres    where criteria
+     * @return          a number of rows affected
+     */
     public int deleteStore(String[][] wheres){
         return deleteRecord(wheres);
     }
-
-    public int getStoresCount(){
-        return getRecordCount();
-    }
-
 }

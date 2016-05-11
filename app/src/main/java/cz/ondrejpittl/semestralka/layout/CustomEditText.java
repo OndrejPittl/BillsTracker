@@ -16,42 +16,41 @@ import android.widget.EditText;
  */
 public class CustomEditText extends EditText {
 
+    /**
+     * A constructor. Basics initialization.
+     * @param context   an activity context reference
+     */
     public CustomEditText(Context context) {
         super(context);
         this.init();
     }
 
+    /**
+     * A constructor. Basics initialization.
+     * @param context   an activity context reference
+     * @param attrs     attributes from xml
+     */
     public CustomEditText(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.init();
     }
 
+    /**
+     * A constructor. Basics initialization.
+     * @param context   an activity context reference
+     * @param attrs     attributes from xml
+     * @param defStyleAttr  default style attributes from xml
+     */
     public CustomEditText(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         this.init();
     }
 
+    /**
+     * Initialization.
+     */
     private void init(){
-        Log.i("Ondra-pin", "initializing pin fields");
-        //this.setInputType(InputType.TYPE_NUMBER_VARIATION_PASSWORD);
-        //this.setRawInputType(InputType.TYPE_CLASS_NUMBER);
-        //this.setRawInputType(Configuration.KEYBOARD_NOKEYS);
-        //this.setInputType(InputType.TYPE_CLASS_NUMBER);
-
         this.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_VARIATION_PASSWORD);
         this.setRawInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_VARIATION_PASSWORD);
     }
-
-/*
-    public InputConnection onCreateInputConnection(final EditorInfo outAttrs) {
-        BaseInputConnection inputConnection = new BaseInputConnection(this, false);
-        return inputConnection;
-    }
-*/
-
-    private void handleEditTextDeleteEvent(){
-        Log.i("Ondra-pin", "DELETEEE");
-    }
-
-
 }

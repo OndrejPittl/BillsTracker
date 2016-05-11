@@ -22,8 +22,6 @@ public class TableManager {
      */
     protected String TABLE_NAME;
 
-
-
     /**
      * DatabaseManager reference.
      */
@@ -79,11 +77,15 @@ public class TableManager {
     }
 
 
+    /**
+     * Selects all records of a table.
+     * @return  a cursor reference
+     */
     protected Cursor selectAllRecords() {
         String query = DBQueryFactory.querySelectAll(TABLE_NAME);
 
-        Log.i("Ondra", "Selecting all from table " + TABLE_NAME + ":");
-        Log.i("Ondra", query);
+        /*Log.i("Ondra", "Selecting all from table " + TABLE_NAME + ":");
+        Log.i("Ondra", query);*/
 
         db = dbManager.getReadableDatabase();
         return db.rawQuery(query, null);
@@ -117,6 +119,16 @@ public class TableManager {
         return db.rawQuery(query, null);
     }
 
+    /**
+     * Selects all records detailed.
+     * @param tableCols a list of table columns
+     * @param tables    a list of tables
+     * @param wheres    where criteria
+     * @param groupBy   group by criteria
+     * @param orderBy   order by criteria
+     * @param limit     limits number of records
+     * @return          a cursor reference
+     */
     protected Cursor selectRecordsDetailed(String tableCols, String tables, String[][] wheres,  String[] groupBy, String[][] orderBy, int limit) {
         //examples:
         //tablecols: "a.name, b.id"
@@ -144,11 +156,9 @@ public class TableManager {
      * @param wheres    Two-dimensional array of where criteria in a form:
      *                  {{colName, equality, colVal}, {colName, equality, colVal}, ...}.
      *                  example: {{"name", "=", "John"}, {"age", "<", 27}}
-     * @return  ???
+     * @return          a number of rows affected
      */
     protected int deleteRecord(String[][] wheres) {
-
-        ////db.delete("tablename","id=? and name=?",new String[]{"1","jack"});
         String whereClause = DBQueryFactory.queryDeleteWhereClause(wheres),
                 whereArgs[] = DBQueryFactory.queryDeleteWhereArgs(wheres);
 
@@ -212,20 +222,29 @@ public class TableManager {
         return (int) DatabaseUtils.queryNumEntries(db, TABLE_NAME);
     }
 
+    /**
+     * Checks whether a record in a table exists or not.
+     * @param wheres    wheres criteria
+     * @return          true – a records already exists, false – not
+     */
     protected boolean checkIfRecordExists(String[][] wheres){
         Cursor c = selectOneRecord(wheres, null);
         return isResultNotEmpty(c);
     }
 
+    /**
+     * Getter of a table name.
+     * @return  a table name
+     */
     public String getTableName(){
         return this.TABLE_NAME;
     }
 
-
-
+    /**
+     * Sets a DB reference.
+     * @param db    a DB reference.
+     */
     public void setDB(SQLiteDatabase db){
         this.db = db;
     }
-
-
 }

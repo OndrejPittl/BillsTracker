@@ -32,16 +32,54 @@ import cz.ondrejpittl.semestralka.models.Store;
  */
 public class SharedPrefs {
 
+    /**
+     * Default value of a password require.
+     */
     public static boolean DEFAULT_PASSWD_REQ = true;
+
+    /**
+     * Default value of a fist-time-launch.
+     */
     public static boolean DEFAULT_FIRST_TIME_LAUNCHED = true;
+
+    /**
+     * Default value of an animations allowed.
+     */
     public static boolean DEFAULT_ANIMATIONS = true;
+
+    /**
+     * Default value of payment icons allowed.
+     */
     public static boolean DEFAULT_ICON_DISPLAY = true;
+
+    /**
+     * Default value of a payment note display.
+     */
     public static boolean DEFAULT_NOTE_DISPLAY = false;
+
+    /**
+     * Default value of a tutorial displayed.
+     */
     public static boolean DEFAULT_TUTORIAL_DISPLAYED = false;
+
+    /**
+     * Default value of a store.
+     */
     public static String DEFAULT_STORE = "---";
+
+    /**
+     * Default value of a category.
+     */
     public static String DEFAULT_CATEGORY = "Car";
+
+    /**
+     * Default value of a design selection.
+     */
     public static int DEFAULT_DESIGN = 0;
 
+    /**
+     * Shared preferences reference.
+     */
     private static SharedPreferences prefs;
 
     /**
@@ -57,33 +95,27 @@ public class SharedPrefs {
     private static String passwdNotReq = "pSSwDnotR3Quir3D";
 
 
-    private static int secretPIN = 0;
-
-
-
+    /**
+     * Loads Shared preferences and sets default values.
+     * @param activity  activity reference
+     */
     public static void load(Activity activity){
         prefs = activity.getSharedPreferences("cz.ondrejpittl.semestralka", activity.MODE_PRIVATE);
 
         SharedPrefs.restoreDefaults();
-
-
-        if(SharedPrefs.isFirstTimeLaunch())
-            SharedPrefs.generateSecretPIN();
-
-        //clear();
     }
 
-    private static void generateSecretPIN(){
-        Random r = new Random();
-        SharedPrefs.secretPIN = r.nextInt() * 9998 + 1;
-    }
-
-    //clears shared prefs
+    /**
+     *  Clears shared prefs and sets default values.
+     */
     public static void clear(){
         prefs.edit().clear().commit();
         SharedPrefs.restoreDefaults();
     }
 
+    /**
+     * Sets default settings.
+     */
     private static void restoreDefaults(){
 
         if(!SharedPrefs.isPasswordRequireSet())
@@ -122,8 +154,11 @@ public class SharedPrefs {
         prefs.edit().putString("firstLaunch", firstLaunch == true ? "1" : "0").commit();
     }
 
+    /**
+     * Determines whether is the app launched for the first time.
+     * @return  true – first time, false – other times
+     */
     public static boolean isFirstTimeLaunch(){
-        //return prefs.getBoolean("firstLaunch", true);
         int rs = Integer.parseInt(prefs.getString("firstLaunch", ""));
 
         if(rs == 0)
@@ -132,13 +167,15 @@ public class SharedPrefs {
             return true;
     }
 
+    /**
+     * Determines whether is the property set.
+     * @return true – it is, false – not
+     */
     public static boolean isFirstTimeLaunchSet(){
         return prefs.getString("firstLaunch", "").length() > 0;
     }
 
     /**
-     * @TODO DOCASNE!
-     *
      * Stores PIN code in SharedPreferences.
      * @param pin   PIN code from user input to store.
      */
@@ -158,75 +195,139 @@ public class SharedPrefs {
 
     }
 
+    /**
+     * Checks the equality of an encrypted entered PIN and the encrypted stored one.
+     * @param entered   entered PIN by user
+     * @return          true – same, false – not
+     */
     public static boolean checkPINCode(String entered){
         return getPINCode().equals(encryptIt(entered));
     }
 
+    /**
+     * Resets the default value of first-time-alunch flag to enable user re-set the PIN.
+     */
     public static void resetPINCode(){
         SharedPrefs.storeFirstTimeLaunched(DEFAULT_FIRST_TIME_LAUNCHED);
     }
 
+    /**
+     * Stores encrypted PIN with SHA-1.
+     * @param pin   entered PIN
+     */
     public static void storeSecretPINCode(String pin){
         prefs.edit().putString("secretpin", encryptIt(pin)).commit();
     }
 
+    /**
+     * Getter of stored encrypted PIN.
+     * @return  encrypted PIN
+     */
     public static String getSecretPINCode(){
         return prefs.getString("secretpin", "");
 
     }
 
+    /**
+     * Check the equality of an encrypted entered secret password and the encrypted stored one.
+     * @param entered   entered secret password
+     * @return  true – same, false – not
+     */
     public static boolean checkSecretPINCode(String entered){
         return getSecretPINCode().equals(encryptIt(entered));
     }
 
-
+    /**
+     * Determines whether is the property set.
+     * @return true – it is, false – not
+     */
     public static boolean isDefaultCategorySet(){
         if(SharedPrefs.isNotNull())
             return prefs.getString("defaultCategory", "").length() > 0;
         return  false;
     }
 
+    /**
+     * Stores default category property.
+     * @param value value to be stored
+     */
     public static void storeDefaultCategory(String value){
         prefs.edit().putString("defaultCategory", value).commit();
     }
 
+    /**
+     * Getter of the stored default category.
+     * @return  stored property
+     */
     public static String getDefaultCategory(){
         String str = prefs.getString("defaultCategory", "");
         return str;
     }
 
+    /**
+     * Determines whether is the property set.
+     * @return true – it is, false – not
+     */
     public static boolean isDefaultStoreSet(){
         if(SharedPrefs.isNotNull())
             return prefs.getString("defaultStore", "").length() > 0;
         return  false;
     }
 
+    /**
+     * Stores default store property.
+     * @param value value to be stored
+     */
     public static void storeDefaultStore(String value){
         prefs.edit().putString("defaultStore", value).commit();
     }
 
+    /**
+     * Getter of the stored default store.
+     * @return  stored property
+     */
     public static String getDefaultStore(){
         return prefs.getString("defaultStore", "");
     }
 
+    /**
+     * Stores default currency property.
+     * @param value value to be stored
+     */
     public static void storeDefaultCurrency(String value){
         prefs.edit().putString("defaultCurrency", value).commit();
     }
 
+    /**
+     * Getter of the stored default currency.
+     * @return  stored property
+     */
     public static String getDefaultCurrency(){
         return prefs.getString("defaultCurrency", "");
     }
 
+    /**
+     * Stores payment default note display property.
+     * @param value value to be stored
+     */
     public static void storePaymentNoteDisplay(boolean value){
         prefs.edit().putString("paymentNoteDisplay", value == true ? "1" : "0").commit();
     }
 
+    /**
+     * Determines whether is the property set.
+     * @return true – it is, false – not
+     */
     public static boolean isPaymentNoteDisplaySet(){
         if(SharedPrefs.isNotNull())
             return prefs.getString("paymentNoteDisplay", "").length() > 0;
         return  false;
     }
 
+    /**
+     * Getter of the stored default note display.
+     * @return  stored property
+     */
     public static boolean getPaymentNoteDisplay(){
 
         int rs = Integer.parseInt(prefs.getString("paymentNoteDisplay", ""));
@@ -237,14 +338,26 @@ public class SharedPrefs {
             return true;
     }
 
+    /**
+     * Stores payment animation allowed property.
+     * @param value value to be stored
+     */
     public static void storePaymentAnimation(boolean value){
         prefs.edit().putString("paymentAnimation", value == true ? "1" : "0").commit();
     }
 
+    /**
+     * Determines whether is the property set.
+     * @return true – it is, false – not
+     */
     public static boolean isPaymentAnimationSet(){
         return prefs.getString("paymentAnimation", "").length() > 0;
     }
 
+    /**
+     * Getter of the stored payment animation allowed.
+     * @return  stored property
+     */
     public static boolean getPaymentAnimation(){
 
         int rs = Integer.parseInt(prefs.getString("paymentAnimation", ""));
@@ -255,14 +368,26 @@ public class SharedPrefs {
             return true;
     }
 
+    /**
+     * Stores payment icons allowed property.
+     * @param value value to be stored
+     */
     public static void storePaymentIcons(boolean value){
         prefs.edit().putString("paymentIcons", value == true ? "1" : "0").commit();
     }
 
+    /**
+     * Determines whether is the property set.
+     * @return true – it is, false – not
+     */
     public static boolean isPaymentIconSet(){
         return prefs.getString("paymentIcons", "").length() > 0;
     }
 
+    /**
+     * Getter of the stored payment icons.
+     * @return  stored property
+     */
     public static boolean getPaymentIcons(){
 
         int rs = Integer.parseInt(prefs.getString("paymentIcons", ""));
@@ -273,6 +398,10 @@ public class SharedPrefs {
             return true;
     }
 
+    /**
+     * Stores password require property.
+     * @param value value to be stored
+     */
     public static void storePasswordRequire(boolean value){
 
         //value == true -> store hashed "pSSwDR3Quir3D"
@@ -281,10 +410,18 @@ public class SharedPrefs {
         prefs.edit().putString("passwordRequire", value == true ? encryptIt(passwdReq) : encryptIt(passwdNotReq)).commit();
     }
 
+    /**
+     * Determines whether is the property set.
+     * @return true – it is, false – not
+     */
     public static boolean isPasswordRequireSet(){
         return prefs.getString("passwordRequire", "").length() > 0;
     }
 
+    /**
+     * Determines whether is the password required or not.
+     * @return  true – required, not – not
+     */
     public static boolean isPasswordRequired(){
         String stored = prefs.getString("passwordRequire", "");
 
@@ -295,14 +432,26 @@ public class SharedPrefs {
             return true;
     }
 
+    /**
+     * Determines whether is the property set.
+     * @return true – it is, false – not
+     */
     public static boolean isTutorialDisplayedSet(){
         return prefs.getString("tutorialDisplayed", "").length() > 0;
     }
 
+    /**
+     * Stores tutorial displayed property.
+     * @param value value to be stored
+     */
     public static void storeTutorialDisplayed(boolean value){
         prefs.edit().putString("tutorialDisplayed", value == true ? "1" : "0").commit();
     }
 
+    /**
+     * Determines whether was a tutorial displayed or not.
+     * @return  true – displayed, not – not
+     */
     public static boolean wasTutorialDisplayed(){
 
         int rs = Integer.parseInt(prefs.getString("tutorialDisplayed", ""));
@@ -313,25 +462,29 @@ public class SharedPrefs {
             return true;
     }
 
+    /**
+     * Determines whether is the property set.
+     * @return true – it is, false – not
+     */
     public static boolean isDefaultDesignSet(){
         return prefs.getString("defaultDesign", "").length() > 0;
     }
 
-    public static void storeDefaultDesign(int defaultDesign){
-        prefs.edit().putString("defaultDesign", String.valueOf(defaultDesign)).commit();
+    /**
+     * Stores default design property.
+     * @param value value to be stored
+     */
+    public static void storeDefaultDesign(int value){
+        prefs.edit().putString("defaultDesign", String.valueOf(value)).commit();
     }
 
+    /**
+     * Getter of the stored default design.
+     * @return  stored property
+     */
     public static int getDefaultDesign(){
         return Integer.parseInt(prefs.getString("defaultDesign", ""));
     }
-
-
-
-
-
-
-
-
 
 
     /**
@@ -355,6 +508,10 @@ public class SharedPrefs {
 
     }
 
+    /**
+     * Determines whether the shared prefs was already loaded.
+     * @return  true – loaded, not – not
+     */
     public static boolean isNotNull(){
         return prefs != null;
     }

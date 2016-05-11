@@ -5,6 +5,14 @@ package cz.ondrejpittl.semestralka.partial;
  */
 public enum EditRecordType {
 
-    CATEGORY, STORE;
+    /**
+     * Category flag.
+     */
+    CATEGORY,
+
+    /**
+     * Store flag.
+     */
+    STORE;
 
 }

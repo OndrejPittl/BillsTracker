@@ -1,15 +1,22 @@
 package cz.ondrejpittl.semestralka.factories;
 
-import java.text.ParseException;
-
 /**
  * Created by OndrejPittl on 31.03.16.
  */
 public class DBQueryFactory {
 
+    /**
+     * Stores a query being built.
+     */
     private static StringBuilder sb = new StringBuilder();
 
 
+    /**
+     * Creates a table create query.
+     * @param tableName a name of a table
+     * @param args      arguments
+     * @return  a result query
+     */
     public static String createTable(String tableName, String[][] args){
         int colCount = args.length;
 
@@ -27,10 +34,22 @@ public class DBQueryFactory {
         return sb.toString();
     }
 
+    /**
+     * Creates a records select query.
+     * @param tableName a name of a table
+     * @return          a result query
+     */
     public static String querySelectAll(String tableName){
         return "select * from " + tableName;
     }
 
+    /**
+     * Creates a records select query.
+     * @param tableName a name of a table
+     * @param wheres    where criteria
+     * @param orderBy   order by criteria
+     * @return          a result query
+     */
     public static String querySelect(String tableName, String[][] wheres, String[][] orderBy){
         //"select * from " + TABLE_NAME + " where id="+id+""
 
@@ -42,12 +61,29 @@ public class DBQueryFactory {
         return sb.toString();
     }
 
+    /**
+     * Creates a records select query.
+     * @param tableName a name of a table
+     * @param wheres    where criteria
+     * @param orderBy   order by criteria
+     * @return          a result query
+     */
     public static String querySelectOne(String tableName, String[][] wheres, String[][] orderBy){
         String query = DBQueryFactory.querySelect(tableName, wheres, orderBy);
-        bildLimit(1);
+        buildLimit(1);
         return query;
     }
 
+    /**
+     * Creates a records select query.
+     * @param tableCols table column list
+     * @param tables    table list
+     * @param wheres    where criteria
+     * @param groupBy   group by criteria
+     * @param orderBy   order by criteria
+     * @param limit     limits record count
+     * @return          a result query
+     */
     public static String querySelectDetailed(String tableCols, String tables, String[][] wheres, String[] groupBy, String[][] orderBy, int limit) {
         clearStringBuilder();
         sb.append("SELECT ");
@@ -57,10 +93,14 @@ public class DBQueryFactory {
         buildWhere(wheres);
         buildGroup(groupBy);
         buildOrderBy(orderBy);
-        bildLimit(limit);
+        buildLimit(limit);
         return sb.toString();
     }
 
+    /**
+     * Builds order by part of a query.
+     * @param orderBy   order by criteria
+     */
     private static void buildOrderBy(String[][] orderBy){
         if(orderBy == null || orderBy.length <= 0) return;
 
@@ -72,6 +112,10 @@ public class DBQueryFactory {
         }
     }
 
+    /**
+     * Builds where part of a query.
+     * @param wheres    where criteria
+     */
     private static void buildWhere(String[][] wheres){
         if(wheres == null || wheres.length <= 0) return;
 
@@ -83,6 +127,10 @@ public class DBQueryFactory {
         }
     }
 
+    /**
+     * Builds group by part of a query.
+     * @param groupBy   group by criteria
+     */
     private static void buildGroup(String[] groupBy){
         if(groupBy == null || groupBy.length <= 0) return;
 
@@ -94,12 +142,19 @@ public class DBQueryFactory {
         }
     }
 
-    private static void bildLimit(int limit) {
+    /**
+     * Builds a limit part of a query.
+     * @param limit   limit criteria
+     */
+    private static void buildLimit(int limit) {
         if(limit > 0)
             sb.append(" LIMIT " + limit);
     }
 
-
+    /**
+     * Builds a record delete query.
+     * @param wheres    where criteria
+     */
     public static String queryDeleteWhereClause(String[][] wheres){
         int whereCount = wheres.length;
         clearStringBuilder();
@@ -112,6 +167,11 @@ public class DBQueryFactory {
         return sb.toString();
     }
 
+    /**
+     * Transforms where args.
+     * @param wheres    where criteria
+     * @return          transformed build criteria
+     */
     public static String[] queryDeleteWhereArgs(String[][] wheres){
         int whereCount = wheres.length;
         String[] args = new String[whereCount];
@@ -123,23 +183,9 @@ public class DBQueryFactory {
         return args;
     }
 
-
-
-
-    /*
-
-    private static boolean isNumeric(String str){
-        try {
-            double d = Double.parseDouble(str);
-        } catch(NumberFormatException ex) {
-            return false;
-        }
-        return true;
-    }
-
-    */
-
-
+    /**
+     * Clears a string builder between building queries.
+     */
     private static void clearStringBuilder(){
         sb.setLength(0);
     }

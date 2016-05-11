@@ -1,6 +1,5 @@
 package cz.ondrejpittl.semestralka.controllers;
 
-import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -10,24 +9,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.PieData;
-import com.github.mikephil.charting.data.PieDataSet;
 
 import org.joda.time.DateTime;
-import org.w3c.dom.Text;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.TreeMap;
 
 import cz.ondrejpittl.semestralka.R;
@@ -35,6 +26,7 @@ import cz.ondrejpittl.semestralka.StatisticsActivity;
 import cz.ondrejpittl.semestralka.layout.CustomSpinner;
 import cz.ondrejpittl.semestralka.layout.StatsChart;
 import cz.ondrejpittl.semestralka.models.Category;
+import cz.ondrejpittl.semestralka.partial.Designer;
 import cz.ondrejpittl.semestralka.partial.JodaCalendar;
 import cz.ondrejpittl.semestralka.partial.SharedPrefs;
 import cz.ondrejpittl.semestralka.partial.StatisticsChartObject;
@@ -55,17 +47,35 @@ public class StatsUIController {
      */
     private LayoutInflater layoutInflater;
 
-
+    /**
+     * Active charts container.
+     */
     private LinearLayout activeChartsContainer;
+
+    /**
+     * Month charts container.
+     */
     private LinearLayout monthChartsContainer;
+
+    /**
+     * Year charts contaner.
+     */
     private LinearLayout yearChartsContainer;
 
+    /**
+     * Flag differing device orientation.
+     */
     private boolean portraitOrientation;
 
+    /**
+     * Chart height.
+     */
     private int chartHeight;
+
+    /**
+     * Chart padding.
+     */
     private int[] chartPadding;
-
-
 
     /**
      * Date button firing datepicker dialog.
@@ -77,11 +87,15 @@ public class StatsUIController {
      */
     private int dateDialogID = 0;
 
-
-
+    /**
+     * Month statistics data.
+     */
     private StatisticsChartObject monthStatsData;
-    private StatisticsChartObject yearStatsData;
 
+    /**
+     * Year statistics data.
+     */
+    private StatisticsChartObject yearStatsData;
 
 
     /**
@@ -102,12 +116,7 @@ public class StatsUIController {
         this.layoutInflater = (LayoutInflater) this.activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.monthChartsContainer = (LinearLayout) this.activity.findViewById(R.id.monthChartsContainer);
         this.yearChartsContainer = (LinearLayout) this.activity.findViewById(R.id.yearChartsContainer);
-
-        Log.i("Ondra-debugLand", "initializing UI controller.");
-
-
         this.registerDateButton();
-        //this.updateChartHeight();
 
         if(!this.portraitOrientation) {
             //landscape
@@ -115,6 +124,9 @@ public class StatsUIController {
         }
     }
 
+    /**
+     * Builds date button.
+     */
     private void registerDateButton(){
         this.dateButton = (Button) this.activity.findViewById(R.id.statsDate);
         this.dateButton.setOnClickListener(new View.OnClickListener() {
@@ -127,16 +139,9 @@ public class StatsUIController {
         this.updateDateButton(new DateTime());
     }
 
-    /*private void clearControlsFocus(){
-        View v = this.activity.getCurrentFocus();
-
-        if(v != null){
-            InputMethodManager imm = (InputMethodManager) this.activity.getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-            v.clearFocus();
-        }
-    }*/
-
+    /**
+     * Updates height of charts.
+     */
     private void updateChartHeight(){
         LinearLayout container;
 
@@ -159,7 +164,6 @@ public class StatsUIController {
 
 
         //padding
-
         float complement = 0.8f - percetnage;
 
         //horizontal – currently not used
@@ -169,6 +173,9 @@ public class StatsUIController {
         this.chartPadding[1] = (int) (getDislayHeightInPx() * complement)/3;
     }
 
+    /**
+     * Changes coming with landscape orientation.
+     */
     private void customizeLandscapeOrientation(){
         TextView lbl = (TextView) this.activity.findViewById(R.id.statisticsHeading);
         lbl.setVisibility(View.GONE);
@@ -179,22 +186,20 @@ public class StatsUIController {
         wrapper.setPadding(p5, p2, p5, p2);
     }
 
-
+    /**
+     * Draws statistic charts.
+     */
     public void drawStats(){
-        /*for(int i = 0; i < 3; i++) {
-            StatsChart chart = (StatsChart) layoutInflater.inflate(R.layout.stats_chart, monthChartsContainer, false);
-            this.monthChartsContainer.addView(chart);
-            chart.init();
-            Log.i("Ondra-chart", "x");
-        }*/
-
         this.updateChartHeight();
         this.drawMonthStats();
         this.drawYearStats();
     }
 
+    /**
+     * Draws month charts.
+     */
     private void drawMonthStats(){
-        this.setActiveChartContanerMonth();
+        this.setActiveChartContainerMonth();
         this.monthChartsContainer.removeAllViews();
 
         TextView monthNoData = (TextView) this.activity.findViewById(R.id.statisticsMonthNoDataLabel);
@@ -202,10 +207,8 @@ public class StatsUIController {
         monthLabel.setText(JodaCalendar.getMonthName(this.monthStatsData.getMonth()));
 
         if(this.monthStatsData.isEmpty()) {
-            //Log.i("Ondra-stats", "NO DATA");
             monthNoData.setVisibility(View.VISIBLE);
         } else {
-            //Log.i("Ondra-stats", "DATA");
             monthNoData.setVisibility(View.GONE);
             this.buildMonthBarChart(
                     this.activity.getString(R.string.statsMonthHeading1),
@@ -226,8 +229,11 @@ public class StatsUIController {
         }
     }
 
+    /**
+     * Draws year charts.
+     */
     private void drawYearStats(){
-        this.setActiveChartContanerYear();
+        this.setActiveChartContainerYear();
         this.yearChartsContainer.removeAllViews();
 
         TextView yearNoData = (TextView) this.activity.findViewById(R.id.statisticsYearNoDataLabel);
@@ -236,12 +242,9 @@ public class StatsUIController {
         yearLabel.setText(String.valueOf(this.yearStatsData.getYear()));
 
 
-
         if(this.yearStatsData.isEmpty()) {
-            //Log.i("Ondra-stats", "y NO DATA");
             yearNoData.setVisibility(View.VISIBLE);
         } else {
-            //Log.i("Ondra-stats", "y DATA");
             yearNoData.setVisibility(View.GONE);
 
             this.buildYearBarChart(
@@ -261,16 +264,24 @@ public class StatsUIController {
                     this.activity.getString(R.string.statsYearDesc4)
             );
         }
-
     }
 
-
+    /**
+     * Includes a new xml-defined view.
+     * @return  view reference
+     */
     private StatsChart inflateChart(){
         StatsChart chart = (StatsChart) layoutInflater.inflate(R.layout.stats_chart, monthChartsContainer, false);
         this.activeChartsContainer.addView(chart);
         return chart;
     }
 
+    /**
+     * Builds bar chart.
+     * @param data  stats data
+     * @param label chart heading
+     * @param desc  chart description
+     */
     private void buildBarChart(StatisticsChartObject data, String label, String desc){
         StatsChart chart = inflateChart();
         chart.setLabels(label, desc);
@@ -279,6 +290,12 @@ public class StatsUIController {
         chart.buildBarChart();
     }
 
+    /**
+     * Builds day (in week) bar chart.
+     * @param data  stats data
+     * @param label chart heading
+     * @param desc  chart description
+     */
     private void buildDayWeekBarChart(StatisticsChartObject data, String label, String desc){
         StatsChart chart = inflateChart();
         chart.setLabels(label, desc);
@@ -287,8 +304,13 @@ public class StatsUIController {
         chart.buildDayWeekBarChart();
     }
 
+    /**
+     * Builds line chart.
+     * @param data  stats data
+     * @param label chart heading
+     * @param desc  chart description
+     */
     private void buildLineChart(StatisticsChartObject data, String label, String desc){
-
         //no sense in this case
         if(data.getLineDataSet().getEntryCount() < 2) return;
 
@@ -299,26 +321,34 @@ public class StatsUIController {
         chart.buildLineChart();
     }
 
+    /**
+     * Builds pie chart.
+     * @param data  stats data
+     * @param label chart heading
+     * @param desc  chart description
+     */
     private void buildPieChart(StatisticsChartObject data, String label, String desc){
         StatsChart chart = inflateChart();
 
         int alternateHeight = this.buildAlternativePieChart(data, chart);
 
-
         if(!data.isPieChartBuildable()) {
             chart.setLabels(label, "Sorry. Your payment data cannot be visualized.");
             chart.init(this.portraitOrientation, 0, (int)(alternateHeight*1.3), this.chartPadding);
-            //chart.hideChart();
-            //this.buildAlternativePieChart(data, chart);
         } else {
             chart.setLabels(label, desc);
             chart.setData(data);
             chart.init(this.portraitOrientation, this.chartHeight, alternateHeight, this.chartPadding);
             chart.buildPieChart();
         }
-
     }
 
+    /**
+     * Builds alternative pie chart/legend.
+     * @param data  stats data
+     * @param chart stats chart
+     * @return
+     */
     private int buildAlternativePieChart(StatisticsChartObject data, StatsChart chart){
         List<String> xData = data.getPieData().getXVals();
         ArrayList<Entry> yData = (ArrayList<Entry>) data.getPieDataSet().getYVals();
@@ -331,7 +361,6 @@ public class StatsUIController {
         int itemCount = items.size();
         LinearLayout itemsContainer = (LinearLayout) chart.findViewById(R.id.alternateChartWrapper);
 
-        //for(Map.Entry<Float, String> item : items.entrySet()) {
         for(int i = itemCount - 1; i >= 0; i--) {
             Map.Entry<Float, String> item = (Map.Entry<Float, String>) items.entrySet().toArray()[i];
             LinearLayout record = (LinearLayout) layoutInflater.inflate(R.layout.alternative_pie_item, itemsContainer, false);
@@ -343,83 +372,113 @@ public class StatsUIController {
             tvCat.setText(item.getValue());
             tvVal.setText(item.getKey() + " " + SharedPrefs.getDefaultCurrency());
             itemsContainer.addView(record);
-
-            Log.i("Ondra-pieeee", item.getValue());
-
         }
 
-        return (itemCount + 2) * dpToPx(25);
+        return (itemCount + 2) * Designer.dpToPx(25, this.activity);
     }
 
-    private int dpToPx(int dp) {
-        DisplayMetrics displayMetrics = activity.getResources().getDisplayMetrics();
-        int px = Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
-        return px;
-    }
-
-
+    /**
+     * Builds month bar chart.
+     * @param label label
+     * @param desc  description
+     */
     private void buildMonthBarChart(String label, String desc){
         this.buildBarChart(this.monthStatsData, label, desc);
     }
 
+    /**
+     * Builds month bar chart.
+     * @param label label
+     * @param desc  description
+     */
     private void buildMonthWeekDayBarChart(String label, String desc){
         this.buildDayWeekBarChart(this.monthStatsData, label, desc);
     }
 
-    private void buildYearWeekDayBarChart(String label, String desc){
-        this.buildDayWeekBarChart(this.yearStatsData, label, desc);
-    }
 
+    /**
+     * Builds month line chart.
+     * @param label label
+     * @param desc  description
+     */
     private void buildMonthLineChart(String label, String desc){
         this.buildLineChart(this.monthStatsData, label, desc);
     }
 
+    /**
+     * Builds month pie chart.
+     * @param label label
+     * @param desc  description
+     */
     private void buildMonthPieChart(String label, String desc){
         this.buildPieChart(this.monthStatsData, label, desc);
     }
 
+    /**
+     * Builds year bar chart.
+     * @param label label
+     * @param desc  description
+     */
+    private void buildYearWeekDayBarChart(String label, String desc){
+        this.buildDayWeekBarChart(this.yearStatsData, label, desc);
+    }
+
+    /**
+     * Builds year bar chart.
+     * @param label label
+     * @param desc  description
+     */
     private void buildYearBarChart(String label, String desc){
         this.buildBarChart(this.yearStatsData, label, desc);
     }
 
+    /**
+     * Builds year line chart.
+     * @param label label
+     * @param desc  description
+     */
     private void buildYearLineChart(String label, String desc){
         this.buildLineChart(this.yearStatsData, label, desc);
     }
 
+    /**
+     * Builds year pie chart.
+     * @param label label
+     * @param desc  description
+     */
     private void buildYearPieChart(String label, String desc){
         this.buildPieChart(this.yearStatsData, label, desc);
     }
 
-
-
-
-    private void setActiveChartContanerMonth(){
+    /**
+     * Sets active month chart container.
+     */
+    private void setActiveChartContainerMonth(){
         this.activeChartsContainer = this.monthChartsContainer;
     }
 
-    private void setActiveChartContanerYear(){
+    /**
+     * Sets active year chart container.
+     */
+    private void setActiveChartContainerYear(){
         this.activeChartsContainer = this.yearChartsContainer;
     }
 
-    private void initCharts(){
-        /*LinearLayout container = (LinearLayout) this.findViewById(R.id.monthChartsContainer);
-        StatsChart chart = new StatsChart(this);*/
-
-        /*//this.container.addView(chart);
-        this.monthChartsContainer.addView(new StatsChart(this.activity));
-        this.monthChartsContainer.setBackgroundColor(LTGRAY);*/
-
-    }
-
+    /**
+     * Sets month statistics data.
+     * @param data  stats data.
+     */
     public void setMonthStatsData(StatisticsChartObject data){
         this.monthStatsData = data;
     }
 
+    /**
+     * Sets year statistics data.
+     * @param data  stats data.
+     */
     public void setYearStatsData(StatisticsChartObject data){
         this.yearStatsData = data;
     }
-
-
 
     /**
      * Updates date button label.
@@ -428,25 +487,25 @@ public class StatsUIController {
      * @param d Selected day.
      */
     private void updateDateButton(int y, int m, int d){
-
         dateButton.setText(JodaCalendar.getMonthName(m) + ", " + y);
-
     }
 
+    /**
+     * Updates date button.
+     * @param date  date
+     */
     private void updateDateButton(DateTime date){
-
         dateButton.setText(JodaCalendar.getMonthName(date.getMonthOfYear()) + ", " + date.getYearOfEra());
-
     }
 
-
+    /**
+     * Handles date picker dialog creation.
+     * @param id        dialog id
+     * @param calendar  date
+     * @return          dialog
+     */
     public Dialog handleDatePickerDialogCreation(int id, DateTime calendar){
         if(id == this.dateDialogID) {
-
-            /*int y = calendar.get(Calendar.YEAR),
-                m = calendar.get(Calendar.MONTH),
-                d = calendar.get(Calendar.DAY_OF_MONTH);*/
-
             int y = calendar.getYearOfEra(),
                     m = calendar.getMonthOfYear(),
                     d = calendar.getDayOfMonth();
@@ -457,10 +516,6 @@ public class StatsUIController {
             StatisticsActivity.changeLocaleUS();
             DatePickerDialog dpDialog = new DatePickerDialog(this.activity, new DatePickerDialog.OnDateSetListener() {
                 public void onDateSet(DatePicker arg0, int y, int m, int d) {
-                    /*Log.i("Ondra-stats", "selected-y: " + y);
-                    Log.i("Ondra-stats", "selected-m: " + m);
-                    Log.i("Ondra-stats", "selected-d: " + d);*/
-
                     updateDateButton(y, m+1, d);
                     activity.handleDisplayedDateChange(y, m+1, d);
                     StatisticsActivity.changeLocaleDefault();
@@ -470,17 +525,22 @@ public class StatsUIController {
             return dpDialog;
         }
 
-
         return null;
     }
 
-
+    /**
+     * Builds category control element.
+     * @param categories    list of categories
+     */
     public void buildCategoryControls(ArrayList<Category> categories){
         final CustomSpinner spinner = (CustomSpinner) this.activity.findViewById(R.id.statsCategory);
         spinner.init(this.activity, categories);
     }
 
-
+    /**
+     * Determines whether is portait/landscape orientation.
+     * @return  true – is portrait, false – landscape
+     */
     private boolean isPortraitOrientation(){
         int w = this.getDislayWidthInPx(),
             h = this.getDislayHeightInPx();
@@ -488,16 +548,23 @@ public class StatsUIController {
         return h > w;
     }
 
+    /**
+     * Gets display witdh.
+     * @return  display width
+     */
     private int getDislayWidthInPx(){
         DisplayMetrics dm = new DisplayMetrics();
         this.activity.getWindow().getWindowManager().getDefaultDisplay().getMetrics(dm);
         return dm.widthPixels ;
     }
 
+    /**
+     * Gets display height.
+     * @return  display width
+     */
     private int getDislayHeightInPx(){
         DisplayMetrics dm = new DisplayMetrics();
         this.activity.getWindow().getWindowManager().getDefaultDisplay().getMetrics(dm);
         return dm.heightPixels ;
     }
-
 }

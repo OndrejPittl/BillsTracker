@@ -44,18 +44,34 @@ public class SettingsUIController {
      */
     private SettingsActivity activity;
 
+    /**
+     * DataController reference.
+     */
     private SettingsDataController dataController;
 
+    /**
+     * Layout inflater.
+     */
     private LayoutInflater layoutInflater = null;
 
-
+    /**
+     * A collection of stored stores in DB.
+     */
     private ArrayList<Store> stores;
 
+    /**
+     * A collection of stored categories in DB.
+     */
     private ArrayList<Category> categories;
 
+    /**
+     * A collection of stored currencies in DB.
+     */
     private ArrayList<Currency> currencies;
 
-
+    /**
+     * A contructor. Initializes a view layer of this activity.
+     */
     public SettingsUIController(SettingsActivity activity) {
         this.activity = activity;
     }
@@ -74,19 +90,23 @@ public class SettingsUIController {
         this.buildStores();
     }
 
+    /**
+     * Loads data from DB.
+     */
     private void loadData(){
         this.categories = this.dataController.getStoredCategories();
         this.stores = this.dataController.getStoredStores();
         this.currencies = this.dataController.getStoredCurrencies();
     }
 
+    /**
+     * Builds settings controls.
+     */
     private void buildControls(){
         String defCur = SharedPrefs.getDefaultCurrency();
 
-
         this.buildCategoryDefault();
         this.buildStoreDefault();
-
 
         CustomSpinner spinCur = (CustomSpinner) this.activity.findViewById(R.id.settingsCurrencySpinner);
         spinCur.init(this.activity, currencies);
@@ -167,6 +187,9 @@ public class SettingsUIController {
         });
     }
 
+    /**
+     * Builds default category controls.
+     */
     private void buildCategoryDefault(){
         String defCat = SharedPrefs.getDefaultCategory();
 
@@ -183,6 +206,9 @@ public class SettingsUIController {
         });
     }
 
+    /**
+     * Builds default store controls.
+     */
     private void buildStoreDefault(){
         String defSto = SharedPrefs.getDefaultStore();
 
@@ -199,6 +225,10 @@ public class SettingsUIController {
         });
     }
 
+    /**
+     * Restores settings to factory defaults.
+     * @param v
+     */
     public void restoreDefaults(View v) {
         final PinCodeFields fields = (PinCodeFields) layoutInflater.inflate(R.layout.pin_code, (ViewGroup) this.activity.findViewById(R.id.pinCodeFieldsWrapper));
         fields.setPinCodeListeners();
@@ -224,7 +254,10 @@ public class SettingsUIController {
         }).show();
     }
 
-    public void eraseAllPayments(View v) {
+    /**
+     * Erases all paymnets.
+     */
+    public void eraseAllPayments() {
         final PinCodeFields fields = (PinCodeFields) layoutInflater.inflate(R.layout.pin_code, (ViewGroup) this.activity.findViewById(R.id.pinCodeFieldsWrapper));
         fields.setPinCodeListeners();
         fields.setFieldsColorBlack();
@@ -249,6 +282,10 @@ public class SettingsUIController {
         }).show();
     }
 
+    /**
+     * Allows scrolling of a scrollview in a scroll view.
+     * @param sv    child scroll view
+     */
     private void allowScrollingChildScrollView(ScrollView sv){
         sv.setOnTouchListener(new View.OnTouchListener() {
 
@@ -272,6 +309,10 @@ public class SettingsUIController {
         });
     }
 
+    /**
+     * Redraws a list of categories/stores after a change.
+     * @param type  type of items of a list
+     */
     public void redrawRecordList(EditRecordType type){
         this.loadData();
 
@@ -291,6 +332,9 @@ public class SettingsUIController {
         }
     }
 
+    /**
+     * Builds category-control controls.
+     */
     public void buildCategories() {
         ScrollView sv = (ScrollView) this.activity.findViewById(R.id.settCategoryScrollView);
         this.allowScrollingChildScrollView(sv);
@@ -305,6 +349,9 @@ public class SettingsUIController {
         }
     }
 
+    /**
+     * Builds store-control controls.
+     */
     public void buildStores() {
         ScrollView sv = (ScrollView) this.activity.findViewById(R.id.settStoreScrollView);
         this.allowScrollingChildScrollView(sv);

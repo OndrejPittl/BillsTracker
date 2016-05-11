@@ -26,11 +26,6 @@ import cz.ondrejpittl.semestralka.partial.SharedPrefs;
 public class HomeActivity extends AppCompatActivity {
 
     /**
-     * Shared Preferences of this app.
-     */
-    //private SharedPreferences prefs;
-
-    /**
      * Stored origin locale enables temporarily change locale to force ENG lang and then setting
      * origin locale back.
      *
@@ -41,7 +36,7 @@ public class HomeActivity extends AppCompatActivity {
      * Model layer.
      * Database Manager representing a model layer od app. Completely controls database.
      */
-    DBManager dbManager;
+    private DBManager dbManager;
 
     /**
      * View Layer.
@@ -56,10 +51,7 @@ public class HomeActivity extends AppCompatActivity {
     private HomeDataController controllerData;
 
 
-
-
-
-
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Designer.setFullscreenActivity(this);
@@ -67,6 +59,7 @@ public class HomeActivity extends AppCompatActivity {
         init();
     }
 
+    @Override
     protected void onResume() {
         super.onResume();
         Designer.updateDesign(this);
@@ -119,16 +112,6 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     /**
-     * Builds DatePicker dialog.
-     * @param id    ID of dialog.
-     * @return      Built DatePicker dialog.
-     */
-   /* @Override
-    protected Dialog onCreateDialog(int id) {
-        return this.controllerUI.handleDatePickerDialogCreation(id);
-    }*/
-
-    /**
      * Handles actual month change.
      */
     public void activeMonthChangeHandler(View v){
@@ -146,41 +129,32 @@ public class HomeActivity extends AppCompatActivity {
         this.updatePaymentRecords();
     }
 
+    /**
+     * Updates viewed payment records
+     */
     private void updatePaymentRecords(){
         this.controllerData.loadPaymentsOfMonth();
     }
 
+    /**
+     * Clear controls event handler.
+     * @param v view that triggered an event
+     */
     public void handleClearEvent(View v){
-
         this.controllerData.handlePaymentCancel();
     }
 
+    /**
+     * Payment insert event handler.
+     * @param v view that triggered an event
+     */
     public void handleInsertEvent(View v){
-
         this.controllerData.handleNewPaymentInsert();
     }
 
-    public void startStatisticsActivity(View v){
-        /*this.controllerUI.hideImgButton(v);
-        HomeActivity.clearControlsFocus(this);
-        Intent i = new Intent(this, StatisticsActivity.class);
-        startActivity(i);*/
-    }
-
-    public void startSettingsActivity(View v){
-        //this.controllerUI.hideImgButton(v);
-        HomeActivity.clearControlsFocus(this);
-
-        Intent i = new Intent(this, SettingsActivity.class);
-        //startActivity(i);
-        startActivityForResult(i, 1);
-    }
-
-
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
-        //this.controllerUI.showLastImgButton();
 
         if(requestCode == 1) {
 
@@ -210,6 +184,9 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Tutorial start handler.
+     */
     private void handleTutorialStart(){
         if(!SharedPrefs.wasTutorialDisplayed()) {
             this.controllerData.createMockPaymentIfNeeded();
@@ -217,10 +194,10 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
-
-
-
-
+    /**
+     *  Clears focus a focused view.
+     * @param activity  activity reference
+     */
     public static void clearControlsFocus(Activity activity){
         View v = activity.getCurrentFocus();
 
@@ -231,27 +208,33 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Changes local to origin one.
+     */
     public static void changeLocaleDefault(){
         Locale.setDefault(HomeActivity.originLocale);
     }
 
+    /**
+     * Changes local to US one.
+     */
     public static void changeLocaleUS(){
         Locale.setDefault(Locale.US);
     }
 
-    public HomeDataController getDataController(){
-        return this.controllerData;
-    }
-
+    /**
+     * UIController getter.
+     * @return  UI controller reference
+     */
     public HomeUIController getUIController(){
         return this.controllerUI;
     }
 
+    /**
+     * DB managing object reference getter.
+     * @return  GB manager
+     */
     public DBManager getDbManager(){
         return this.dbManager;
     }
-
-
-
-
 }

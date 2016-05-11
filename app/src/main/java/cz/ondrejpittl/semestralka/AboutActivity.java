@@ -25,5 +25,4 @@ public class AboutActivity extends AppCompatActivity {
         tv.setMovementMethod(LinkMovementMethod.getInstance());
 
     }
-
 }

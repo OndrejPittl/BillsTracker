@@ -40,10 +40,13 @@ public class SettingsActivity extends AppCompatActivity {
     public static final int INTENT_INDEX = 1;
 
     /**
-     *
+     *  UIController reference.
      */
     private SettingsUIController controllerUI;
 
+    /**
+     * DataController reference.
+     */
     private SettingsDataController controllerData;
 
     /**
@@ -51,6 +54,7 @@ public class SettingsActivity extends AppCompatActivity {
      */
     private DBManager dbManager;
 
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Designer.setFullscreenActivity(this);
@@ -59,8 +63,8 @@ public class SettingsActivity extends AppCompatActivity {
         this.init();
     }
 
+    @Override
     protected void onDestroy() {
-        Log.i("Ondra-mem", "Settings destroyed.");
         super.onDestroy();
         Runtime.getRuntime().gc();
     }
@@ -81,17 +85,22 @@ public class SettingsActivity extends AppCompatActivity {
      * @param v UI element that triggered action.
      */
     public void replayTutorial(View v){
-        Log.i("Ondra-settings", "replayed!");
         SharedPrefs.storePaymentAnimation(true);
         SharedPrefs.storeTutorialDisplayed(false);
         this.setResult(Activity.RESULT_OK);
         this.finish();
     }
 
-    public void storeSettings(){
+    /**
+     * Stores settings.
+     */
+    public void storeSettings() {
         this.controllerData.storeSettings();
     }
 
+    /**
+     * Erases all payments.
+     */
     public void erasePayments(){
         this.dbManager.eraseAllPayments();
     }
@@ -105,22 +114,41 @@ public class SettingsActivity extends AppCompatActivity {
         this.startActivity(i);
     }
 
+    /**
+     * Explicitly initialized view layer.
+     */
     private void loadStoredSettings(){
         this.controllerUI.init(this.controllerData);
     }
 
+    /**
+     * Restores default settigs.
+     * @param v an element that fired an event
+     */
     public void restoreDefaults(View v){
         this.controllerUI.restoreDefaults(v);
     }
 
+    /**
+     * Erazes all paymnts.
+     * @param v an elementd that fired an event
+     */
     public void eraseAllPayments(View v){
-        this.controllerUI.eraseAllPayments(v);
+        this.controllerUI.eraseAllPayments();
     }
 
+    /**
+     * Getter of DataController reference.
+     * @return  DataController reference
+     */
     public SettingsDataController getDataController(){
         return this.controllerData;
     }
 
+    /**
+     * Creates a new category.
+     * @param v an elementd that fired an event
+     */
     public void createNewCategory(View v){
         EditText et = (EditText) findViewById(R.id.settNewCategry);
 
@@ -138,6 +166,10 @@ public class SettingsActivity extends AppCompatActivity {
         this.controllerUI.redrawRecordList(EditRecordType.CATEGORY);
     }
 
+    /**
+     *  Creates a new store.
+     * @param v an elementd that fired an event
+     */
     public void createNewStore(View v){
         EditText et = (EditText) findViewById(R.id.settNewStore);
 
@@ -154,6 +186,4 @@ public class SettingsActivity extends AppCompatActivity {
         et.setText("");
         this.controllerUI.redrawRecordList(EditRecordType.STORE);
     }
-
-
 }

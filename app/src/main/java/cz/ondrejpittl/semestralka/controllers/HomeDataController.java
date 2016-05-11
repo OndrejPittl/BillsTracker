@@ -15,6 +15,7 @@ import cz.ondrejpittl.semestralka.models.Category;
 import cz.ondrejpittl.semestralka.models.Payment;
 import cz.ondrejpittl.semestralka.models.Statistics;
 import cz.ondrejpittl.semestralka.models.Store;
+import cz.ondrejpittl.semestralka.partial.Designer;
 import cz.ondrejpittl.semestralka.partial.InputFieldType;
 import cz.ondrejpittl.semestralka.partial.JodaCalendar;
 import cz.ondrejpittl.semestralka.partial.MonthChangeEnum;
@@ -173,12 +174,9 @@ public class HomeDataController {
         String monthStr = this.jodaDate.toString("MMMM");
         HomeActivity.changeLocaleDefault();
 
-        String currencyUnits = SharedPrefs.getDefaultCurrency();
-
         this.displayedPayments = this.dbManager.getPaymentsByMonth(month, year);
-        this.controllerUI.updatePaymentRecords(monthStr, year, this.displayedPayments, currencyUnits, this);
+        this.controllerUI.updatePaymentRecords(monthStr, year, this.displayedPayments, this);
 
-        this.logDisplayedPayments();
         this.computeStatistics();
     }
 
@@ -232,7 +230,7 @@ public class HomeDataController {
     }
 
     /**
-     *
+     *  Handles payment edit cancellation.
      */
     public void handlePaymentCancel(){
         this.controllerUI.clearControls();
@@ -245,10 +243,13 @@ public class HomeDataController {
 
     }
 
+    /**
+     * Handles a new payment insertion.
+     */
     public void handleNewPaymentInsert(){
         String[] contents = this.controllerUI.getControlsContents();
 
-        if(!validatePaymentInputs(contents))
+        if(!this.validatePaymentInputs(contents))
             return;
 
         if(this.editingPayment) {
@@ -272,21 +273,29 @@ public class HomeDataController {
         this.loadPaymentsOfMonth();
     }
 
+    /**
+     * Handles payment deletion.
+     * @param paymentID payment ID of a payment being deleted
+     */
     public void handlePaymentDelete(int paymentID){
         this.dbManager.deletePayment(paymentID);
         this.loadPaymentsOfMonth();
     }
 
+    /**
+     * Handles payment edit.
+     * @param paymentID payment ID of a payment being edited
+     */
     public void handlePaymentEdit(int paymentID){
         this.editingPayment = true;
         this.editingPaymentID = paymentID;
-        //this.controllerUI.fillPaymentInfoOnUpdate(p);
-
-
-        //this.dbManager.updatePayment(paymentID);
-        //this.loadPaymentsOfMonth();
     }
 
+    /**
+     * New payment inputs validation.
+     * @param contents  array of payment inputs
+     * @return  true – payments input are valid; false – not
+     */
     private boolean validatePaymentInputs(String[] contents){
         boolean correct = true;
 
@@ -296,19 +305,19 @@ public class HomeDataController {
         //contents[1] ... category name     (String)
         //contents[2] ... category id       (int)
         if(contents[1].length() == 0) {
-            this.controllerUI.markInputError(InputFieldType.CUSTOM_SPINNER_CATEGORY);
+            Designer.markInputError(InputFieldType.CUSTOM_SPINNER_CATEGORY, this.activity);
             correct = false;
         } else {
-            this.controllerUI.unmarkInputError(InputFieldType.CUSTOM_SPINNER_CATEGORY);
+            Designer.unmarkInputError(InputFieldType.CUSTOM_SPINNER_CATEGORY, this.activity);
         }
 
         //contents[3] ... amount            (int)
         //numeric keyboard, test with regex to eliminate multiple dots and commmas
         if(!isNumericPositive(contents[3]) || !isInAmountRange(contents[3])) {
-            this.controllerUI.markInputError(InputFieldType.EDIT_TEXT_AMOUNT);
+            Designer.markInputError(InputFieldType.EDIT_TEXT_AMOUNT, this.activity);
             correct = false;
         } else {
-            this.controllerUI.unmarkInputError(InputFieldType.EDIT_TEXT_AMOUNT);
+            Designer.unmarkInputError(InputFieldType.EDIT_TEXT_AMOUNT, this.activity);
         }
 
         //contents[4] ... note              (String)
@@ -317,15 +326,20 @@ public class HomeDataController {
         //contents[5] ... store name
         //contents[6] ... store id
         if(contents[5].length() == 0) {
-            this.controllerUI.markInputError(InputFieldType.CUSTOM_SPINNER_STORE);
+            Designer.markInputError(InputFieldType.CUSTOM_SPINNER_STORE, this.activity);
             correct = false;
         } else {
-            this.controllerUI.unmarkInputError(InputFieldType.CUSTOM_SPINNER_STORE);
+            Designer.unmarkInputError(InputFieldType.CUSTOM_SPINNER_STORE, this.activity);
         }
 
         return correct;
     }
 
+    /**
+     * Determines whether a string given is a positive number or not.
+     * @param num   validated string
+     * @return      true – string is a positive number; false – not
+     */
     private boolean isNumericPositive(String num){
         try {
             Float f = Float.parseFloat(num);
@@ -334,36 +348,26 @@ public class HomeDataController {
         } catch (NumberFormatException ex) {
             return false;
         }
-
         return true;
-        //return num.matches("/^([1-9]\\d*|0)?(?:\\.\\d+)?$/");
     }
 
+    /**
+     * Determines whether a number given is a number in a specific range:
+     * num >= 0 && num < 10000000.
+     * @param num   a number being validated
+     * @return      true – a number is in range, false – not
+     */
     private boolean isInAmountRange(String num){
         Float f = Float.parseFloat(num);
         if(f < 0 || f > 10000000) return false;
         return true;
-        //return num.matches("/^([1-9]\\d*|0)?(?:\\.\\d+)?$/");
     }
 
+    /**
+     * Getter of a date with a month being currently viewed.
+     * @return  currently viewed month date
+     */
     public DateTime getViewedMonthDate(){
         return this.jodaDate;
     }
-
-
-
-
-    private void logDisplayedPayments(){
-        Log.i("Ondra", "loggggggggggggggggging displayed:");
-        for(Payment p : this.displayedPayments) {
-            Log.i("Ondra", p.toString());
-        }
-    }
-
-    private void logStoredStores(){
-        for(Store s : this.storedStores) {
-            Log.i("Ondra", s.toString());
-        }
-    }
-
 }

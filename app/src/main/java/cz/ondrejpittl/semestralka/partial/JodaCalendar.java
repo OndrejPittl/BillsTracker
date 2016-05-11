@@ -17,16 +17,28 @@ import cz.ondrejpittl.semestralka.models.Statistics;
  */
 public class JodaCalendar {
 
+    /**
+     * Date time.
+     */
     private DateTime date;
 
+    /**
+     * Origin locale.
+     */
     private static Locale prevLocale;
 
 
-
+    /**
+     * Constructor. Basics initialization.
+     */
     public JodaCalendar() {
         this.date = new DateTime();
     }
 
+    /**
+     * Setter of the start of a day.
+     * @return  beginning of a current day
+     */
     private DateTime setStartTime(){
         return date.hourOfDay().withMinimumValue()
                    .minuteOfDay().withMinimumValue()
@@ -34,6 +46,10 @@ public class JodaCalendar {
                    .millisOfDay().withMinimumValue();
     }
 
+    /**
+     * Setter of the end of a day.
+     * @return  end of a current day
+     */
     private DateTime setEndTime(){
         return date.hourOfDay().withMaximumValue()
                    .minuteOfDay().withMaximumValue()
@@ -41,38 +57,73 @@ public class JodaCalendar {
                    .millisOfDay().withMaximumValue();
     }
 
+    /**
+     * Getter of the start of a day.
+     * @return  beginning of a current day
+     */
     public DateTime getStartOfDay(){
         return setStartTime();
     }
 
+    /**
+     * Getter of the end of a day.
+     * @return  end of a current day
+     */
     public DateTime getEndOfDay(){
         return setEndTime();
     }
 
+    /**
+     * Getter of the first day of a week.
+     * @return  the first day of a week
+     */
     public DateTime getFirstDayOfWeek(){
         return setStartTime().dayOfWeek().withMinimumValue();
     }
 
+    /**
+     * Getter of the last day of a week
+     * @return  the last day of a week
+     */
     public DateTime getLastDayOfWeek(){
         return setEndTime().dayOfWeek().withMaximumValue();
     }
 
+    /**
+     * Getter of the first day of a month
+     * @return  the first day of a month
+     */
     public DateTime getFirstDayOfMonth(){
         return setStartTime().dayOfMonth().withMinimumValue();
     }
 
+    /**
+     * Getter of the last day of a month
+     * @return  the last day of a month
+     */
     public DateTime getLastDayOfMonth(){
         return setEndTime().dayOfMonth().withMaximumValue();
     }
 
+    /**
+     * Getter of the first day of a month.
+     * @param month month
+     * @param year  year
+     * @return  date with the first day of a month
+     */
     public DateTime getFirstDayOfMonth(int month, int year){
-        Log.i("Ondra", "mesic: " + month);
         return setStartTime()
                 .withYear(year)
                 .withMonthOfYear(month)
                 .dayOfMonth().withMinimumValue();
     }
 
+    /**
+     * Getter of the last day of a month.
+     * @param month month
+     * @param year  year
+     * @return  date with the last day of a month
+     */
     public DateTime getLastDayOfMonth(int month, int year){
         return setEndTime()
                 .withYear(year)
@@ -80,31 +131,48 @@ public class JodaCalendar {
                 .dayOfMonth().withMaximumValue();
     }
 
+    /**
+     * Getter of the first day of a year
+     * @return  the first day of a year
+     */
     public DateTime getFirstDayOfYear(){
         return setStartTime().dayOfMonth().withMinimumValue().monthOfYear().withMinimumValue();
     }
 
+    /**
+     * Getter of the last day of a year
+     * @return  the last day of a year
+     */
     public DateTime getLastDayOfYear(){
         return setEndTime().dayOfMonth().withMaximumValue().monthOfYear().withMaximumValue();
     }
 
+    /**
+     * Getter of the first day of a year
+     * @return  the first day of a year
+     */
     public DateTime getFirstDayOfYear(int year){
-        Log.i("Ondra", "rok: " + year);
         return setStartTime()
                 .withYear(year)
                 .dayOfYear().withMinimumValue();
     }
 
+    /**
+     * Getter of the last day of a year
+     * @return  the last day of a year
+     */
     public DateTime getLastDayOfYear(int year){
         return setEndTime()
                 .withYear(year)
                 .dayOfYear().withMaximumValue();
     }
 
-    public DateTime getDate(){
-        return this.date;
-    }
-
+    /**
+     * Compares a month and a year of two dates given.
+     * @param j1    first date
+     * @param j2    second date
+     * @return  true – same, false – not
+     */
     public static boolean compareMonthYear(DateTime j1, DateTime j2){
         int j1M = j1.getMonthOfYear(),
                 j1Y = j1.getYearOfEra(),
@@ -114,6 +182,12 @@ public class JodaCalendar {
         return j1M == j2M && j1Y == j2Y;
     }
 
+    /**
+     * Compares a day, a month and a year of two dates given.
+     * @param j1    first date
+     * @param j2    second date
+     * @return  true – same, false – not
+     */
     public static boolean compareDateTimes(DateTime j1, DateTime j2){
         int     j1D = j1.getDayOfMonth(),
                 j1M = j1.getMonthOfYear(),
@@ -125,6 +199,11 @@ public class JodaCalendar {
         return j1D == j2D && j1M == j2M && j1Y == j2Y;
     }
 
+    /**
+     * Clones datetime.
+     * @param orig  original datetime
+     * @return  a clone
+     */
     public static DateTime clone(DateTime orig){
         return new DateTime()
                 .withYearOfEra(orig.getYearOfEra())
@@ -132,6 +211,11 @@ public class JodaCalendar {
                 .withDayOfMonth(orig.getDayOfMonth());
     }
 
+    /**
+     * Getter of a month name in a string representation.
+     * @param month index of a month
+     * @return  string represented month
+     */
     public static String getMonthName(int month) {
         String m;
 
@@ -142,6 +226,11 @@ public class JodaCalendar {
         return m;
     }
 
+    /**
+     * Labels a day with a suffix.
+     * @param day   day to be labeled
+     * @return      labeled day
+     */
     public static String getDayLabeled(int day) {
         String suffix;
 
@@ -167,55 +256,48 @@ public class JodaCalendar {
         return String.valueOf(day) + suffix;
     }
 
-    public static String getWeekDay(int month, int day) {
-        String output;
-
-        JodaCalendar.changeLocaleUS();
-        output = new DateTime().withMonthOfYear(month).withDayOfMonth(day).dayOfWeek().getAsText();
-        JodaCalendar.changeLocaleDefault();
-
-        return output;
-    }
-
+    /**
+     * Getter of a week day number.
+     * @param month month
+     * @param day   day
+     * @return      week day index
+     */
     public static int getWeekDayNum(int month, int day) {
         return new DateTime().withMonthOfYear(month).withDayOfMonth(day).getDayOfWeek();
     }
 
-    public static HashMap<String, Float> buildDayWeekHashmap(){
-        HashMap<String, Float> weekDay = new HashMap<>();
-        weekDay.put("Sunday", 0f);
-        weekDay.put("Saturday", 0f);
-        weekDay.put("Friday", 0f);
-        weekDay.put("Thursday", 0f);
-        weekDay.put("Wednesday", 0f);
-        weekDay.put("Tuesday", 0f);
-        weekDay.put("Monday", 0f);
-        return weekDay;
-    }
-
+    /**
+     * Builds array of week days.
+     * @param collapsed collapsed/uncollapsed labels
+     * @return  array of week days
+     */
     public static String[] buildDayWeekArray(boolean collapsed){
         if(collapsed)
             return new String[]{"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"};
         return new String[]{"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
     }
 
+    /**
+     * Get number of days in a month.
+     * @param month month
+     * @return      number of days
+     */
     public static int getDayCountInMonth(int month){
         return new DateTime().withMonthOfYear(month).dayOfMonth().withMaximumValue().getDayOfMonth();
     }
 
-
-
-
-
-
-
+    /**
+     * Changes locale to origin one.
+     */
     public static void changeLocaleDefault(){
         Locale.setDefault(JodaCalendar.prevLocale);
     }
 
+    /**
+     * Changes locale to american one.
+     */
     public static void changeLocaleUS(){
         JodaCalendar.prevLocale = Locale.getDefault();
         Locale.setDefault(Locale.US);
     }
-
 }

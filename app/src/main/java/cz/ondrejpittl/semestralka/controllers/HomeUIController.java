@@ -2,7 +2,6 @@ package cz.ondrejpittl.semestralka.controllers;
 
 import android.app.DatePickerDialog;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Rect;
 import android.os.Handler;
 import android.support.v4.content.ContextCompat;
@@ -36,6 +35,7 @@ import cz.ondrejpittl.semestralka.models.Category;
 import cz.ondrejpittl.semestralka.models.Payment;
 import cz.ondrejpittl.semestralka.models.Statistics;
 import cz.ondrejpittl.semestralka.models.Store;
+import cz.ondrejpittl.semestralka.partial.Designer;
 import cz.ondrejpittl.semestralka.partial.InputFieldType;
 import cz.ondrejpittl.semestralka.partial.JodaCalendar;
 import cz.ondrejpittl.semestralka.partial.LoadingButtonType;
@@ -59,29 +59,34 @@ public class HomeUIController {
     private HomeActivity activity;
 
 
-    private TutorialManager tut;
-
+    /**
+     * An object handling a first-time-launch tutorial.
+     */
+    private TutorialManager tutorial;
 
     /**
      * Object inflating view defined as XML.
      */
     private LayoutInflater layoutInflater;
 
-
+    /**
+     * A container of currently viewed payments.
+     */
     LinearLayout paymentRecordsContainer;
 
+    /**
+     * A collection of currently viewed payments.
+     */
     private ArrayList<PaymentRecord> records;
 
-
-
-    private SharedPreferences prefs;
-
+    /**
+     * A flag indicating whether are animations allowed or not.
+     */
     private boolean animationAllowed;
 
     /**
      * Calendar singleton object reference with actual date.
      */
-    //private Calendar cal;
     private DateTime calendar;
 
     /**
@@ -89,12 +94,11 @@ public class HomeUIController {
      */
     private Button dateButton;
 
+
+
     /**
-     * DatePicker dialog ID.
+     * A new payment control elements – date picker dialog
      */
-    private int dateDialogID = 0;
-
-
     private DatePickerDialog dateDPDialog;
 
     /**
@@ -112,16 +116,23 @@ public class HomeUIController {
      */
     private int date_day;
 
-
+    /**
+     *  A payment record being edited reference.
+     */
     private PaymentRecord editingRecord;
 
 
-
+    /**
+     * A settings button reference.
+     * Starts SettingsActivity.
+     */
     private LoadingImgButton settingsBtn;
+
+    /**
+     * A statistics button reference.
+     * Starts StatisticsActivity.
+     */
     private LoadingImgButton statsBtn;
-
-
-
 
 
 
@@ -137,35 +148,34 @@ public class HomeUIController {
      * Initializes UI of Home activity.
      */
     public void initUI(){
-        //this.cal = Calendar.getInstance();
         this.calendar = new DateTime();
-        this.prefs = this.activity.getSharedPreferences("cz.ondrejpittl.semestralka", Context.MODE_PRIVATE);
-        this.tut = new TutorialManager(this.activity);
+
+        this.tutorial = new TutorialManager(this.activity);
         this.layoutInflater = (LayoutInflater) this.activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.paymentRecordsContainer = (LinearLayout) this.activity.findViewById(R.id.recordsContainer);
         this.animationAllowed = SharedPrefs.isPaymentAnimationSet() && SharedPrefs.getPaymentAnimation();
-
         this.buildControlPanel();
-
-        //tmp
-        //this.resetVisitOnDoubleTap();
     }
 
     /**
-     * Builds control panel.
+     * Builds a control panel.
      */
     private void buildControlPanel(){
         this.buildDateControls();
         this.buildSettingsImgButton();
         this.buildStatsImgButton();
-        //this.buildCategoryControls();
-        //this.buildStoreControls();
     }
 
+    /**
+     * Starts a first-time-launch tutorial.
+     */
     public void startTutorial(){
-        this.tut.start();
+        this.tutorial.start();
     }
 
+    /**
+     * Builds a settings button.
+     */
     private void buildSettingsImgButton(){
         FrameLayout container = (FrameLayout) this.activity.findViewById(R.id.settingsBtnWrapper);
         this.settingsBtn = (LoadingImgButton) layoutInflater.inflate(R.layout.loading_img_button, container, false);
@@ -173,6 +183,9 @@ public class HomeUIController {
         container.addView(this.settingsBtn);
     }
 
+    /**
+     * Builds a stats button.
+     */
     private void buildStatsImgButton(){
         FrameLayout container = (FrameLayout) this.activity.findViewById(R.id.statsBtnWrapper);
         this.statsBtn = (LoadingImgButton) layoutInflater.inflate(R.layout.loading_img_button, container, false);
@@ -180,34 +193,28 @@ public class HomeUIController {
         container.addView(this.statsBtn);
     }
 
+    /**
+     * Resets a settings button.
+     */
     public void resetSettingsImgButton(){
         this.settingsBtn.reset();
     }
 
+    /**
+     * Resets a statistics button.
+     */
     public void resetStatsImgButton(){
         this.statsBtn.reset();
     }
 
-
-
-    private void setEditTextFocusLoseHandler(){
-
-        /*this.activity.findViewById()
-        hideKeyboard();*/
-
-    }
-
-    /*private void hideKeyboard() {
-        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
-
-        //skryj soft klávesnici
-        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-
-        //zobraz soft klávestnici
-        //imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-    }*/
-
-    public void updatePaymentRecords(final String month, final int year, final ArrayList<Payment> payments, final String currencyUnits, final HomeDataController dControl){
+    /**
+     * Updates a list of payment records being currently viewed.
+     * @param month             currently viewed month
+     * @param year              currently viewed year
+     * @param payments          a list of payment records
+     * @param dControl          DataController reference
+     */
+    public void updatePaymentRecords(final String month, final int year, final ArrayList<Payment> payments, final HomeDataController dControl){
         AnimationFactory.fadeOutPaymentRecords(this.records);
 
         int timeOffset = 230;
@@ -219,11 +226,16 @@ public class HomeUIController {
         new Handler().postDelayed(new Runnable() {
             public void run() {
                 updateDateLabels(month, year);
-                buildPaymentBoxes(payments, currencyUnits, dControl);
+                buildPaymentBoxes(payments, dControl);
             }
         }, timeOffset);
     }
 
+    /**
+     * Updates date label.
+     * @param month a currently viewed month
+     * @param year  a currently viewed year
+     */
     private void updateDateLabels(String month, int year){
         TextView m = (TextView) this.activity.findViewById(R.id.txtView_recordsListMonth),
                  y = (TextView) this.activity.findViewById(R.id.txtView_recordsListYear);
@@ -232,44 +244,24 @@ public class HomeUIController {
         y.setText(String.valueOf(year));
     }
 
-    private int getDislayWidthInPx(){
-        DisplayMetrics dm = new DisplayMetrics();
-        this.activity.getWindow().getWindowManager().getDefaultDisplay().getMetrics(dm);
-        return dm.widthPixels ;
-    }
-
-
-    private void buildPaymentBoxes(ArrayList<Payment> payments, String currencyUnits, final HomeDataController dControl){
-
+    /**
+     * Builds payment boxes representing currently viewed payments.
+     * @param payments          a list of currently viewed payments
+     * @param dControl          DataController reference
+     */
+    private void buildPaymentBoxes(ArrayList<Payment> payments, final HomeDataController dControl){
         this.paymentRecordsContainer.removeAllViews();
-        PaymentRecord.setDisplayWidth(getDislayWidthInPx());
-
+        PaymentRecord.setDisplayWidth(Designer.getDisplayWidthInPx(this.activity));
         records = new ArrayList<>();
 
         for(Payment p : payments) {
             final PaymentRecord record = (PaymentRecord) layoutInflater.inflate(R.layout.payment_record, paymentRecordsContainer, false);
-
-            //payment ID
-            //record.setId(paymentID);
-            //record.setPaymentId(p.getID());
 
             if(SharedPrefs.isPaymentAnimationSet())
                 record.setAlpha(0);
 
             record.setPayment(p);
             record.update();
-            //record.updateIconVisibility();
-            //record.setHomeController(dControl);
-
-            /*int containerHeight = record.updateRecordHeight(this.activity);
-            float textSize = (int)(containerHeight * 0.9);*/
-
-            /*float textSize = record.isCollapsed()
-                    ? PaymentRecord.getPaymentCollapsedHeight()
-                    : PaymentRecord.getPaymentUnCollapsedHeight();*/
-
-
-
 
             record.getRecordDeleteBtn().setOnTouchListener(new View.OnTouchListener() {
                 public boolean onTouch(View v, MotionEvent event) {
@@ -290,59 +282,44 @@ public class HomeUIController {
             //payment category icon
             String iconPath = p.getCategory().getIcon();
             int imageResource = this.activity.getResources().getIdentifier(iconPath, null, this.activity.getPackageName());
-            //Drawable image = ResourcesCompat.getDrawable(this.activity.getResources(), imageResource, null);
 
             ImageView icon = (ImageView) record.findViewById(R.id.imgViewRecordIcon);
-            //icon.setBackground(image);
-            //icon.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.appWhite50));
             icon.setImageResource(imageResource);
-
 
             //payment day
             TextView d = (TextView) record.findViewById(R.id.txtViewRecordDay);
             Calendar cal = Calendar.getInstance();
-            //cal.setTime(p.getDate());
             cal.setTime(p.getDate().toDate());
             d.setText(String.valueOf(cal.get(Calendar.DAY_OF_MONTH)) + ".");
-            //d.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
 
             //payment category name
             TextView c = (TextView) record.findViewById(R.id.txtViewRecordCategory);
             c.setText(p.getCategory().getName());
-            //c.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
 
             //payment store name
             TextView s = (TextView) record.findViewById(R.id.txtViewRecordStore);
             s.setText(p.getStore().getName());
-            //s.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
 
             //payment amount
             TextView a = (TextView) record.findViewById(R.id.txtViewRecordPrice);
-            a.setText(String.valueOf(p.getAmount()));
-            //a.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
-
-            //payment amount currency
-            //TextVidatew cur = (TextView) record.findViewById(R.id.txtViewRecordCurrency);
-            //cur.setText(currencyUnits);
-
+            a.setText(String.valueOf(p.getAmount()) + " " + SharedPrefs.getDefaultCurrency());
 
             //paymentNote
             TextView v = (TextView) record.findViewById(R.id.txtViewRecordNote);
             v.setText(p.getNote());
-            //v.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
 
             this.records.add(record);
             paymentRecordsContainer.addView(record);
             record.updateIconVisibility();
         }
-
         updateRecordsHeight();
-
         AnimationFactory.fadeInPaymentRecords(this.records);
-
     }
 
-
+    /**
+     * Registers payment update.
+     * @param record    a payment record being updated
+     */
     public void registerPaymentUpdateStart(PaymentRecord record){
         fillPaymentInfoOnUpdate(record.getPayment());
         setInsertUpdateButtonText(true);
@@ -357,7 +334,9 @@ public class HomeUIController {
 
     }
 
-
+    /**
+     * Registers a payment update confirmed.
+     */
     public void registerPaymentUpdateFinished(){
             setInsertUpdateButtonText(false);
         setClearCancelButtonText(false);
@@ -369,14 +348,9 @@ public class HomeUIController {
      * Initializes date controls represented with button and DatePicker.
      */
     private void buildDateControls(){
-        /*this.date_year = this.cal.get(Calendar.YEAR);
-        this.date_month = this.cal.get(Calendar.MONTH);
-        this.date_day = this.cal.get(Calendar.DAY_OF_MONTH);*/
-
         this.date_year = this.calendar.getYear();
         this.date_month = this.calendar.getMonthOfYear();
         this.date_day = this.calendar.getDayOfMonth();
-
 
         this.dateDPDialog = new DatePickerDialog(this.activity, new DatePickerDialog.OnDateSetListener() {
             public void onDateSet(DatePicker arg0, int y, int m, int d) {
@@ -397,15 +371,9 @@ public class HomeUIController {
     }
 
     /**
-     * Initializes category selection controls represented with spinner.
+     *  Builds a category control element.
+     * @param categories    a list of stored categories
      */
-    /*private void buildCategoryControls(){
-        Spinner spinner = (Spinner) this.activity.findViewById(R.id.spinner_category);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this.activity, R.array.categories, R.layout.spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
-    }*/
-
     public void buildCategoryControls(ArrayList<Category> categories){
         final CustomSpinner spinner = (CustomSpinner) this.activity.findViewById(R.id.spinner_category);
         spinner.init(this.activity, categories);
@@ -420,32 +388,13 @@ public class HomeUIController {
         });
     }
 
+    /**
+     * Updates a selected item of a category spinner.
+     */
     public void updateCategoryControlsSelection(){
         CustomSpinner spinner = (CustomSpinner) this.activity.findViewById(R.id.spinner_category);
         spinner.selectItem(SharedPrefs.getDefaultCategory());
     }
-
-    /*private void clearControlsFocus(){
-        View v = this.activity.getCurrentFocus();
-
-        if(v != null){
-            InputMethodManager imm = (InputMethodManager) this.activity.getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-            v.clearFocus();
-        }
-    }*/
-
-
-
-    /**
-     * Initializes store selection controls.
-     */
-    /*private void buildStoreControls(){
-        Spinner spinner = (Spinner) this.activity.findViewById(R.id.spinner_store);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this.activity, R.array.stores, R.layout.spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
-    }*/
 
     /**
      * Initializes store selection controls.
@@ -462,11 +411,13 @@ public class HomeUIController {
         });
     }
 
+    /**
+     * Updates a selected item of a store spinner.
+     */
     public void updateStoreControlsSelection(){
         CustomSpinner spinner = (CustomSpinner) this.activity.findViewById(R.id.spinner_store);
         spinner.selectItem(SharedPrefs.getDefaultStore());
     }
-
 
     /**
      * Stores selected date.
@@ -481,31 +432,6 @@ public class HomeUIController {
 
         this.calendar = this.calendar.withYearOfEra(y).withMonthOfYear(m).withDayOfMonth(d);
     }
-
-    /*
-     * Updates date button label.
-     * @param y Selected year.
-     * @param m Selected month.
-     * @param d Selected day.
-     */
-    /*private void updateDateButton(int y, int m, int d){
-        Calendar cal = Calendar.getInstance();
-
-        if(y == cal.get(Calendar.YEAR) && m == cal.get(Calendar.MONTH)) {
-
-            if(d == cal.get(Calendar.DAY_OF_MONTH)) {
-                this.dateButton.setText("Today");
-            } else if((d + 1) == cal.get(Calendar.DAY_OF_MONTH)) {
-                this.dateButton.setText("Yesterday");
-            } else {
-                dateButton.setText(d + ". " + m + ". " + y);
-            }
-        }
-
-        this.cal.set(Calendar.YEAR, y);
-        this.cal.set(Calendar.MONTH, m);
-        this.cal.set(Calendar.DAY_OF_MONTH, d);
-    }*/
 
     /**
      * Updates date button label.
@@ -536,29 +462,10 @@ public class HomeUIController {
         dateButton.setText(d + ". " + m + ". " + y);
     }
 
-    /*public Dialog handleDatePickerDialogCreation(int id){
-        if(id == this.dateDialogID) {
-
-            //temporarily set US locale to force being set CalendarDialog English language
-            HomeActivity.changeLocaleUS();
-
-             this.dateDPDialog = new DatePickerDialog(this.activity, new DatePickerDialog.OnDateSetListener() {
-                public void onDateSet(DatePicker arg0, int y, int m, int d) {
-                    updateDateButton(y, m+1, d);
-                    saveSelectedDate(y, m+1, d);
-                    HomeActivity.changeLocaleDefault();
-                }
-            }, this.date_year, this.date_month - 1, this.date_day);
-
-
-
-            return dpDialog;
-        }
-
-
-        return null;
-    }*/
-
+    /**
+     * Updates currencies on currency change.
+     * @param curr  new currency
+     */
     public void updateCurrencyViews(String curr){
         //controls – price amount
         TextView tv = (TextView) this.activity.findViewById(R.id.txtView_currency);
@@ -577,7 +484,12 @@ public class HomeUIController {
         tvM.setText(curr);
     }
 
-    public void updateStatistics(Statistics s, boolean dispayAll){
+    /**
+     * Updates compact statistics placed in the footer of this activity.
+     * @param s         Statistics object reference.
+     * @param displayAll a flag indicating whether are all statistics data drawn or just a part
+     */
+    public void updateStatistics(Statistics s, boolean displayAll){
         int today = s.getTodayAmount(),
             week = s.getWeekAmount(),
             month = s.getMonthAmount();
@@ -593,9 +505,7 @@ public class HomeUIController {
         TextView tvM = (TextView) this.activity.findViewById(R.id.txtView_statisticsMonth);
         tvM.setText(String.valueOf(month));
 
-
-
-        if(dispayAll) {
+        if(displayAll) {
             //actual month
 
             int statsWidth = 0;
@@ -612,10 +522,9 @@ public class HomeUIController {
             statsWidth += measureTextWidth(String.valueOf(week), tvW);
             statsWidth += measureTextWidth(String.valueOf(month), tvM);
 
-
             //update month label length ("Month" vs. "M")
-            Log.i("Ondra-ministats", "measured: " + statsWidth + ", max: " + (getDislayWidthInPx() * 0.8));
-            if(statsWidth > getDislayWidthInPx() * 0.80) {
+            Log.i("Ondra-ministats", "measured: " + statsWidth + ", max: " + (Designer.getDisplayWidthInPx(this.activity) * 0.8));
+            if(statsWidth > Designer.getDisplayWidthInPx(this.activity) * 0.80) {
                 tvDayLbl.setText(R.string.home_stats_d_label);
                 tvWeekLbl.setText(R.string.home_stats_w_label);
                 tvMonthLbl.setText(R.string.home_stats_m_label);
@@ -624,7 +533,6 @@ public class HomeUIController {
                 tvWeekLbl.setText(R.string.home_stats_week_label);
                 tvMonthLbl.setText(R.string.home_stats_month_label);
             }
-
 
             //display today stats
             tvT.setText(String.valueOf(today));
@@ -641,6 +549,12 @@ public class HomeUIController {
         }
     }
 
+    /**
+     * Function measuring width od a text.
+     * @param txt   text being measured
+     * @param tv    textview where is a text inserted/formatted
+     * @return      width of a text formated by textview
+     */
     private int measureTextWidth(String txt, TextView tv){
         Rect bounds = new Rect();
 
@@ -650,6 +564,9 @@ public class HomeUIController {
         return width;
     }
 
+    /**
+     * Resets all payment input controls.
+     */
     public void clearControls(){
         Calendar cal = Calendar.getInstance();
 
@@ -683,9 +600,13 @@ public class HomeUIController {
             editingRecord.setEditing(false);
 
         HomeActivity.clearControlsFocus(activity);
-        this.unmarkInputErrorAll();
+        Designer.unmarkInputErrorAll(this.activity);
     }
 
+    /**
+     * Collects data from payment input controls.
+     * @return  input data
+     */
     public String[] getControlsContents(){
         String[] contents = new String[7];
 
@@ -703,7 +624,6 @@ public class HomeUIController {
             contents[1] = "";
             contents[2] = String.valueOf(-1);
         }
-
 
         //amount
         EditText etA = (EditText) this.activity.findViewById(edTxt_amount);
@@ -724,113 +644,13 @@ public class HomeUIController {
             contents[6] = String.valueOf(-1);
         }
 
-        /*
-        contents[5] = ((Store) stSpin.getSelectedItem()).getName();
-        contents[6] = String.valueOf(((Store) stSpin.getSelectedItem()).getID());
-        */
-
         return contents;
     }
 
-    public void markInputError(InputFieldType t){
-        int errColor = ContextCompat.getColor(this.activity, appError);
-
-
-        switch(t) {
-            case EDIT_TEXT_AMOUNT:
-                EditText et = (EditText) this.activity.findViewById(edTxt_amount);
-                et.setTextColor(errColor);
-                et.setHintTextColor(errColor);
-                //et.requestFocus();
-
-                LinearLayout layout = (LinearLayout) this.activity.findViewById(homeAmountContainer);
-                layout.setBackgroundResource(shape_thin_border_error);
-
-                break;
-
-            case CUSTOM_SPINNER_CATEGORY:
-
-                CustomSpinner spinCat = (CustomSpinner) this.activity.findViewById(R.id.spinner_category);
-                spinCat.setBackgroundResource(shape_thin_border_error);
-
-                break;
-
-            case CUSTOM_SPINNER_STORE:
-
-                CustomSpinner spinSt = (CustomSpinner) this.activity.findViewById(R.id.spinner_store);
-                spinSt.setBackgroundResource(shape_thin_border_error);
-
-                break;
-        }
-    }
-
-    public void unmarkInputError(InputFieldType t){
-        int okColor = ContextCompat.getColor(this.activity, R.color.appWhite);
-
-        switch(t) {
-            case EDIT_TEXT_AMOUNT:
-
-                EditText et = (EditText) this.activity.findViewById(edTxt_amount);
-                et.setTextColor(okColor);
-                et.setHintTextColor(okColor);
-
-                LinearLayout layout = (LinearLayout) this.activity.findViewById(homeAmountContainer);
-                layout.setBackgroundResource(shape_thin_border);
-
-                break;
-
-            case CUSTOM_SPINNER_CATEGORY:
-
-                CustomSpinner spinCat = (CustomSpinner) this.activity.findViewById(R.id.spinner_category);
-                spinCat.setBackgroundResource(shape_thin_border);
-
-                break;
-
-            case CUSTOM_SPINNER_STORE:
-
-                CustomSpinner spinSt = (CustomSpinner) this.activity.findViewById(R.id.spinner_store);
-                spinSt.setBackgroundResource(shape_thin_border);
-
-                break;
-        }
-    }
-
-
-    public void unmarkInputErrorAll(){
-        int okColor = ContextCompat.getColor(this.activity, R.color.appWhite);
-
-        //amount
-        EditText et = (EditText) this.activity.findViewById(edTxt_amount);
-        et.setTextColor(okColor);
-        et.setHintTextColor(okColor);
-
-        LinearLayout layout = (LinearLayout) this.activity.findViewById(homeAmountContainer);
-        layout.setBackgroundResource(shape_thin_border);
-
-
-        //category
-        CustomSpinner spinCat = (CustomSpinner) this.activity.findViewById(R.id.spinner_category);
-        spinCat.setBackgroundResource(shape_thin_border);
-
-
-        //store
-        CustomSpinner spinSt = (CustomSpinner) this.activity.findViewById(R.id.spinner_store);
-        spinSt.setBackgroundResource(shape_thin_border);
-
-    }
-
-
-    /*public void unmarkInputError(){
-        int okColor = ContextCompat.getColor(this.activity, R.color.appWhite);
-
-        EditText et = (EditText) this.activity.findViewById(edTxt_amount);
-        et.setTextColor(okColor);
-        et.setHintTextColor(okColor);
-
-        LinearLayout layout = (LinearLayout) this.activity.findViewById(homeAmountContainer);
-        layout.setBackgroundResource(shape_thin_border);
-    }*/
-
+    /**
+     * Fills payment info into payment input elements.
+     * @param p a payment being edited
+     */
     public void fillPaymentInfoOnUpdate(Payment p){
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(p.getDateLong());
@@ -844,7 +664,6 @@ public class HomeUIController {
 
         //category spinner
         CustomSpinner catSpin = (CustomSpinner) this.activity.findViewById(R.id.spinner_category);
-        //catSpin.setSelection(catSpin.findSpinnerItemIndex(p.getCategory().getName()), true);
         catSpin.selectItem(p.getCategory().getName());
 
         //amount edittext
@@ -857,11 +676,13 @@ public class HomeUIController {
 
         //store spinner
         CustomSpinner stSpin = (CustomSpinner) this.activity.findViewById(R.id.spinner_store);
-        //stSpin.setSelection(stSpin.findSpinnerItemIndex(p.getStore().getName()), true);
         stSpin.selectItem(p.getStore().getName());
     }
 
-
+    /**
+     * Sets texts of insert/update control button.
+     * @param editing   a flag indicating whether is a payment being edited or not
+     */
     public void setInsertUpdateButtonText(boolean editing) {
         Button btn = (Button) this.activity.findViewById(R.id.btn_ok);
 
@@ -872,6 +693,10 @@ public class HomeUIController {
         }
     }
 
+    /**
+     * Sets texts of clear/cancel control button.
+     * @param editing   a flag indicating whether is a payment being edited or not
+     */
     public void setClearCancelButtonText(boolean editing){
         Button btn = (Button) this.activity.findViewById(R.id.btn_clear);
 
@@ -882,6 +707,9 @@ public class HomeUIController {
         }
     }
 
+    /**
+     * Updates a height of payment records.
+     */
     public void updateRecordsHeight(){
         boolean collapsed = SharedPrefs.isPaymentNoteDisplaySet() && !SharedPrefs.getPaymentNoteDisplay();
             int childcount = paymentRecordsContainer.getChildCount();
@@ -896,6 +724,10 @@ public class HomeUIController {
         }
     }
 
+    /**
+     * Updates a date being currently viewed.
+     * @param date  a new date
+     */
     public void updateDateViewed(DateTime date){
         this.date_month = date.getMonthOfYear();
 
@@ -913,37 +745,4 @@ public class HomeUIController {
         this.date_month = m;
         this.date_day = d;
     }
-
-    /*public void hideImgButton(View v){
-        this.lastImgButton = v;
-        this.lastImgButton.setVisibility(View.INVISIBLE);
-    }
-
-    public void showLastImgButton(){
-        this.lastImgButton.setVisibility(View.VISIBLE);
-    }*/
-
-
-    // TODO: 01.04.16 DELETE
-    private void resetVisitOnDoubleTap(){
-        final GestureDetector.SimpleOnGestureListener listener = new GestureDetector.SimpleOnGestureListener() {
-            public boolean onDoubleTap(MotionEvent e) {
-                SharedPrefs.clear();
-                Toast.makeText(activity, "Time-travelled back.", Toast.LENGTH_SHORT).show();
-                return true;
-            }
-        };
-
-        final GestureDetector detector = new GestureDetector(listener);
-        detector.setOnDoubleTapListener(listener);
-
-        this.activity.getWindow().getDecorView().setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent event) {
-                return detector.onTouchEvent(event);
-            }
-        });
-
-    }
-
 }

@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import cz.ondrejpittl.semestralka.R;
 import cz.ondrejpittl.semestralka.layout.PaymentRecord;
 import cz.ondrejpittl.semestralka.partial.PaymentRecordStateEnum;
-import cz.ondrejpittl.semestralka.partial.PaymentRecordsAnimation;
 import cz.ondrejpittl.semestralka.partial.SharedPrefs;
 
 /**
@@ -26,6 +25,11 @@ import cz.ondrejpittl.semestralka.partial.SharedPrefs;
 public class AnimationFactory {
 
 
+    /**
+     * Fades out a view given with delay.
+     * @param v     a view given
+     * @param delay a delay of an animation
+     */
     public static void fadeOut(final View v, int delay) {
         boolean animationAllowed = SharedPrefs.isPaymentAnimationSet() && SharedPrefs.getPaymentAnimation();
 
@@ -43,6 +47,11 @@ public class AnimationFactory {
         }, delay);
     }
 
+    /**
+     * Fades in a view given with delay.
+     * @param v     a view given
+     * @param delay a delay of an animation
+     */
     public static void fadeIn(final View v, int delay){
         boolean animationAllowed = SharedPrefs.isPaymentAnimationSet() && SharedPrefs.getPaymentAnimation();
 
@@ -60,6 +69,10 @@ public class AnimationFactory {
         }, delay);
     }
 
+    /**
+     * Fades in all payment records given.
+     * @param records   a payment collection given
+     */
     public static void fadeInPaymentRecords(final ArrayList<PaymentRecord> records){
         int y = 0;
         for (final PaymentRecord rec : records) {
@@ -68,6 +81,10 @@ public class AnimationFactory {
         }
     }
 
+    /**
+     * Fades out all payment records given.
+     * @param records   a payment record collection given
+     */
     public static void fadeOutPaymentRecords(final ArrayList<PaymentRecord> records){
         if(records == null || records.size() <= 0)
             return;
@@ -76,8 +93,6 @@ public class AnimationFactory {
             fadeOut(rec, 0);
         }
     }
-
-
 
     /**
      * Function animating edit/delete action button.
@@ -89,14 +104,8 @@ public class AnimationFactory {
         final int from, diff;
 
         rec.setActionBtnAnimating(true);
-        //actionBtnAnimating = true;
-
-        //from = actionButtonWidth;
         from = rec.getActionButtonWidth();
         diff = Math.abs(to - from);
-
-        Log.i("Ondra", "from: " + from);
-        Log.i("Ondra", "to: " + to);
 
         Animation a = new Animation() {
             protected void applyTransformation(float interpolatedTime, Transformation t) {
@@ -117,16 +126,12 @@ public class AnimationFactory {
                     realWidth = (int)(base + diff * interTime);
                 }
 
-                Log.i("Ondra", "inter-time: " + interTime);
+                /*Log.i("Ondra", "inter-time: " + interTime);
                 Log.i("Ondra", "w: " + (int)(diff * interTime));
-                Log.i("Ondra", "realWidth: " + realWidth);
+                Log.i("Ondra", "realWidth: " + realWidth);*/
 
                 actionButton.getLayoutParams().width = realWidth;
                 actionButton.requestLayout();
-
-                Log.i("Ondra", "nastaveno: " + actionButton.getLayoutParams().width);
-
-
             }
             public boolean willChangeBounds() {
                 return true;
@@ -150,34 +155,7 @@ public class AnimationFactory {
 
                 }
 
-                //actionBtnAnimating = false;
                 rec.setActionBtnAnimating(false);
-
-
-                /*if(recState == PaymentRecordStateEnum.DELETE_ACTIVE) {
-
-                    if(to < from) {
-                        //deleteActionVisible = false;
-                        //state = PaymentRecordStateEnum.NORMAL;
-                        rec.setState(PaymentRecordStateEnum.NORMAL);
-
-                    } else {
-                        //deleteActionVisible = true;
-                        //state = PaymentRecordStateEnum.DELETE_ACTIVE;
-                        rec.setState(PaymentRecordStateEnum.DELETE_ACTIVE);
-                    }
-
-                } else if(recState == PaymentRecordStateEnum.EDIT_ACTIVE) {
-
-                    if(to < from) {
-                        //state = PaymentRecordStateEnum.NORMAL;
-                        rec.setState(PaymentRecordStateEnum.NORMAL);
-                    } else {
-                        //state = PaymentRecordStateEnum.EDIT_ACTIVE;
-                        rec.setState(PaymentRecordStateEnum.EDIT_ACTIVE);
-                    }
-
-                }*/
             }
         });
 
@@ -195,11 +173,6 @@ public class AnimationFactory {
 
         if(rec.getCollapsedHeight() < 0)
             rec.setCollapsedHeight(v.getHeight() - 5);
-
-        /*//note height
-        TextView tvNote = (TextView) v.findViewById(R.id.txtViewRecordNote);
-        tvNote.measure(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        final int noteHeight = tvNote.getMeasuredHeight() + 10;*/
 
         //base height
         final int targetHeight = rec.getCollapsedHeight();
@@ -240,15 +213,4 @@ public class AnimationFactory {
         a.setFillAfter(true);
         v.startAnimation(a);
     }
-
-
-
-
-
-
-
-
-
-
-
 }

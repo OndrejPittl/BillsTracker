@@ -5,6 +5,19 @@ package cz.ondrejpittl.semestralka.partial;
  */
 public enum PaymentRecordStateEnum {
 
-    DELETE_ACTIVE, NORMAL, EDIT_ACTIVE;
+    /**
+     * Payment record state flag – delete active.
+     */
+    DELETE_ACTIVE,
+
+    /**
+     * Payment record state flag – normal.
+     */
+    NORMAL,
+
+    /**
+     * Payment record state flag – edit active.
+     */
+    EDIT_ACTIVE;
 
 }

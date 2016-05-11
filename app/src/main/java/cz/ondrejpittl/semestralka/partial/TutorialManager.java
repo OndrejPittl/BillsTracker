@@ -15,35 +15,83 @@ import cz.ondrejpittl.semestralka.factories.AnimationFactory;
  */
 public class TutorialManager {
 
+    /**
+     * Interface of a single tutorial step.
+     */
     interface TutorialStep {
         void start();
     }
 
+    /**
+     * Activity reference.
+     */
     private HomeActivity activity;
 
+    /**
+     * Empty overlay view catches the click/tap events.
+     */
     private View emptyOverlay;
 
+    /**
+     * A collection of previously displayed views.
+     */
     private View[] lastViews = null;
 
+    /**
+     * A flag indicating whether is a steb being animated or not.
+     */
     private boolean animating;
 
 
-    //overlay1
+    /**
+     * Controls overlay – payment list is viewed.
+     */
     private View controlsPaymentListOverlay;
+
+    /**
+     * Controls overlay – buttons are viewed.
+     */
     private View controlsButtonsOverlay;
+
+    /**
+     * Controls overlay – full-size dark overlay.
+     */
     private View controlsClearOverlay;
 
-    //overlay2
+
+    /**
+     * Payments overlay – controls are viewed.
+     */
     private View paymentsControlsOverlay;
+
+    /**
+     * Payments overlay – payment is viewed.
+     */
     private View paymentsPaymentOverlay;
+
+    /**
+     * Payments overlay – stats are viewed.
+     */
     private View paymentsStatisticsOverlay;
+
+    /**
+     * Payments overlay – full-size dark overlay.
+     */
     private View paymentsClearOverlay;
 
-    //overlay3
+    /**
+     * Statistics overlay – full-size dark overlay.
+     */
     private View statisticsClearOverlay;
 
+    /**
+     * Current step of a tutorial.
+     */
     private int step;
 
+    /**
+     * Steps of a tutorial.
+     */
     private TutorialStep[] steps = {
         new TutorialStep() { public void start() { explainControls(); }},
         new TutorialStep() { public void start() { explainActivityButtons(); }},
@@ -53,13 +101,19 @@ public class TutorialManager {
         new TutorialStep() {public void start() { hideAll(); }}
     };
 
-
+    /**
+     *  Consructor. Basics initialization.
+     * @param activity  acrivity reference
+     */
     public TutorialManager(HomeActivity activity) {
         this.activity = activity;
         this.init();
         this.setListeners();
     }
 
+    /**
+     * Tutorial manager initialization.
+     */
     private void init(){
         this.step = 0;
         this.animating = false;
@@ -78,6 +132,9 @@ public class TutorialManager {
         this.statisticsClearOverlay = this.activity.findViewById(R.id.overlay3Light);
     }
 
+    /**
+     * Sets click handler on an empty overlaying view catching events.
+     */
     private void setListeners(){
         this.emptyOverlay.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -87,11 +144,17 @@ public class TutorialManager {
         });
     }
 
+    /**
+     * Go next tutorial step.
+     */
     private void goNext(){
         this.animating = true;
         this.steps[this.step++].start();
     }
 
+    /**
+     * Start a tutorial.
+     */
     public void start(){
         this.activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         this.activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
@@ -100,6 +163,10 @@ public class TutorialManager {
         this.goNext();
     }
 
+    /**
+     * Getter of an animation delay.
+     * @return  animation delay
+     */
     private int getAnimationDelay(){
         int delay = 0;
 
@@ -109,6 +176,9 @@ public class TutorialManager {
         return delay;
     }
 
+    /**
+     * Controls explaining tutorial step.
+     */
     public void explainControls(){
         this.hideVisible();
 
@@ -120,6 +190,9 @@ public class TutorialManager {
         this.animateIn(overlays);
     }
 
+    /**
+     * Activity buttons explaining tutorial step.
+     */
     public void explainActivityButtons(){
         this.hideVisible();
 
@@ -132,6 +205,9 @@ public class TutorialManager {
         this.animateIn(overlays);
     }
 
+    /**
+     * Payment list explaining tutorial step.
+     */
     public void explainPaymentList(){
         this.hideVisible();
 
@@ -143,6 +219,9 @@ public class TutorialManager {
         this.animateIn(overlays);
     }
 
+    /**
+     * Payment explaining tutorial step.
+     */
     public void explainPayment(){
         this.hideVisible();
 
@@ -155,6 +234,9 @@ public class TutorialManager {
         this.animateIn(overlays);
     }
 
+    /**
+     * Compact stats explaining tutorial step.
+     */
     public void explainStats(){
         this.hideVisible();
 
@@ -166,6 +248,10 @@ public class TutorialManager {
         this.animateIn(overlays);
     }
 
+    /**
+     * Intro animation of all views given.
+     * @param overlays  views to be animated
+     */
     private void animateIn(View[] overlays){
         this.resetAlpha(overlays, this.getAnimationDelay());
         this.show(overlays, this.getAnimationDelay() + 200);
@@ -173,16 +259,24 @@ public class TutorialManager {
         this.lastViews = overlays;
     }
 
+    /**
+     * Fades out all overlays given after a delay.
+     * @param overlays  views given
+     * @param delay     animation delay
+     */
     private void fadeOut(View[] overlays, int delay){
         for (View v : overlays) {
-            Log.i("Ondra-tut", "fading out: " + v);
             AnimationFactory.fadeOut(v, delay);
         }
     }
 
+    /**
+     * Fades in all overlays given after a delay.
+     * @param overlays  views given
+     * @param delay     animation delay
+     */
     private void fadeIn(View[] overlays, int delay){
         for (View v : overlays) {
-            Log.i("Ondra-tut", "fading in: " + v);
             AnimationFactory.fadeIn(v, delay);
         }
 
@@ -193,6 +287,11 @@ public class TutorialManager {
         }, delay + getAnimationDelay() + 300);
     }
 
+    /**
+     * Hides all overlays given after a delay.
+     * @param overlays  views given
+     * @param delay     animation delay
+     */
     private void hide(final View[] overlays, int delay){
         new Handler().postDelayed(new Runnable() {
             public void run() {
@@ -204,6 +303,11 @@ public class TutorialManager {
         }, delay);
     }
 
+    /**
+     * Shows all overlays given after a delay.
+     * @param overlays  views given
+     * @param delay     animation delay
+     */
     private void show(final View[] overlays, int delay){
         new Handler().postDelayed(new Runnable() {
             public void run() {
@@ -215,6 +319,9 @@ public class TutorialManager {
 
     }
 
+    /**
+     * Hides all overlays immediately.
+     */
     private void hideAll(){
         this.step = 0;
         this.emptyOverlay.setVisibility(View.GONE);
@@ -224,14 +331,21 @@ public class TutorialManager {
         this.activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
     }
 
+    /**
+     * Fades out last visible collection of views.
+     */
     private void hideVisible(){
-        Log.i("Ondra-tut", "hiding visible");
         if(this.lastViews == null) return;
 
         this.fadeOut(this.lastViews, 0);
         this.hide(this.lastViews, getAnimationDelay());
     }
 
+    /**
+     * Resets alpha of overlays given after a delay.
+     * @param overlays  views given
+     * @param delay     animation delay
+     */
     private void resetAlpha(final View[] overlays, int delay){
         new Handler().postDelayed(new Runnable() {
             public void run() {

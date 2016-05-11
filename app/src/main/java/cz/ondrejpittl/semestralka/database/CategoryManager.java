@@ -56,6 +56,11 @@ public class CategoryManager extends TableManager {
         Log.i("Ondra", "Category Manager constructor");
     }
 
+    /**
+     * Builds category table.
+     * @param db    db reference
+     * @param res   resources
+     */
     public void createCategoriesTable(SQLiteDatabase db, Resources res) {
         this.db = db;
         this.res = res;
@@ -70,6 +75,9 @@ public class CategoryManager extends TableManager {
         fillCategoriesTableFromXML();
     }
 
+    /**
+     * Fills an empty category table from XML values.
+     */
     private void fillCategoriesTableFromXML() {
 
         try {
@@ -95,12 +103,24 @@ public class CategoryManager extends TableManager {
         }
     }
 
+    /**
+     * Inserts a new category.
+     * @param name  category name
+     * @param icon  category icon path
+     */
     public void insertCategory(String name, String icon){
         insertRecord(new String[][]{
                 {COLUMN_NAME, name},
                 {COLUMN_ICON, icon}
         });
     }
+
+    /**
+     * Inserts a new category.
+     * @param id    category id
+     * @param name  category name
+     * @param icon  category icon path
+     */
 
     private void insertCategory(String id, String name, String icon){
         insertRecord(new String[][]{
@@ -110,13 +130,22 @@ public class CategoryManager extends TableManager {
         });
     }
 
-
+    /**
+     * Alphabetical-ordered categories.
+     * @return  category list
+     */
     public ArrayList<Category> selectAllCategoriesFrequencyOrdered(){
         return this.selectCategories(null, new String[][]{
                 {"name COLLATE NOCASE", "asc"}
         });
     }
 
+    /**
+     * Selects all categories from FB.
+     * @param wheres    where conditions
+     * @param orderBy   orderby conditions
+     * @return  list of all categories
+     */
     public ArrayList<Category> selectCategories(String[][] wheres, String[][] orderBy) {
         //wheres: {{"name", "=", "John"}, {"age", "<", 27}}
         //orderBy: {{"id", "asc"}, {"name", "desc"}}
@@ -128,20 +157,11 @@ public class CategoryManager extends TableManager {
         return col;
     }
 
-
-
-    public ArrayList<Category> selectAllCategories(){
-        //selectRecordsDetailed(String tableCols, String tables, String[][] wheres,  String[] groupBy, String[][] orderBy, int limit)
-        //Cursor c = selectRecordsDetailed(getAllColumnsSelector(), TABLE_NAME, null, null, new String[][]{{getColumnNameAliased(), "asc"}}, -1);
-        //Cursor c = selectRecordsDetailed("*", TABLE_NAME, null, null, null, -1);
-
-        Cursor c = selectAllRecords();
-        ArrayList<Category> col = this.buildCategoriesArraylistFromCursor(c);
-        c.close();
-
-        return col;
-    }
-
+    /**
+     * Builds a list of categories from a cursor.
+     * @param c cursor
+     * @return  list of categories
+     */
     private ArrayList<Category> buildCategoriesArraylistFromCursor(Cursor c){
         ArrayList<Category> categories = new ArrayList<Category>();
 
@@ -158,40 +178,54 @@ public class CategoryManager extends TableManager {
         return categories;
     }
 
+    /**
+     * Aliased id column.
+     * @return  Aliased id column
+     */
     public static String getColumnIdAliased(){
         return ALIAS_PREFIX + COLUMN_ID;
     }
 
+    /**
+     * Aliased name column.
+     * @return  Aliased name column
+     */
     public static String getColumnNameAliased(){
         return ALIAS_PREFIX + COLUMN_NAME;
     }
 
+    /**
+     * Aliased icon column.
+     * @return  Aliased icon column
+     */
     public static String getColumnIconAliased(){
         return ALIAS_PREFIX + COLUMN_ICON;
     }
 
-    public static String getColumnId(){
-        return COLUMN_ID;
-    }
-
+    /**
+     * Name column.
+     * @return  Name column
+     */
     public static String getColumnName(){
         return COLUMN_NAME;
     }
 
+    /**
+     * All aliased colums selector.
+     * @return all aliased colums selector
+     */
     public String getAllColumnsSelector(){
         return TABLE_NAME + "." + COLUMN_ID + " as " + getColumnIdAliased()  + ", "
                 + TABLE_NAME + "." + COLUMN_NAME + " as " + getColumnNameAliased()  + ", "
                 + TABLE_NAME + "." + COLUMN_ICON + " as " + getColumnIconAliased();
     }
 
-
-
+    /**
+     * Deletes category.
+     * @param wheres    where conditions
+     * @return          number of rows affected
+     */
     public int deleteCategory(String[][] wheres){
         return deleteRecord(wheres);
     }
-
-    public int getCategoriesCount(){
-        return getRecordCount();
-    }
-
 }

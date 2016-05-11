@@ -28,24 +28,49 @@ import cz.ondrejpittl.semestralka.partial.LoadingButtonType;
  */
 public class LoadingImgButton extends FrameLayout {
 
+    /**
+     * An activity reference.
+     */
     private Activity activity;
 
+    /**
+     * Differs statistics/settings button.
+     */
     private LoadingButtonType type;
 
+    /**
+     * Image button reference.
+     */
     private ImageButton btn;
 
+    /**
+     * A progress bar running on background.
+     */
     private ProgressBar bar;
 
 
-
+    /**
+     * A constructor. Basics initialization.
+     * @param context   an activity context reference
+     */
     public LoadingImgButton(Context context) {
         super(context);
     }
 
+    /**
+     * A constructor. Basics initialization.
+     * @param context   an activity context reference
+     * @param attrs     xml attributes
+     */
     public LoadingImgButton(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
+    /**
+     * Initialization.
+     * @param type      type of a button – settings btn / stats btn
+     * @param activity  an activity reference
+     */
     public void init(LoadingButtonType type, Activity activity){
         this.type = type;
         this.activity = activity;
@@ -71,6 +96,9 @@ public class LoadingImgButton extends FrameLayout {
         }
     }
 
+    /**
+     * OnClick event handler.
+     */
     private void setBtnOnClick(){
         this.btn.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
@@ -108,6 +136,9 @@ public class LoadingImgButton extends FrameLayout {
         });
     }
 
+    /**
+     * Resets a button.
+     */
     public void reset(){
         this.btn.setVisibility(VISIBLE);
         this.bar.setVisibility(INVISIBLE);

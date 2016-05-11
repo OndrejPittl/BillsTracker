@@ -31,12 +31,12 @@ public class StatisticsActivity extends AppCompatActivity {
     private static Locale originLocale;
 
     /**
-     *
+     *  Stores displayed month/year.
      */
     private DateTime calendar;
 
     /**
-     *
+     *  Stores displayed category.
      */
     private String category;
 
@@ -55,10 +55,8 @@ public class StatisticsActivity extends AppCompatActivity {
      */
     private DBManager dbManager;
 
-
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.i("Ondra-init", "initializing Statistics activity");
-
         super.onCreate(savedInstanceState);
         Designer.setFullscreenActivity(this);
         setContentView(R.layout.activity_statistics);
@@ -66,6 +64,7 @@ public class StatisticsActivity extends AppCompatActivity {
         this.init();
     }
 
+    @Override
     public void onDestroy() {
         super.onDestroy();
         Runtime.getRuntime().gc();
@@ -78,10 +77,6 @@ public class StatisticsActivity extends AppCompatActivity {
         Designer.updateDesign(this);
         this.originLocale = Locale.getDefault();
         this.calendar = new DateTime();
-
-        Log.i("Ondra-debugLand", "-------------------------------------");
-        Log.i("Ondra-debugLand", "initializing Statistics Activity");
-        Log.i("Ondra-stats", this.calendar.toDateTime().toString());
 
         this.category = "";
 
@@ -105,8 +100,6 @@ public class StatisticsActivity extends AppCompatActivity {
         int month = this.calendar.getMonthOfYear(),
             year = this.calendar.getYearOfEra();
 
-        Log.i("Ondra-stats", "init: " + this.calendar.toDateTime());
-
         //Month stats
         StatisticsChartObject monthStatsData = this.controllerData.computeMonthStatsData(month, year, this.category);
         this.controllerUI.setMonthStatsData(monthStatsData);
@@ -125,8 +118,6 @@ public class StatisticsActivity extends AppCompatActivity {
      * @param category  changed category
      */
     public void handleDisplayCategoryChange(Category category){
-        Log.i("Ondra-stats", "selected category – id: " + category.getID() + ", name: " + category.getName());
-
         if(category.getID() == -1) {
             this.category = "";
         } else {

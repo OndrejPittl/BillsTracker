@@ -19,34 +19,37 @@ import cz.ondrejpittl.semestralka.partial.StatisticsChartObject;
  */
 public class StatsDataController {
 
-    private StatisticsActivity activity;
-
+    /**
+     * UIController reference.
+     */
     private StatsUIController controllerUI;
 
+    /**
+     * DB managing object reference.
+     */
     private DBManager dbManager;
 
 
-
+    /**
+     * A controller. Initializes a model layer of this activity.
+     * @param activity  StatisticsActivity
+     */
     public StatsDataController(StatisticsActivity activity) {
-        this.activity = activity;
         this.dbManager = activity.getDbManager();
         this.controllerUI = activity.getControllerUI();
         this.loadStoredCategories();
-
-        Log.i("Ondra-debugLand", "initializing DATA controller.");
-
-        /*
-            this.xData = new String[]{"Sony", "Huawei", "LG", "Apple", "Samsung"};
-            this.yData =  new int[]{5, 10, 15, 30, 40};
-        */
     }
 
+    /**
+     * Computes month line-chart data.
+     * @param data  statistics object container
+     * @param payments  payment list
+     */
     private void computeMonthLineStatsData(StatisticsChartObject data, ArrayList<Payment> payments){
         ArrayList<String> xVals = new ArrayList<>();
         ArrayList<Entry> yVals = new ArrayList<>();
 
         float[] amounts = computeDayAmounts(data, payments);
-
 
         float sum = 0;
         int index = 0;
@@ -65,6 +68,12 @@ public class StatsDataController {
         data.buildLineChartData(xVals, yVals);
     }
 
+    /**
+     * Summarizes payment amounts day by day.
+     * @param data      statistics container
+     * @param payments  list of payments
+     * @return          summarized amounts
+     */
     private float[] computeDayAmounts(StatisticsChartObject data, ArrayList<Payment> payments){
         int dayCount = JodaCalendar.getDayCountInMonth(data.getMonth());
         float[] amounts = new float[dayCount];
@@ -81,6 +90,11 @@ public class StatsDataController {
         return amounts;
     }
 
+    /**
+     * Summarizes payment amounts day (in a week) by day.
+     * @param payments  list of payments
+     * @return  summarized payment amounts
+     */
     private float[] computeDayWeekAmounts(ArrayList<Payment> payments){
         int dayCount = 7;
         float[] amounts = new float[dayCount];
@@ -98,6 +112,11 @@ public class StatsDataController {
         return amounts;
     }
 
+    /**
+     * Summarizes amounts of a year.
+     * @param payments  list of payments
+     * @return  summarized amounts
+     */
     private float[] computeYearAmounts(ArrayList<Payment> payments){
         float[] amounts = new float[]{ 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f };
 
@@ -113,6 +132,11 @@ public class StatsDataController {
         return amounts;
     }
 
+    /**
+     * Computes month bar-chart data.
+     * @param data  statistics container
+     * @param payments  payment list
+     */
     private void computeMonthDayMonthBarData(StatisticsChartObject data, ArrayList<Payment> payments){
         ArrayList<String> xVals = new ArrayList<>();
         ArrayList<BarEntry> yVals = new ArrayList<>();
@@ -131,6 +155,11 @@ public class StatsDataController {
         data.buildBarChartData(xVals, yVals);
     }
 
+    /**
+     * Computes month bar-chart data.
+     * @param data  statistics container
+     * @param payments  payment list
+     */
     private void computeDayWeekBarData(StatisticsChartObject data, ArrayList<Payment> payments){
         String[] days;
         ArrayList<String> xVals = new ArrayList<>();
@@ -160,22 +189,14 @@ public class StatsDataController {
             yVals.add(new BarEntry(amounts[i], index++));
         }
 
-
-        /*Iterator it = amounts.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry)it.next();
-
-            String d = (String) pair.getKey();
-
-            xVals.add(d);
-            yVals.add(new BarEntry((float) pair.getValue(), index++));
-
-            it.remove();
-        }*/
-
         data.buildWeekDayBarChartData(xVals, yVals);
     }
 
+    /**
+     * Computes month pie-chart data.
+     * @param data  statistics container
+     * @param payments  payment list
+     */
     private void computePieStatsData(StatisticsChartObject data, ArrayList<Payment> payments){
         ArrayList<String> xVals = new ArrayList<>();
         ArrayList<Entry> yVals = new ArrayList<>();
@@ -189,6 +210,11 @@ public class StatsDataController {
         data.buildPieChartData(xVals, yVals);
     }
 
+    /**
+     * Computes year bar-chart data.
+     * @param data  statistics container
+     * @param payments  payment list
+     */
     private void computeYearMonthBarData(StatisticsChartObject data, ArrayList<Payment> payments){
         ArrayList<String> xVals = new ArrayList<>();
         ArrayList<BarEntry> yVals = new ArrayList<>();
@@ -213,6 +239,11 @@ public class StatsDataController {
         data.buildBarChartData(xVals, yVals);
     }
 
+    /**
+     * Computes year line-chart data.
+     * @param data  statistics container
+     * @param payments  payment list
+     */
     private void computeYearLineStatsData(StatisticsChartObject data, ArrayList<Payment> payments){
         ArrayList<String> xVals = new ArrayList<>();
         ArrayList<Entry> yVals = new ArrayList<>();
@@ -235,6 +266,9 @@ public class StatsDataController {
         data.buildLineChartData(xVals, yVals);
     }
 
+    /**
+     * Loads stored categories.
+     */
     private void loadStoredCategories(){
         ArrayList<Category> categories = new ArrayList<>();
         categories.add(new Category(-1, "– all –"));
@@ -242,6 +276,13 @@ public class StatsDataController {
         this.controllerUI.buildCategoryControls(categories);
     }
 
+    /**
+     * Computes month statistics data.
+     * @param month     month
+     * @param year      year
+     * @param category  category
+     * @return  parametrized statistics data
+     */
     public StatisticsChartObject computeMonthStatsData(int month, int year, String category){
 
         Log.i("Ondra-stats", "Computing month stats: ");
@@ -257,15 +298,18 @@ public class StatsDataController {
         this.computeMonthLineStatsData(data, payments);
         this.computeDayWeekBarData(data, payments);
 
-
         payments = this.dbManager.getCategorySummaryByMonth(month, year, category);
         this.computePieStatsData(data, payments);
-
-
 
         return data;
     }
 
+    /**
+     * Computes year statistics data.
+     * @param year      year
+     * @param category  category
+     * @return  computed stats data
+     */
     public StatisticsChartObject computeYearStatsData(int year, String category){
 
         Log.i("Ondra-stats", "Computing year stats: ");
@@ -278,9 +322,6 @@ public class StatsDataController {
         //payments loaded from DB
         ArrayList<Payment> payments = this.dbManager.getPaymentsByYear(year, category);
 
-        /*for (Payment p : payments)
-            Log.i("Ondra-stats", "yearstats: " + p);*/
-
         this.computeYearMonthBarData(data, payments);
         this.computeYearLineStatsData(data, payments);
         this.computeDayWeekBarData(data, payments);
@@ -288,48 +329,6 @@ public class StatsDataController {
         payments = this.dbManager.getCategorySummaryByYear(year, category);
         this.computePieStatsData(data, payments);
 
-
-
         return data;
     }
-
-
 }
-
-
-
-
- /*String[] daysXData = new String[30];
-        for (int i = 0; i < daysXData.length; i++) {
-            daysXData[i] = String.valueOf(i + 1);
-        }*/
-
-        /*int[] yData = new int[5];
-        for (int i = 0; i < yData.length; i++) {
-            yData[i] = i * 2;
-        }*/
-
-//int[] yData = new int[]{200, 500, 169, 230, 891, 169, 1205};
-
-
-
-        /*for(int i = 0; i < paymentCount; i++) {
-            xVals.add(daysXData[i]);
-        }*/
-
-        /*xVals.add(daysXData[2]);
-        xVals.add(daysXData[3]);
-        xVals.add(daysXData[9]);
-        xVals.add(daysXData[15]);
-        xVals.add(daysXData[17]);
-        xVals.add(daysXData[22]);
-        xVals.add(daysXData[29]);*/
-
-
-
-//(int) (Math.random() * 9 + 1);
-        /*ArrayList<Entry> yVals = new ArrayList<>();
-        for(int i = 0; i < paymentCount; i++) {
-            //yVals.add(new Entry((int) (Math.random() * 9 + 1), i));
-            yVals.add(new Entry(yData[i], i));
-        }*/

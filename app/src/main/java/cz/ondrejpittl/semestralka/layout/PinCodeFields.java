@@ -15,28 +15,50 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import cz.ondrejpittl.semestralka.R;
+import cz.ondrejpittl.semestralka.partial.Designer;
 import cz.ondrejpittl.semestralka.partial.SharedPrefs;
 
 /**
  * Created by OndrejPittl on 22.04.16.
  */
 public class PinCodeFields extends LinearLayout {
+
+    /**
+     * Activity context reference.
+     */
     private Context context;
 
+    /**
+     * Activity reference.
+     */
     private Activity activity;
 
+    /**
+     * PIN field count.
+     */
     private int fieldCount = 4;
 
+    /**
+     * Pin fields.
+     */
     private EditText[] fields;
 
 
+    /**
+     * A constructor. Basics initialization.
+     * @param context   an activity context reference
+     */
     public PinCodeFields(Context context) {
         super(context);
         this.context = context;
         this.activity = (Activity) context;
-        //this.activity = (WelcomeActivity) context;
     }
 
+    /**
+     * A constructor. Basics initialization.
+     * @param context   an activity context reference
+     * @param attrs     xml attributes
+     */
     public PinCodeFields(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.context = context;
@@ -70,26 +92,26 @@ public class PinCodeFields extends LinearLayout {
         }
     }
 
+    /**
+     * Sets black background and text color.
+     */
     public void setFieldsColorBlack(){
         for (int i = 0; i < 4; i++) {
-            //this.fields[i].setBackground(this.activity.getResources().getDrawable(R.drawable.pin_code_input_style_black));
             this.fields[i].setBackgroundResource(R.drawable.pin_code_input_style_black);
             this.fields[i].setTextColor(ContextCompat.getColor(getContext(), R.color.appTextBlack));
-            //this.fields[i].setBackgroundDrawable(ContextCompat.getDrawable(getContext(), R.drawable.pin_code_input_style_black));
         }
 
-        //LinearLayout container = (LinearLayout) findViewById(R.id.pinCodeFieldsWrapperContainer);
-        this.setPadding(dpToPx(30, this.activity), dpToPx(5, this.activity), dpToPx(30, this.activity), dpToPx(5, this.activity));
+        this.setPadding(
+                Designer.dpToPx(30, this.activity),
+                Designer.dpToPx(5, this.activity),
+                Designer.dpToPx(30, this.activity),
+                Designer.dpToPx(5, this.activity)
+        );
 
         ImageButton eraseBtn = (ImageButton) findViewById(R.id.pinClearBtn);
         eraseBtn.setImageResource(R.drawable.erase_black);
     }
 
-    private int dpToPx(int dp, Activity activity) {
-        DisplayMetrics displayMetrics = activity.getResources().getDisplayMetrics();
-        int px = Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
-        return px;
-    }
 
     /**
      * Handles requesting focus of next element after entering a value into a PIN input field.
@@ -97,23 +119,6 @@ public class PinCodeFields extends LinearLayout {
      * @param field Field its text is being changed.
      */
     private void setPinCodeTextChangeListener(final EditText field){
-
-        /*field.addTextChangedListener(new TextWatcher() {
-            public void afterTextChanged(Editable s) {
-                Log.d("Ondra-pin", "after");
-            }
-
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                Log.d("Ondra-pin", "before");
-            }
-
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                Log.d("Ondra-pin", "on");
-            }
-        });*/
-
-
-
         field.setOnKeyListener(new OnKeyListener() {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 Log.i("Ondra-pin", "code: " + keyCode);
@@ -133,31 +138,39 @@ public class PinCodeFields extends LinearLayout {
         });
     }
 
+    /**
+     * Deletes all PIN fields and sets focus on the first one.
+     */
     private void delAndGoFirst(){
-        //Log.i("Ondra-pin", "BACKSPACED");
-
         for (EditText e : this.fields) {
             e.setText("");
         }
 
         goFirst();
-
         return;
     }
 
+    /**
+     * Writes a character (numter) and sets focus on next field.
+     * @param field current field
+     */
     private void writeAndGoNext(EditText field){
-
         //field EMPTY -> nothing to do
         if (field.getText().length() <= 0) return;
-
         this.goNext(field);
-
     }
 
+    /**
+     * Sets a focus on the first field.
+     */
     private void goFirst() {
         fields[0].requestFocus();
     }
 
+    /**
+     * Sets a focus on a next field.
+     * @param field current field
+     */
     private void goNext(EditText field){
         int tag = (int) field.getTag();
         if (tag < fieldCount) {
@@ -170,14 +183,10 @@ public class PinCodeFields extends LinearLayout {
         }
     }
 
-    private void goPrev(EditText field){
-        int tag = (int) field.getTag();
-        if (tag > 1) {
-            //-1 -> id, -1 1 lower
-            fields[tag - 2].requestFocus();
-        }
-    }
-
+    /**
+     * Collects a PIN code.
+     * @return  PIN
+     */
     public String collectPINDigits(){
         String output = "";
 
@@ -188,31 +197,25 @@ public class PinCodeFields extends LinearLayout {
         return output;
     }
 
-
+    /**
+     *  Stores a PIN code.
+     */
     public void storePINCode(){
         String entered = collectPINDigits();
-        //String encrypted = encryptIt(entered);
-
-        /*Log.i("Ondra-prefs", "– storing PIN code –");
-        Log.i("Ondra-prefs", "entered: " + entered + " (" + encrypted + ")");*/
-
         SharedPrefs.storePINCode(entered);
         SharedPrefs.storeFirstTimeLaunched(false);
     }
 
+    /**
+     * Checks an entered PIN code with a stored one.
+     * @return  true – PIN is ok, false – not
+     */
     public boolean checkPINCode(){
-
         String entered = collectPINDigits();
-
-        /*Log.i("Ondra-prefs", "– checking PIN code –");
-        Log.i("Ondra-prefs", "entered PIN: " + entered + "(" + encrypted + ")");
-        Log.i("Ondra-prefs", "stored PIN: " + stored);*/
-
 
         if(SharedPrefs.checkPINCode(entered)) {
             Toast.makeText (
                     this.context,
-                    //activity.getApplicationContext(),
                     this.activity.getString(R.string.loginOK),
                     //"OK",
                     Toast.LENGTH_SHORT
@@ -220,7 +223,6 @@ public class PinCodeFields extends LinearLayout {
             return true;
         } else {
             Toast.makeText (
-                    //activity.getApplicationContext(),
                     this.context,
                     this.activity.getString(R.string.loginERR),
                     //"ERR",

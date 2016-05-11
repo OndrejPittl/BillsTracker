@@ -6,10 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import com.google.gson.Gson;
-
 import java.util.ArrayList;
-import java.util.Locale;
 
 import cz.ondrejpittl.semestralka.models.Category;
 import cz.ondrejpittl.semestralka.models.Currency;
@@ -22,45 +19,61 @@ import cz.ondrejpittl.semestralka.models.Store;
  */
 public class DBManager extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 6;
+    /**
+     * Database version.
+     */
+    //private static final int DATABASE_VERSION = 6;
 
+    /**
+     * Database name.
+     */
     private static final String DATABASE_NAME = "billstracker_database";
 
+    /**
+     * Payment management module.
+     */
     private PaymentsManager payments;
+
+    /**
+     * Store management module.
+     */
     private StoresManager stores;
+
+    /**
+     * Category management module.
+     */
     private CategoryManager categories;
+
+    /**
+     * Currencies management module.
+     */
     private CurrencyManager currencies;
 
+    /**
+     * Database reference.
+     */
     protected SQLiteDatabase db;
 
+    /**
+     * Activity context.
+     */
     private Context context;
 
 
-
-
+    /**
+     * A constructor. Initializes DB layer.
+     * @param context   activity context
+     */
     public DBManager(Context context) {
-        super(context, DATABASE_NAME, null, DATABASE_VERSION);
-
+        super(context, DATABASE_NAME, null, 1);
         this.context = context;
-
-        Log.i("Ondra", "DB Manager constructor");
-
 
         this.payments = new PaymentsManager(this);
         this.stores = new StoresManager(this);
         this.categories = new CategoryManager(this);
         this.currencies = new CurrencyManager(this);
 
-        Log.i("Ondra", "All table managers initialised.");
-
-
         this.db = getWritableDatabase();
-
-
-        Log.i("Ondra", "All tables created.");
-
-        Log.i("Ondra-debugLand", "initializing DB manager.");
-
     }
 
 
@@ -86,61 +99,126 @@ public class DBManager extends SQLiteOpenHelper {
         onCreate(db);
     }
 
+    /**
+     * Getter of stored stores.
+     * @return  stored stores
+     */
     public ArrayList<Store> getStoredStores(){
-        return this.stores.selectAllStoresFrequencyOrdered();
+        return this.stores.selectAllStoresAlphabeticalOrdered();
     }
 
+    /**
+     * Getter of stored categories.
+     * @return  stored categories
+     */
     public ArrayList<Category> getStoredCategories(){
         return this.categories.selectAllCategoriesFrequencyOrdered();
     }
 
+    /**
+     * Getter of stored currencies.
+     * @return  stored currencies
+     */
     public ArrayList<Currency> getStoredCurrencies(){
         return this.currencies.selectAllCurrency();
     }
 
+    /**
+     * Selects payments of a month.
+     * @param month month
+     * @param year  year
+     * @return      payments of a month
+     */
     public ArrayList<Payment> getPaymentsByMonth(int month, int year){
         return this.payments.selectPaymentsOfMonth(month, year);
     }
 
+    /**
+     * Selects payments of a month parametrized with a category.
+     * @param month month
+     * @param year  year
+     * @param category  category
+     * @return      payments of a month
+     */
     public ArrayList<Payment> getPaymentsByMonth(int month, int year, String category){
         return this.payments.selectPaymentsOfMonth(month, year, category);
     }
 
+    /**
+     * Selects summarized payments of a month parametrized with a category.
+     * @param month month
+     * @param year  year
+     * @param category  category
+     * @return      payments of a month
+     */
     public ArrayList<Payment> getCategorySummaryByMonth(int month, int year, String category){
         return this.payments.selectCategorySummaryOfMonth(month, year, category);
     }
 
+    /**
+     * Selects all payments of a year parammetrized with a category.
+     * @param year      year
+     * @param category  category
+     * @return          payments of a year
+     */
     public ArrayList<Payment> getPaymentsByYear(int year, String category){
         return this.payments.selectPaymentsOfYear(year, category);
     }
 
+    /**
+     * Select summary of a category.
+     * @param year      year
+     * @param category  category
+     * @return          summary
+     */
     public ArrayList<Payment> getCategorySummaryByYear(int year, String category){
         return this.payments.selectCategorySummaryOfYear(year, category);
     }
 
+    /**
+     * Updates default currency.
+     * @param curr  default currency
+     */
     public void updateDefaultCurrency(String curr){
         if(this.currencies.checkIfCurrencyExists(curr))
             return;
         this.currencies.insertCurrency(curr);
     }
 
+    /**
+     * Gets a list of all table columns.
+     * @return  selector
+     */
     public String getAllTableColumnsList(){
         return  this.payments.getAllColumnsSelector() + ", " +
                 this.categories.getAllColumnsSelector() + ", " +
                 this.stores.getAllColumnsSelector();
     }
 
+    /**
+     * Getter of all table list.
+     * @return  table list
+     */
     public String getAllTablesList(){
         return "tb_payments inner join tb_categories on tb_payments.id_category = tb_categories.id " +
                         "inner join tb_stores on tb_payments.id_store = tb_stores.id";
-
     }
 
+    /**
+     * Checks if a DB is empty.
+     * @param month month
+     * @param year  year
+     * @return      true – exists; false – not
+     */
     public boolean isDBEmpty(int month, int year){
         ArrayList<Payment> payments = getPaymentsByMonth(month, year);
         return payments.size() == 0;
     }
 
+    /**
+     * Computes cmopact statistics.
+     * @return  statistics element
+     */
     public Statistics computeCurrentStatistics(){
         int today, week,
             month, year, total;
@@ -161,6 +239,12 @@ public class DBManager extends SQLiteOpenHelper {
         return s;
     }
 
+    /**
+     * Computes other statistics.
+     * @param month month
+     * @param year  year
+     * @return      statistics object
+     */
     public Statistics computeOtherStatistics(int month, int year){
         int monthStats = this.payments.computeMonthPaymentAmount(month, year);
 
@@ -169,33 +253,60 @@ public class DBManager extends SQLiteOpenHelper {
         return s;
     }
 
+    /**
+     * Inserts a new paymnet.
+     * @param p a new payment
+     */
     public void insertNewPayment(Payment p){
         this.payments.insertPayment(p);
     }
 
+    /**
+     * Inserts a new category.
+     * @param title a tittle
+     */
     public void insertNewCategory(String title){
         this.categories.insertCategory(title, "@drawable/category_icon_default");
     }
 
+    /**
+     * Inserts a new Store..
+     * @param title a title
+     */
     public void insertNewStore(String title){
         this.stores.insertStore(title);
     }
 
+    /**
+     * Deletes a payment.
+     * @param id    an id of a payment being deleted
+     */
     public void deletePayment(int id){
         this.payments.deletePayment(new String[][]{
                 {"id", "=", String.valueOf(id)}
         });
     }
 
+    /**
+     * Deletes a category.
+     * @param id     an id of a category
+     */
     public void deleteCategory(int id){
         this.categories.deleteCategory(new String[][]{{"id", "=", String.valueOf(id)}});
     }
 
+    /**
+     * Deletes a store.
+     * @param id an id of store
+     */
     public void deleteStore(int id){
         this.stores.deleteStore(new String[][]{{"id", "=", String.valueOf(id)}});
     }
 
-
+    /**
+     * Updates payment.
+     * @param p  a payment reference
+     */
     public void updatePayment(Payment p){
         /*this.payments.deletePayment(new String[][]{
                 {"id", "=", String.valueOf(id)}
@@ -212,21 +323,17 @@ public class DBManager extends SQLiteOpenHelper {
         });
     }
 
+    /**
+     * Eraases all paymnets.
+     */
     public void eraseAllPayments(){
         this.payments.deletePayments();
     }
 
-    public String packToJson() {
-        Gson gson = new Gson();
-        return gson.toJson(this);
-    }
-
-    public static DBManager unpackFromJson(String json) {
-        Gson gson = new Gson();
-        return gson.fromJson(json, DBManager.class);
-    }
-
-
+    /**
+     * Getter of a db reference.
+     * @return  a db reference
+     */
     public SQLiteDatabase getDB(){
         return this.db;
     }
@@ -240,70 +347,3 @@ public class DBManager extends SQLiteOpenHelper {
         this.payments.insertPayment("5", "6", "7", "567", "1459469600000", "akorát");
     }
 }
-
-
-
-
-
-
-    /*
-    public String getDefaultCurrency(){
-        String[] defaults = {"USD", "EUR"};
-
-        for(int i = 0; i < defaults.length; i++) {
-            if(this.currencies.checkIfCurrencyExists(defaults[i])) {
-                return defaults[i];
-            }
-        }
-
-        Log.i("Ondra", "DEFAULT CURRENCY2: not found, getting first");
-
-        return this.currencies.getFirstCurrency();
-    }
-    */
-
-
-
-
-/*
-
-    PAYMENTS EXAMPLES!
-
-        Log.i("Ondra", "----------------------");
-
-        this.payments.insertPayment("0", "1", "2", "123456", "pozn");
-        this.payments.insertPayment("1", "3", "9.90", "234567", "poznáááámkáááá");
-        this.payments.insertPayment("0", "1", "2", "123456", "pozn");
-        this.payments.insertPayment("1", "3", "9.90", "234567", "poznáááámkáááá");
-        this.payments.insertPayment("0", "1", "2", "123456", "pozn");
-        this.payments.insertPayment("1", "3", "9.90", "234567", "poznáááámkáááá");
-
-        Log.i("Ondra", "----------------------");
-
-        //this.payments.insertPayment("cat0", "store1", "2Kč", "dnes", "pozn");
-        for(Payment p : this.payments.selectAllPayments()) {
-            Log.i("Ondra", p.toString());
-        }
-
-        Log.i("Ondra", "----------------------");
-
-        for(Payment p : this.payments.selectPayments(new String[][]{{"id_store", "<", "3"}, {"amount", "=", "2"}})) {
-            Log.i("Ondra", p.toString());
-        }
-
-        Log.i("Ondra", "----------------------");
-
-        Log.i("Ondra", "deleted: " + this.payments.deletePayment(new String[][]{{"id", "<", "4"}, {"amount", "=", "2"}}));
-
-        Log.i("Ondra", "----------------------");
-
-        Log.i("Ondra", "updated: " + this.payments.updatePayment(
-                new String[][]{{"amount", "7.99"}, {"id_store", "222"}},
-                new String[][]{{"id", ">", "5"}, {"amount", ">", "5"}}
-        ));
-
-        Log.i("Ondra", "----------------------");
-
-        Log.i("Ondra", "total count: " + this.payments.getPaymentsCount());
-
-*/

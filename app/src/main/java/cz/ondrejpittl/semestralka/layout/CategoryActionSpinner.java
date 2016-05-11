@@ -15,16 +15,28 @@ import cz.ondrejpittl.semestralka.models.Statistics;
  */
 public class CategoryActionSpinner extends CustomSpinner {
 
+    /**
+     * A constructor. Basics initialization.
+     * @param context   an activity context reference
+     * @param attrs     attributes from xml given
+     */
     public CategoryActionSpinner(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.setItemSelectCallback();
     }
 
+    /**
+     * A constructor. Basics initialization.
+     * @param context   an activity context reference
+     */
     public CategoryActionSpinner(Context context) {
         super(context);
         this.setItemSelectCallback();
     }
 
+    /**
+     * Sets an item onClick callback.
+     */
     private void setItemSelectCallback(){
         this.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -35,7 +47,6 @@ public class CategoryActionSpinner extends CustomSpinner {
                     return;
                 }
 
-                Log.i("Ondra-spinner", "ITEM SELECTED!");
                 StatisticsActivity ac = (StatisticsActivity) activity;
                 ac.handleDisplayCategoryChange((Category) getSelectedItem());
             }
